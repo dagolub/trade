@@ -15,22 +15,6 @@ ModelType = TypeVar("ModelType", bound=Base)
 
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
-    async def get(self, db: Session, id: str) -> Optional[ModelType]:
-        current_user = await db["users"].find_one({"_id": ObjectId(id)})  # type: ignore
-        if current_user:
-            current_user["id"] = str(current_user["_id"])
-            return current_user
-        else:
-            return None
-
-    async def get_multi(
-        self, db: Session, *, skip: int = 0, limit: int = 100
-    ) -> List[ModelType]:
-        result = []
-        async for document in db["users"].find().skip(skip).limit(limit):  # type: ignore
-            document["id"] = str(document["_id"])  # noqa
-            result.append(document)
-        return result
 
     async def get_by_email(self, db: Session, email: str) -> Optional[User]:
         return await db["users"].find_one({"email": email})  # type: ignore
@@ -44,8 +28,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             "is_superuser": obj_in.get("is_superuser") or False,
             "is_active": True,
         }
-        obj = await db["users"].insert_one(document=db_obj)  # type: ignore
-        user = await db["users"].find_one(  # type: ignore
+        obj = await db[self.model.__tablename__].insert_one(document=db_obj)  # type: ignore
+        user = await db[self.model.__tablename__].find_one(  # type: ignore
             {"_id": ObjectId(obj.inserted_id)}
         )  # type: ignore
         user["id"] = str(obj.inserted_id)
@@ -63,13 +47,10 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             update_data["hashed_password"] = hashed_password  # type: ignore
         if "email" in update_data:
             del update_data["email"]  # type: ignore
-        await db["users"].update_one({"_id": ObjectId(db_obj["id"])}, {"$set": update_data})  # type: ignore
-        user = await db["users"].find_one({"_id": ObjectId(db_obj["id"])})  # type: ignore
+        await db[self.model.__tablename__].update_one({"_id": ObjectId(db_obj["id"])}, {"$set": update_data})  # type: ignore
+        user = await db[self.model.__tablename__].find_one({"_id": ObjectId(db_obj["id"])})  # type: ignore
         user["id"] = str(user["_id"])
         return user
-
-    async def remove(self, db: AsyncIOMotorClient, user_id: str) -> None:
-        await db["users"].delete_one({"_id": user_id})
 
     async def authenticate(
         self, db: AsyncIOMotorClient, *, email: str, password: str

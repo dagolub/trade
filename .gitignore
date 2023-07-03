@@ -4,3 +4,4 @@
 .mypy_cache
 docker-stack.yml
 frontent/node_modules
+venv
