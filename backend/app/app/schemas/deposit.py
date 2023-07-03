@@ -5,7 +5,8 @@ from pydantic import BaseModel
 
 # Shared properties
 class DepositBase(BaseModel):
-    
+    pass
+
 
 # Properties to receive on Deposit creation
 class DepositCreate(DepositBase):
