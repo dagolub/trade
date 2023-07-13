@@ -1,5 +1,4 @@
 from typing import Any
-
 from sqlalchemy.ext.declarative import as_declarative  # type:ignore
 from sqlalchemy.ext.declarative import declared_attr
 
@@ -8,6 +7,7 @@ from sqlalchemy.ext.declarative import declared_attr
 class Base:
     id: Any
     __name__: str
+
     # Generate __tablename__ automatically
 
     @declared_attr

@@ -1,36 +1,34 @@
 from typing import Optional
-import datetime
 from pydantic import BaseModel
+from bson.objectid import ObjectId
 
 
-# Shared properties
 class DepositBase(BaseModel):
-    pass
-
-
-# Properties to receive on Deposit creation
+    owner_id: Optional[str] = None
+    wallet: Optional[str] = None
+    type: Optional[str] = None
+    sum: Optional[int] = None
+    currency: Optional[str] = None
+    
+    
 class DepositCreate(DepositBase):
     pass
 
 
-# Properties to receive on Deposit update
 class DepositUpdate(DepositBase):
     pass
 
 
-# Properties shared by models stored in DB
 class DepositInDBBase(DepositBase):
-    id: int
+    _id: ObjectId
     
     class Config:
         orm_mode = True
 
 
-# Properties to return to client
 class Deposit(DepositInDBBase):
     pass
 
 
-# Properties properties stored in DB
 class DepositInDB(DepositInDBBase):
     pass

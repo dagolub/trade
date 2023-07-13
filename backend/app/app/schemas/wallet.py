@@ -6,6 +6,8 @@ from pydantic import BaseModel
 # Shared properties
 class WalletBase(BaseModel):
     
+    pass
+    
 
 # Properties to receive on Wallet creation
 class WalletCreate(WalletBase):

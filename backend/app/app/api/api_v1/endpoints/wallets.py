@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app import crud, models, schemas
 from app.api import deps
-from app.translate import _
+
 
 router = APIRouter()
 
@@ -28,7 +28,7 @@ def create_wallet(
     *,
     db: Session = Depends(deps.get_db),
     wallet_in: schemas.WalletCreate,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Create new wallet.
@@ -42,7 +42,7 @@ def create_wallet(
 @router.get("/{id}", response_model=schemas.Wallet)
 def read_wallet(
     id: int,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
 ) -> Any:
     """
@@ -62,7 +62,7 @@ def update_wallet(
     db: Session = Depends(deps.get_db),
     id: int,
     wallet_in: schemas.WalletUpdate,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Update a wallet.
@@ -82,7 +82,7 @@ def delete_wallet(
     *,
     db: Session = Depends(deps.get_db),
     id: int,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Delete an wallet.

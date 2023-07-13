@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app import crud, models, schemas
 from app.api import deps
-from app.translate import _
+
 
 router = APIRouter()
 
@@ -24,17 +24,17 @@ def read_deposits(
 
 
 @router.post("/", response_model=schemas.Deposit)
-def create_deposit(
+async def create_deposit(
     *,
     db: Session = Depends(deps.get_db),
     deposit_in: schemas.DepositCreate,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Create new deposit.
     """
 
-    deposit = crud.deposit.create(db=db, obj_in=deposit_in)
+    deposit = await crud.deposit.create(db=db, obj_in=deposit_in)
 
     return deposit
 
@@ -42,7 +42,7 @@ def create_deposit(
 @router.get("/{id}", response_model=schemas.Deposit)
 def read_deposit(
     id: int,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
 ) -> Any:
     """
@@ -62,7 +62,7 @@ def update_deposit(
     db: Session = Depends(deps.get_db),
     id: int,
     deposit_in: schemas.DepositUpdate,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Update a deposit.
@@ -82,7 +82,7 @@ def delete_deposit(
     *,
     db: Session = Depends(deps.get_db),
     id: int,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Delete an deposit.

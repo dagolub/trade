@@ -23,6 +23,7 @@ class MongoDbTest(MagicMock):
             "is_active": True,
         }
         self.users.setdefault(str(first_user_id), user)
+        self.deposits = {}
 
     async def find_one(self, find: dict) -> Optional[dict]:
         if "email" in find:
@@ -36,19 +37,27 @@ class MongoDbTest(MagicMock):
         return None
 
     async def insert_one(self, document: dict) -> Optional[type]:
+        result = None
         if "email" not in document:
-            return None
+            result = None
+        else:
+            tablename = "users"
+
+        if "wallet" in document:
+            tablename = "deposits"
 
         user_id = ObjectId() if "_id" not in document else document["_id"]
         document["id"] = str(user_id)
         document["_id"] = user_id
 
-        user = self.users.setdefault(document["id"], document)
+        user = self.tablename.setdefault(document["id"], document)
 
         user_obj = type("User", (), user)
         setattr(user_obj, "inserted_id", user_id)
         setattr(user_obj, "_id", user_id)
-        return user_obj
+
+        result = user_obj
+        return result
 
     async def update_one(self, find: dict, update: dict) -> Optional[dict]:
         current_user = None

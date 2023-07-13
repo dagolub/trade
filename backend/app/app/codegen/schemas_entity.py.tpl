@@ -1,27 +1,24 @@
 from typing import Optional
-import datetime
 from pydantic import BaseModel
+from bson.objectid import ObjectId
 
 
-# Shared properties
-class {{ entity }}Base(BaseModel):
-    {% for field in schema_fields %}
-        {{ schema_fields[field] }}
+class {{ entity }}Base(BaseModel):{% if schema_fields %}
+    {% for field in schema_fields %}{{ schema_fields[field] }}
     {% endfor %}
-
-# Properties to receive on {{ entity }} creation
+    {% else %}
+    pass
+    {% endif %}
 class {{ entity }}Create({{ entity }}Base):
     pass
 
 
-# Properties to receive on {{ entity }} update
 class {{ entity }}Update({{ entity }}Base):
     pass
 
 
-# Properties shared by models stored in DB
 class {{ entity }}InDBBase({{ entity }}Base):
-    id: int
+    _id: ObjectId
     {% for field in related_fields %}
         {{ field }}_id: int
     {% endfor %}
@@ -29,11 +26,9 @@ class {{ entity }}InDBBase({{ entity }}Base):
         orm_mode = True
 
 
-# Properties to return to client
 class {{ entity }}({{ entity }}InDBBase):
     pass
 
 
-# Properties properties stored in DB
 class {{ entity }}InDB({{ entity }}InDBBase):
     pass

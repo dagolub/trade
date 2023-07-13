@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app import crud, models, schemas
 from app.api import deps
-from app.translate import _
+
 
 router = APIRouter()
 
@@ -28,7 +28,7 @@ def create_transaction(
     *,
     db: Session = Depends(deps.get_db),
     transaction_in: schemas.TransactionCreate,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Create new transaction.
@@ -42,7 +42,7 @@ def create_transaction(
 @router.get("/{id}", response_model=schemas.Transaction)
 def read_transaction(
     id: int,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
 ) -> Any:
     """
@@ -62,7 +62,7 @@ def update_transaction(
     db: Session = Depends(deps.get_db),
     id: int,
     transaction_in: schemas.TransactionUpdate,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Update a transaction.
@@ -82,7 +82,7 @@ def delete_transaction(
     *,
     db: Session = Depends(deps.get_db),
     id: int,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Delete an transaction.

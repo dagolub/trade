@@ -4,7 +4,7 @@ from app.db.base_class import Base
 
 
 class Deposit(Base):
-    __tablename__ = "deposit"
+    __tablename__ = "deposits"
     _id = Column(String, primary_key=True, index=True)
     owner_id = Column(String, index=True)
     wallet = Column(String, index=True)

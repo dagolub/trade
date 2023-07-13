@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app import crud, models, schemas
 from app.api import deps
-from app.translate import _
+
 
 router = APIRouter()
 
@@ -24,17 +24,17 @@ def read_{{ entity_lower }}s(
 
 
 @router.post("/", response_model=schemas.{{ entity }})
-def create_{{ entity_lower }}(
+async def create_{{ entity_lower }}(
     *,
     db: Session = Depends(deps.get_db),
     {{ entity_lower }}_in: schemas.{{ entity }}Create,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Create new {{ entity_lower }}.
     """
 
-    {{ entity_lower }} = crud.{{ entity_lower }}.create(db=db, obj_in={{ entity_lower }}_in)
+    {{ entity_lower }} = await crud.{{ entity_lower }}.create(db=db, obj_in={{ entity_lower }}_in)
 
     return {{ entity_lower }}
 
@@ -42,7 +42,7 @@ def create_{{ entity_lower }}(
 @router.get("/{id}", response_model=schemas.{{ entity }})
 def read_{{ entity_lower }}(
     id: int,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
 ) -> Any:
     """
@@ -62,7 +62,7 @@ def update_{{ entity_lower }}(
     db: Session = Depends(deps.get_db),
     id: int,
     {{ entity_lower }}_in: schemas.{{ entity }}Update,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Update a {{ entity_lower }}.
@@ -82,7 +82,7 @@ def delete_{{ entity_lower }}(
     *,
     db: Session = Depends(deps.get_db),
     id: int,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Delete an {{ entity_lower }}.

@@ -33,7 +33,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return result
 
     async def create(self, db: Session, obj_in: dict) -> Optional[ModelType]:
-        obj = await db[self.model.__tablename__].insert_one(document=db_obj)  # type: ignore
+        obj = await db[self.model.__tablename__].insert_one(document=jsonable_encoder(obj_in))  # type: ignore
         object = await db[self.model.__tablename__].find_one(  # type: ignore
             {"_id": ObjectId(obj.inserted_id)}
         )  # type: ignore

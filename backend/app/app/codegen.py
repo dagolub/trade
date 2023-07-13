@@ -45,16 +45,16 @@ def parse_model(model_name):
     model_file = get_file(f"models/{camel_to_snake(model_name)}.py")
     type_mapping = {'String': 'str', 'Integer': 'int', 'Date': 'datetime.date',
                     'Float': 'float', 'Boolean': 'bool', 'JSON': 'list'}
-    fields = re.findall("(\w+) = Column\((\w+), (nullable|default)=(\w+)\)", model_file)  # noqa
+    fields = re.findall("(\w+) = Column\((\w+)", model_file)  # noqa
     schema_fields = {}
     for field in fields:
         default = 'None'
         set_default = False
-        if field[2] == 'default':
+        if 2 in field and field[2] == 'default':
             default = field[3]
             set_default = True
 
-        if field[2] == 'nullable' and field[3] == 'False':
+        if 2 in field and 3 in field and field[2] == 'nullable' and field[3] == 'False':
             if set_default:
                 new_field = f'{field[0]}: {type_mapping[field[1]]} = {default}'
             else:
@@ -62,7 +62,8 @@ def parse_model(model_name):
         else:
             new_field = f'{field[0]}: Optional[{type_mapping[field[1]]}] = {default}'
 
-        schema_fields.setdefault(field[0], new_field)
+        if new_field[0:1] != "_":
+            schema_fields.setdefault(field[0], new_field)
 
     relations = re.findall('(\w+) = relationship\("(\w+)", (back_populates|backref)="(\w+)"\)', model_file)  # noqa
     related_fields = {}
@@ -92,6 +93,7 @@ def install_files(model_name):
     os.rename(f"codegen/generated/endpoints_{camel_to_snake(model_name)}.py", f"api/api_v1/endpoints/{pn}.py")
     os.rename(f"codegen/generated/crud_{camel_to_snake(model_name)}.py", f"crud/crud_{camel_to_snake(model_name)}.py")
     os.rename(f"codegen/generated/schemas_{camel_to_snake(model_name)}.py", f"schemas/{camel_to_snake(model_name)}.py")
+    os.rename(f"codegen/generated/test_{camel_to_snake(model_name)}.py", f"tests/api/api_v1/test_{camel_to_snake(model_name)}.py")
 
     crud_init_file_path = 'crud/__init__.py'
     crud_init = get_file(crud_init_file_path)
@@ -133,8 +135,14 @@ def main(model_name: str):
         endpoints_template = env.get_template("endpoints_entity_with_owner.py.tpl")
     else:
         endpoints_template = env.get_template("endpoints_entity.py.tpl")
-    save_to_file(endpoints_template.render(entity=model_name, entity_lower=camel_to_snake(model_name), pn=pn),
+    test_template = env.get_template("test_entity.py.tpl")
+    save_to_file(endpoints_template.render(entity=model_name, entity_lower=camel_to_snake(model_name), pn=pn, ),
                  f'codegen/generated/endpoints_{camel_to_snake(model_name)}.py')
+    save_to_file(test_template.render(entity=model_name,
+                                      entity_lower=camel_to_snake(model_name),
+                                      pn=pn,
+                                      schema_fields=schema_fields),
+                 f'codegen/generated/test_{camel_to_snake(model_name)}.py')
     is_install = typer.confirm('Install new files?')
 
     if is_install:
