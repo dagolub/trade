@@ -9,8 +9,13 @@ from app.api import deps
 router = APIRouter()
 
 
+@router.get("/count")
+async def count(db: Session = Depends(deps.get_db)) -> int:
+    return await crud.wallet.count(db=db)
+
+
 @router.get("/", response_model=List[schemas.Wallet])
-def read_wallets(
+async def read_wallets(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
@@ -19,12 +24,12 @@ def read_wallets(
     """
     Retrieve wallet.
     """
-    wallets = crud.wallet.get_multi(db, skip=skip, limit=limit)
+    wallets = await crud.wallet.get_multi(db, skip=skip, limit=limit)
     return wallets
 
 
 @router.post("/", response_model=schemas.Wallet)
-def create_wallet(
+async def create_wallet(
     *,
     db: Session = Depends(deps.get_db),
     wallet_in: schemas.WalletCreate,
@@ -34,62 +39,62 @@ def create_wallet(
     Create new wallet.
     """
 
-    wallet = crud.wallet.create(db=db, obj_in=wallet_in)
+    wallet = await crud.wallet.create(db=db, obj_in=wallet_in)
 
     return wallet
 
 
 @router.get("/{id}", response_model=schemas.Wallet)
-def read_wallet(
-    id: int,
+async def read_wallet(
+    id: str,
     current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
 ) -> Any:
     """
     Get a wallet.
     """
-    wallet = crud.wallet.get(db=db, id=id)
+    wallet = await crud.wallet.get(db=db, entity_id=id)
     if not wallet:
         raise HTTPException(
-            status_code=400, detail=_("Wallet doesn't exists")
+            status_code=400, detail="Wallet doesn't exists"
         )
     return wallet
 
 
 @router.put("/{id}", response_model=schemas.Wallet)
-def update_wallet(
+async def update_wallet(
     *,
     db: Session = Depends(deps.get_db),
-    id: int,
+    id: str,
     wallet_in: schemas.WalletUpdate,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Update a wallet.
     """
-    wallet = crud.wallet.get(db=db, id=id)
+    wallet = await crud.wallet.get(db=db, entity_id=id)
     if not wallet:
         raise HTTPException(
             status_code=404,
-            detail=_("Wallet doesn't exists"),
+            detail="Wallet doesn't exists",
         )
-    wallet = crud.wallet.update(db=db, db_obj=wallet, obj_in=wallet_in)
+    wallet = await crud.wallet.update(db=db, db_obj=wallet, obj_in=wallet_in)
     return wallet
 
 
 @router.delete("/{id}", response_model=schemas.Wallet)
-def delete_wallet(
+async def delete_wallet(
     *,
     db: Session = Depends(deps.get_db),
-    id: int,
+    id: str,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Delete an wallet.
     """
-    wallet = crud.wallet.get(db=db, id=id)
+    wallet = await crud.wallet.get(db=db, id=id)
     if not wallet:
-        raise HTTPException(status_code=404, detail=_("Wallet doesn't exists"))
+        raise HTTPException(status_code=404, detail="Wallet doesn't exists")
 
-    wallet = crud.wallet.remove(db=db, id=id)
+    wallet = await crud.wallet.remove(db=db, id=id)
     return wallet

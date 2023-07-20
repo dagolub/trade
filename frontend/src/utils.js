@@ -19,8 +19,6 @@ const convertList = (list, field) => {
         }
 
     }
-
-    console.log(result)
     return result
 }
 

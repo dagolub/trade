@@ -25,15 +25,14 @@ async def test_get_deposit(
     client: TestClient, superuser_token_headers: dict, db: Session
 ) -> None:
     payload = {}
-    fields = {'owner_id': 'owner_id: Optional[str] = None', 'wallet': 'wallet: Optional[str] = None', 'type': 'type: Optional[str] = None', 'sum': 'sum: Optional[int] = None', 'currency': 'currency: Optional[str] = None'}
-    for field in fields:
+    for field in {'owner_id': 'owner_id: Optional[str] = None', 'wallet': 'wallet: Optional[str] = None', 'type': 'type: Optional[str] = None', 'sum': 'sum: Optional[int] = None', 'currency': 'currency: Optional[str] = None'}:
         value = False
-        if 'str' in fields[field]:
+        if 'str' in field[1]:
             value = "Some string"
-        if 'int' in fields[field]:
+        if 'int' in field[1]:
             value = 1111
-        payload.setdefault(field, value)
-    entity = await deposit.create_deposit(db, payload)
+        payload.setdefault(field[0], value)
+    entity = deposit.create_deposit(db, payload)
     #  deposit = await crud.deposit.get_by_email(db, email=settings.FIRST_SUPERUSER)  # type: ignore
     response = client.get(
         f"{settings.API_V1_STR}/deposits/{['id']}",  # type: ignore

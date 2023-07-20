@@ -8,6 +8,11 @@ from app.api import deps
 router = APIRouter()
 
 
+@router.get("/count")
+async def count(db: Session = Depends(deps.get_db)) -> int:
+    return await crud.{{ entity_lower }}.count(db=db)
+
+
 @router.get("/", response_model=List[schemas.{{ entity }}])
 def read_{{ pn }}(
     db: Session = Depends(deps.get_db),

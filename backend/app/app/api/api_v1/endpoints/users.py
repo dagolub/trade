@@ -13,17 +13,23 @@ from app.utils import send_new_account_email
 router = APIRouter()
 
 
+@router.get("/count")
+async def count(db: Session = Depends(deps.get_db)) -> int:
+    return await crud.user.count(db=db)
+
+
 @router.get("/", response_model=List[schemas.User])
 async def read_users(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
+    q: str = "",
     current_user: models.User = Depends(deps.get_current_active_superuser),  # noqa
 ) -> Any:
     """
     Retrieve users.
     """
-    users = await crud.user.get_multi(db, skip=skip, limit=limit)  # type: ignore
+    users = await crud.user.get_multi(db, skip=skip, limit=limit, q=q)  # type: ignore
     return users
 
 
@@ -95,7 +101,7 @@ async def read_user_by_id(
     """
     Get a specific user by id.
     """
-    user = await crud.user.get(db, id=user_id)  # type: ignore
+    user = await crud.user.get(db, entity_id=user_id)  # type: ignore
     if user["email"] == current_user["email"]:  # type: ignore
         return user
     if not crud.user.is_superuser(current_user):
@@ -116,11 +122,27 @@ async def update_user(
     """
     Update a user.
     """
-    user = await crud.user.get(db, id=user_id)  # type: ignore
+    user = await crud.user.get(db, entity_id=user_id)  # type: ignore
     if not user:
         raise HTTPException(
             status_code=404,
             detail="The user with this username does not exist in the system",
         )
     user = await crud.user.update(db, db_obj=user, obj_in=user_in)  # type: ignore
+    return user
+
+@router.delete("/{id}", response_model=schemas.User)
+async def delete_deposit(
+    id: str,
+    db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_active_user),
+) -> Any:
+    """
+    Delete an deposit.
+    """
+    user = await crud.user.get(db=db, entity_id=id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User doesn't exists")
+
+    user = await crud.user.remove(db=db, id=id)
     return user

@@ -9,8 +9,13 @@ from app.api import deps
 router = APIRouter()
 
 
+@router.get("/count")
+async def count(db: Session = Depends(deps.get_db)) -> int:
+    return await crud.deposit.count(db=db)
+
+
 @router.get("/", response_model=List[schemas.Deposit])
-def read_deposits(
+async def read_deposits(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
@@ -19,7 +24,7 @@ def read_deposits(
     """
     Retrieve deposit.
     """
-    deposits = crud.deposit.get_multi(db, skip=skip, limit=limit)
+    deposits = await crud.deposit.get_multi(db, skip=skip, limit=limit)
     return deposits
 
 
@@ -40,56 +45,56 @@ async def create_deposit(
 
 
 @router.get("/{id}", response_model=schemas.Deposit)
-def read_deposit(
-    id: int,
+async def read_deposit(
+    id: str,
     current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
 ) -> Any:
     """
     Get a deposit.
     """
-    deposit = crud.deposit.get(db=db, id=id)
+    deposit = await crud.deposit.get(db=db, entity_id=id)
     if not deposit:
         raise HTTPException(
-            status_code=400, detail=_("Deposit doesn't exists")
+            status_code=400, detail="Deposit doesn't exists"
         )
     return deposit
 
 
 @router.put("/{id}", response_model=schemas.Deposit)
-def update_deposit(
+async def update_deposit(
     *,
     db: Session = Depends(deps.get_db),
-    id: int,
+    id: str,
     deposit_in: schemas.DepositUpdate,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Update a deposit.
     """
-    deposit = crud.deposit.get(db=db, id=id)
+    deposit = await crud.deposit.get(db=db, entity_id=id)
     if not deposit:
         raise HTTPException(
             status_code=404,
-            detail=_("Deposit doesn't exists"),
+            detail="Deposit doesn't exists",
         )
-    deposit = crud.deposit.update(db=db, db_obj=deposit, obj_in=deposit_in)
+    deposit = await crud.deposit.update(db=db, db_obj=deposit, obj_in=deposit_in)
     return deposit
 
 
 @router.delete("/{id}", response_model=schemas.Deposit)
-def delete_deposit(
+async def delete_deposit(
     *,
     db: Session = Depends(deps.get_db),
-    id: int,
+    id: str,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Delete an deposit.
     """
-    deposit = crud.deposit.get(db=db, id=id)
+    deposit = await crud.deposit.get(db=db, id=id)
     if not deposit:
-        raise HTTPException(status_code=404, detail=_("Deposit doesn't exists"))
+        raise HTTPException(status_code=404, detail="Deposit doesn't exists")
 
-    deposit = crud.deposit.remove(db=db, id=id)
+    deposit = await crud.deposit.remove(db=db, id=id)
     return deposit

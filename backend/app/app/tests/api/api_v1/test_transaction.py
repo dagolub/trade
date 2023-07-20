@@ -10,7 +10,7 @@ from app.core.config import settings
 from app.main import app
 from app.schemas.transaction import TransactionCreate
 from app.tests.utils.db import fake_db
-
+from app.tests.utils import transaction
 
 app.dependency_overrides[get_db] = fake_db
 
@@ -24,6 +24,15 @@ app.dependency_overrides[get_db] = fake_db
 async def test_get_transaction(
     client: TestClient, superuser_token_headers: dict, db: Session
 ) -> None:
+    payload = {}
+    for field in {'owner_id': 'owner_id: Optional[str] = None', 'from_wallet': 'from_wallet: Optional[str] = None', 'to_wallet': 'to_wallet: Optional[str] = None', 'tx': 'tx: Optional[str] = None', 'amount': 'amount: Optional[int] = None', 'currency': 'currency: Optional[str] = None', 'type': 'type: Optional[str] = None'}:
+        value = False
+        if 'str' in field[1]:
+            value = "Some string"
+        if 'int' in field[1]:
+            value = 1111
+        payload.setdefault(field[0], value)
+    entity = transaction.create_transaction(db, payload)
     #  transaction = await crud.transaction.get_by_email(db, email=settings.FIRST_SUPERUSER)  # type: ignore
     response = client.get(
         f"{settings.API_V1_STR}/transactions/{['id']}",  # type: ignore

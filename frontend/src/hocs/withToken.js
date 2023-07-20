@@ -2,7 +2,7 @@ import React from "react"
 import {getToken} from "../services/token";
 
 const withProtectedRoute = (Component) =>{
-    const WithToken = (props) => {
+    return (props) => {
         const token = getToken()
 
         if (!token) {
@@ -10,7 +10,6 @@ const withProtectedRoute = (Component) =>{
         }
         return <Component {...props} />
     }
-    return WithToken
 }
 
 export default withProtectedRoute;

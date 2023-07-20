@@ -1,6 +1,5 @@
 import axios from "axios";
 import {getToken} from "./token";
-import {id2key} from "../utils";
 
 const getUrl = (url) => {
     const base = 'http://localhost:8001/api/v1'
@@ -85,24 +84,24 @@ const getPagination = (url) => {
     return GET('/api/' + url + '/pagination')
 }
 // USERS
-const createUser = (full_name, email, password, is_superuser, is_active) => {
+const createUser = (full_name, email, password, is_active, is_superuser) => {
     return POST('/api/users/', {
         "email": email,
         "is_active": is_active,
         "is_superuser": is_superuser,
         "full_name": full_name,
-        "avatar": "string",
-        "description": "string",
+        // "avatar": "string",
+        // "description": "string",
         "password": password
     })
 }
-const getUsers = (skip=0, limit=10) => {
-    return GET('/api/users/?skip=' + skip + '&limit=' + limit)
+const getUsers = (q="", skip=0, limit=10) => {
+    return GET('/api/users/?skip=' + skip + '&limit=' + limit + '&q=' + q)
 }
 const getUser = (id) => {
     return GET('/api/users/' + id)
 }
-const updateUser = (id, full_name, email, password, is_superuser, is_active) => {
+const updateUser = (id, full_name, email, password, is_active, is_superuser) => {
     return PUT('/api/users/' + id, {
         "email": email,
         "is_active": is_active,
@@ -117,7 +116,92 @@ const deleteUser = (id) => {
     return DELETE('/api/users/' + id)
 }
 
+
+
+const createDeposit = (wallet, type, sum, currency) => {
+  return POST('/api/deposits/', {
+        "wallet": wallet,
+        "type": type,
+        "sum": sum,
+        "currency": currency,
+})
+  }
+const getDeposits = (q="", skip=0, limit=10) => {
+  return GET('/api/deposits/?skip=' + skip + '&limit=' + limit + '&q=' + q)
+}
+const getDeposit = (id) => {
+   return GET('/api/deposits/' + id)
+}
+const updateDeposit = (id, wallet, type, sum, currency) => {
+      return PUT('/api/deposits/' + id, {
+        "wallet": wallet,
+        "type": type,
+        "sum": sum,
+        "currency": currency,
+  })
+}
+const deleteDeposit = (id) => {
+   return DELETE('/api/deposits/' + id)
+}
+
+const createTransaction = (tx, amount, currency, type) => {
+  return POST('/api/transactions/', {
+        "tx": tx,
+        "amount": amount,
+        "currency": currency,
+        "type": type,
+})
+  }
+const getTransactions = (q="", skip=0, limit=10) => {
+  return GET('/api/transactions/?skip=' + skip + '&limit=' + limit + '&q=' + q)
+}
+const getTransaction = (id) => {
+   return GET('/api/transactions/' + id)
+}
+const updateTransaction = (id, tx, amount, currency, type) => {
+      return PUT('/api/transactions/' + id, {
+        "tx": tx,
+        "amount": amount,
+        "currency": currency,
+        "type": type,
+  })
+}
+const deleteTransaction = (id) => {
+   return DELETE('/api/transactions/' + id)
+}
+
+const createWallet = (wallet, type) => {
+  return POST('/api/wallets/', {
+        "wallet": wallet,
+        "type": type,
+})
+  }
+const getWallets = (q="", skip=0, limit=10) => {
+  return GET('/api/wallets/?skip=' + skip + '&limit=' + limit + '&q=' + q)
+}
+const getWallet = (id) => {
+   return GET('/api/wallets/' + id)
+}
+const updateWallet = (id, wallet, type) => {
+      return PUT('/api/wallets/' + id, {
+        "wallet": wallet,
+        "type": type,
+  })
+}
+const deleteWallet = (id) => {
+   return DELETE('/api/wallets/' + id)
+}
+//INSERT1
+
 export {
     Login, getPagination,
+    GET, POST, PUT, DELETE,
     getUserMe, createUser, getUsers, getUser, updateUser, deleteUser, createAvatar,
+
+createDeposit, getDeposits, getDeposit, updateDeposit, deleteDeposit,
+
+createTransaction, getTransactions, getTransaction, updateTransaction, deleteTransaction,
+
+createWallet, getWallets, getWallet, updateWallet, deleteWallet
+//INSERT2
 }

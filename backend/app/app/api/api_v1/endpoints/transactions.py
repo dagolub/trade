@@ -9,8 +9,13 @@ from app.api import deps
 router = APIRouter()
 
 
+@router.get("/count")
+async def count(db: Session = Depends(deps.get_db)) -> int:
+    return await crud.transaction.count(db=db)
+
+
 @router.get("/", response_model=List[schemas.Transaction])
-def read_transactions(
+async def read_transactions(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
@@ -19,12 +24,12 @@ def read_transactions(
     """
     Retrieve transaction.
     """
-    transactions = crud.transaction.get_multi(db, skip=skip, limit=limit)
+    transactions = await crud.transaction.get_multi(db, skip=skip, limit=limit)
     return transactions
 
 
 @router.post("/", response_model=schemas.Transaction)
-def create_transaction(
+async def create_transaction(
     *,
     db: Session = Depends(deps.get_db),
     transaction_in: schemas.TransactionCreate,
@@ -34,62 +39,62 @@ def create_transaction(
     Create new transaction.
     """
 
-    transaction = crud.transaction.create(db=db, obj_in=transaction_in)
+    transaction = await crud.transaction.create(db=db, obj_in=transaction_in)
 
     return transaction
 
 
 @router.get("/{id}", response_model=schemas.Transaction)
-def read_transaction(
-    id: int,
+async def read_transaction(
+    id: str,
     current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
 ) -> Any:
     """
     Get a transaction.
     """
-    transaction = crud.transaction.get(db=db, id=id)
+    transaction = await crud.transaction.get(db=db, entity_id=id)
     if not transaction:
         raise HTTPException(
-            status_code=400, detail=_("Transaction doesn't exists")
+            status_code=400, detail="Transaction doesn't exists"
         )
     return transaction
 
 
 @router.put("/{id}", response_model=schemas.Transaction)
-def update_transaction(
+async def update_transaction(
     *,
     db: Session = Depends(deps.get_db),
-    id: int,
+    id: str,
     transaction_in: schemas.TransactionUpdate,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Update a transaction.
     """
-    transaction = crud.transaction.get(db=db, id=id)
+    transaction = await crud.transaction.get(db=db, entity_id=id)
     if not transaction:
         raise HTTPException(
             status_code=404,
-            detail=_("Transaction doesn't exists"),
+            detail="Transaction doesn't exists",
         )
-    transaction = crud.transaction.update(db=db, db_obj=transaction, obj_in=transaction_in)
+    transaction = await crud.transaction.update(db=db, db_obj=transaction, obj_in=transaction_in)
     return transaction
 
 
 @router.delete("/{id}", response_model=schemas.Transaction)
-def delete_transaction(
+async def delete_transaction(
     *,
     db: Session = Depends(deps.get_db),
-    id: int,
+    id: str,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Delete an transaction.
     """
-    transaction = crud.transaction.get(db=db, id=id)
+    transaction = await crud.transaction.get(db=db, id=id)
     if not transaction:
-        raise HTTPException(status_code=404, detail=_("Transaction doesn't exists"))
+        raise HTTPException(status_code=404, detail="Transaction doesn't exists")
 
-    transaction = crud.transaction.remove(db=db, id=id)
+    transaction = await crud.transaction.remove(db=db, id=id)
     return transaction
