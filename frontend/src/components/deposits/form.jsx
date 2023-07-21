@@ -1,7 +1,7 @@
 import React from 'react';
 import {createDeposit, updateDeposit} from "../../services/api";
 
-function Form({owner_id = "",wallet = "",type = "",sum = "",currency = "",id=""}) {
+function Form({wallet = "",type = "",sum = "",currency = "",id=""}) {
     const refWallet = React.useRef("")
     const refType = React.useRef("")
     const refSum = React.useRef("")
@@ -26,7 +26,7 @@ function Form({owner_id = "",wallet = "",type = "",sum = "",currency = "",id=""}
         }
     }
     React.useEffect(()=> {
-        if (owner_id||wallet||type||sum||currency||true) {
+        if (wallet||type||sum||currency||true) {
             refWallet.current.value = wallet
             refType.current.value = type
             refSum.current.value = sum

@@ -6,16 +6,14 @@ import React from "react";
 function WalletEdit() {
     const { id } = useParams();
 
-    const [owner_id, setOwnerId] = React.useState("")
-    const [wallet, setWallet] = React.useState("")
-    const [type, setType] = React.useState("")
+    const [Wallet, setWallet] = React.useState("")
+    const [Type, setType] = React.useState("")
     
 
     React.useEffect(()=> {
         getWallet(id).then((data)=> {
-            setOwnerId(data.owner_id)
-            setWallet(data.wallet)
-            setType(data.type)
+            setWallet(data.Wallet)
+            setType(data.Type)
             
         })
     })
@@ -26,7 +24,6 @@ function WalletEdit() {
                 <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
                     <Form
 
-                          owner_id={owner_id}
                           wallet={wallet}
                           type={type}
                           

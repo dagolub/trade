@@ -74,7 +74,6 @@ function WalletTable({
                       key={entity.id}
                       id={entity.id}
 
-                      owner_id={entity.owner_id}
                       wallet={entity.wallet}
                       type={entity.type}
                       

@@ -6,12 +6,12 @@ import React from "react";
 function {{ entity }}Edit() {
     const { id } = useParams();
 
-    {% for field in schema_fields %}const [{{ field }}, set{{ schema_fields[field] }}] = React.useState("")
+    {% for field in schema_fields_capitalize %}const [{{ field }}, set{{ field }}] = React.useState("")
     {% endfor %}
 
     React.useEffect(()=> {
         get{{ entity }}(id).then((data)=> {
-            {% for field in schema_fields %}set{{ schema_fields[field] }}(data.{{ field }})
+            {% for field in schema_fields_capitalize %}set{{ field }}(data.{{ field }})
             {% endfor %}
         })
     })

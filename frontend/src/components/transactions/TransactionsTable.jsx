@@ -50,7 +50,12 @@ function TransactionTable({
                     </label>
                   </div>
                 </th>
-
+                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                  <div className="font-semibold text-left">From wallet</div>
+                </th>
+                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                  <div className="font-semibold text-left">To wallet</div>
+                </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                   <div className="font-semibold text-left">Tx</div>
                 </th>
@@ -80,7 +85,6 @@ function TransactionTable({
                       key={entity.id}
                       id={entity.id}
 
-                      owner_id={entity.owner_id}
                       from_wallet={entity.from_wallet}
                       to_wallet={entity.to_wallet}
                       tx={entity.tx}

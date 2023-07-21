@@ -55,9 +55,6 @@ function DepositTableItem(props) {
             </td>
 
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
-                <div className="font-medium text-slate-800 dark:text-slate-100">{props.owner_id}</div>
-            </td>
-            <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
                 <div className="font-medium text-slate-800 dark:text-slate-100">{props.wallet}</div>
             </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>

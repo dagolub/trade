@@ -1,7 +1,7 @@
 import React from 'react';
 import {createWallet, updateWallet} from "../../services/api";
 
-function Form({owner_id = "",wallet = "",type = "",id=""}) {
+function Form({wallet = "",type = "",id=""}) {
     const refWallet = React.useRef("")
     const refType = React.useRef("")
     
@@ -24,7 +24,7 @@ function Form({owner_id = "",wallet = "",type = "",id=""}) {
         }
     }
     React.useEffect(()=> {
-        if (owner_id||wallet||type||true) {
+        if (wallet||type||true) {
             refWallet.current.value = wallet
             refType.current.value = type
             

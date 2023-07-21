@@ -1,7 +1,9 @@
 import React from 'react';
 import {createTransaction, updateTransaction} from "../../services/api";
 
-function Form({owner_id = "",from_wallet = "",to_wallet = "",tx = "",amount = "",currency = "",type = "",id=""}) {
+function Form({from_wallet = "",to_wallet = "",tx = "",amount = "",currency = "",type = "",id=""}) {
+    const refFromWallet = React.useRef("")
+    const refToWallet = React.useRef("")
     const refTx = React.useRef("")
     const refAmount = React.useRef("")
     const refCurrency = React.useRef("")
@@ -18,15 +20,19 @@ function Form({owner_id = "",from_wallet = "",to_wallet = "",tx = "",amount = ""
         e.preventDefault()
 
         if (id) {
-            const r = await updateTransaction(id, refTx.current.value, refAmount.current.value, refCurrency.current.value, refType.current.value, )
+            const r = await updateTransaction(id, refFromWallet.current.value, refToWallet.current.value,refTx.current.value,
+                refAmount.current.value, refCurrency.current.value, refType.current.value, )
             setResp(r)
         } else {
-            const r = await createTransaction(refTx.current.value, refAmount.current.value, refCurrency.current.value, refType.current.value, )
+            const r = await createTransaction(refFromWallet.current.value, refToWallet.current.value, refTx.current.value,
+                refAmount.current.value, refCurrency.current.value, refType.current.value, )
             setResp(r)
         }
     }
     React.useEffect(()=> {
-        if (owner_id||from_wallet||to_wallet||tx||amount||currency||type||true) {
+        if (from_wallet||to_wallet||tx||amount||currency||type||true) {
+            refFromWallet.current.value = from_wallet
+            refToWallet.current.value = to_wallet
             refTx.current.value = tx
             refAmount.current.value = amount
             refCurrency.current.value = currency
@@ -39,7 +45,21 @@ function Form({owner_id = "",from_wallet = "",to_wallet = "",tx = "",amount = ""
         <div className="max-w-sm mx-auto w-full px-4 py-8">
             <h1 className="text-3xl text-slate-800 dark:text-slate-100 font-bold mb-6">Ceating Transaction</h1>
             <form onSubmit={submitHandler} method="POST">
-
+                <div>
+                    <div>
+                        <label className="block text-sm font-medium mb-1" htmlFor="Tx-text">
+                            From Wallet
+                        </label>
+                        <input id="Tx-text" className="form-input w-full" type="text" ref={refFromWallet}/>
+                    </div>
+                </div>                <div>
+                    <div>
+                        <label className="block text-sm font-medium mb-1" htmlFor="Tx-text">
+                            To Wallet
+                        </label>
+                        <input id="Tx-text" className="form-input w-full" type="text" ref={refToWallet}/>
+                    </div>
+                </div>
                 <div>
                     <div>
                         <label className="block text-sm font-medium mb-1" htmlFor="Tx-text">

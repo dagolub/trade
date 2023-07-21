@@ -144,8 +144,10 @@ const deleteDeposit = (id) => {
    return DELETE('/api/deposits/' + id)
 }
 
-const createTransaction = (tx, amount, currency, type) => {
+const createTransaction = (from_wallet, to_wallet, tx, amount, currency, type) => {
   return POST('/api/transactions/', {
+        "from_wallet": from_wallet,
+        "to_wallet": to_wallet,
         "tx": tx,
         "amount": amount,
         "currency": currency,
@@ -158,8 +160,10 @@ const getTransactions = (q="", skip=0, limit=10) => {
 const getTransaction = (id) => {
    return GET('/api/transactions/' + id)
 }
-const updateTransaction = (id, tx, amount, currency, type) => {
+const updateTransaction = (id, from_wallet, to_wallet, tx, amount, currency, type) => {
       return PUT('/api/transactions/' + id, {
+        "from_wallet": from_wallet,
+        "to_wallet": to_wallet,
         "tx": tx,
         "amount": amount,
         "currency": currency,
@@ -182,7 +186,7 @@ const getWallets = (q="", skip=0, limit=10) => {
 const getWallet = (id) => {
    return GET('/api/wallets/' + id)
 }
-const updateWallet = (id, wallet, type) => {
+const updateWallet = (id, from_wallet, to_wallet, tx, amount, currency, type) => {
       return PUT('/api/wallets/' + id, {
         "wallet": wallet,
         "type": type,

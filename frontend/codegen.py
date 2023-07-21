@@ -67,7 +67,7 @@ def parse_model(model_name):
         else:
             new_field = f'{field[0]}: Optional[{type_mapping[field[1]]}] = {default}'
 
-        if new_field[0:1] != "_":
+        if new_field[0:1] != "_" and "owner_id" not in new_field:
             schema_fields.setdefault(field[0], new_field)
 
     relations = re.findall('(\w+) = relationship\("(\w+)", (back_populates|backref)="(\w+)"\)', model_file)  # noqa
@@ -171,10 +171,12 @@ def main(model_name: str):
         model_name = typer.prompt("Please enter model name (Model)?")
 
     schema_fields, _ = parse_model(model_name)
+    # schema_fields = [i for i in schema_fields if "_" not in i]
     schema_fields_capitalize = [i.capitalize() for i in schema_fields if "_" not in i]
+
     for field in schema_fields:
         schema_fields[field] = snake_case_to_capitalize_every_letter(field)
-
+    # schema_fields = schema_fields_capitalize
     if not os.path.isdir('codegen/generated'):
         os.mkdir('codegen/generated')
 

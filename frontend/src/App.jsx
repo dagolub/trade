@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom';
 
 import './css/style.css';
+import Dashboard from "./pages/dashboard";
 import Users from './pages/users/list';
 import UsersNew from './pages/users/new';
 import UsersEdit from './pages/users/edit';
@@ -44,6 +45,8 @@ function App() {
   return (
     <>
       <Routes>
+        <Route path="/" element={<Dashboard />} />
+
         <Route path="/users/list" element={<Users />} />
         <Route path="/users/new" element={<UsersNew />} />
         <Route path="/users/edit/:id" element={<UsersEdit />} />

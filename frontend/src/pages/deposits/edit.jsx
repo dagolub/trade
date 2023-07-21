@@ -6,20 +6,18 @@ import React from "react";
 function DepositEdit() {
     const { id } = useParams();
 
-    const [owner_id, setOwnerId] = React.useState("")
-    const [wallet, setWallet] = React.useState("")
-    const [type, setType] = React.useState("")
-    const [sum, setSum] = React.useState("")
-    const [currency, setCurrency] = React.useState("")
+    const [Wallet, setWallet] = React.useState("")
+    const [Type, setType] = React.useState("")
+    const [Sum, setSum] = React.useState("")
+    const [Currency, setCurrency] = React.useState("")
     
 
     React.useEffect(()=> {
         getDeposit(id).then((data)=> {
-            setOwnerId(data.owner_id)
-            setWallet(data.wallet)
-            setType(data.type)
-            setSum(data.sum)
-            setCurrency(data.currency)
+            setWallet(data.Wallet)
+            setType(data.Type)
+            setSum(data.Sum)
+            setCurrency(data.Currency)
             
         })
     })
@@ -30,7 +28,6 @@ function DepositEdit() {
                 <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
                     <Form
 
-                          owner_id={owner_id}
                           wallet={wallet}
                           type={type}
                           sum={sum}
