@@ -15,6 +15,7 @@ function Users() {
   };
   const settingList = (q="", count) => {
     setTimeout(()=>{
+      console.log("In list", count)
       let q = document.location.search.split("=")[1]
       getUsers(q, count).then((data)=>setList(data))
     }, 500)

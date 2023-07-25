@@ -15,7 +15,7 @@ function Deposits() {
   };
   const settingList = (q="", count) => {
     setTimeout(()=>{
-
+      console.log("In list", count)
       let q = document.location.search.split("=")[1]
       getDeposits(q, count).then((data)=>setList(data))
 

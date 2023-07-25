@@ -9,8 +9,8 @@ function TransactionTableItem(props) {
     const deleteHandler = (id) => {
         deleteRow(id)
         setTimeout(() => {
-            deleteUser(id).then((response) => {
-                response.email ? document.getElementById("tr" + id).remove() : ""
+            deleteTransaction(id).then((response) => {
+                response.currency ? document.getElementById("tr" + id).remove() : ""
                 // setTimeout(()=>{
                 //     let hash = parseInt(window.location.hash.split("#")[1])
                 //     hash = hash > 0 ? hash : 0

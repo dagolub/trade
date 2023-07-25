@@ -9,8 +9,8 @@ function DepositTableItem(props) {
     const deleteHandler = (id) => {
         deleteRow(id)
         setTimeout(() => {
-            deleteUser(id).then((response) => {
-                response.email ? document.getElementById("tr" + id).remove() : ""
+            deleteDeposit(id).then((response) => {
+                response.wallet ? document.getElementById("tr" + id).remove() : ""
                 // setTimeout(()=>{
                 //     let hash = parseInt(window.location.hash.split("#")[1])
                 //     hash = hash > 0 ? hash : 0
@@ -66,7 +66,9 @@ function DepositTableItem(props) {
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
                 <div className="font-medium text-slate-800 dark:text-slate-100">{props.currency}</div>
             </td>
-            
+            <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
+                <div className="font-medium text-slate-800 dark:text-slate-100">{props.sub_account}</div>
+            </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px td" + props.id}>
                 <div className="space-x-1">
                     <a href={"/deposits/edit/" + props.id}>
