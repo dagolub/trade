@@ -131,7 +131,7 @@ async def update_user(
     user = await crud.user.update(db, db_obj=user, obj_in=user_in)  # type: ignore
     return user
 
-@router.delete("/{id}", response_model=schemas.User)
+@router.delete("/{entity_id}", response_model=schemas.User)
 async def delete_deposit(
     entity_id: str,
     db: Session = Depends(deps.get_db),
