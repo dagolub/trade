@@ -1,7 +1,8 @@
 from typing import Any, List
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from starlette.responses import JSONResponse
+from app.services.exchanger import Exchanger
 from app import crud, models, schemas
 from app.api import deps
 
@@ -21,11 +22,17 @@ async def read_deposits(
     limit: int = 100,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    """
-    Retrieve deposit.
-    """
+    exchanger = Exchanger()
+    okx = exchanger.get("OKX")
+    if not okx:
+        raise ValueError("Exchanger 'OKX' is not available.")
+
     deposits = await crud.deposit.get_multi(db, skip=skip, limit=limit)
-    return deposits
+    result = []
+    for deposit in deposits:
+        deposit["sum"] = okx.int_to_frac(deposit["sum"], "usdt")
+        result.append(deposit)
+    return result
 
 
 @router.post("/", response_model=schemas.Deposit)
@@ -38,10 +45,13 @@ async def create_deposit(
     """
     Create new deposit.
     """
-
-    deposit = await crud.deposit.create(db=db, obj_in=deposit_in)
-
-    return deposit
+    try:
+        return await crud.deposit.create(db=db, obj_in=deposit_in, owner=current_user)
+    except ValueError as e:
+        return JSONResponse(
+            status_code=500,
+            content={"detail": e.args[0]},
+        )
 
 
 @router.get("/{id}", response_model=schemas.Deposit)
@@ -82,19 +92,20 @@ async def update_deposit(
     return deposit
 
 
-@router.delete("/{id}", response_model=schemas.Deposit)
+@router.delete("/{entity_id}", response_model=schemas.Deposit)
 async def delete_deposit(
     *,
     db: Session = Depends(deps.get_db),
-    id: str,
+    entity_id: str,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Delete an deposit.
     """
-    deposit = await crud.deposit.get(db=db, id=id)
+    deposit = await crud.deposit.get(db=db, entity_id=entity_id)
+    wallet = await crud.wallet.get_by_deposit(db=db, deposit_id=deposit["id"])
+    await crud.wallet.remove(db=db, entity_id=wallet["id"])
     if not deposit:
         raise HTTPException(status_code=404, detail="Deposit doesn't exists")
 
-    deposit = await crud.deposit.remove(db=db, id=id)
-    return deposit
+    return await crud.deposit.remove(db=db, entity_id=entity_id)

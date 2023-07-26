@@ -7,8 +7,14 @@ class DepositBase(BaseModel):
     owner_id: Optional[str] = None
     wallet: Optional[str] = None
     type: Optional[str] = None
-    sum: Optional[int] = None
-    currency: Optional[str] = None
+    status: Optional[str] = None
+    sub_account: Optional[str] = None
+    sub_account_label: Optional[str] = None
+    sub_account_secret_key: Optional[str] = None
+    sub_account_api_key: Optional[str] = None
+    sub_account_passphrase: Optional[str] = None
+    sum: float = None
+    currency: str = None
     
     
 class DepositCreate(DepositBase):
@@ -20,7 +26,8 @@ class DepositUpdate(DepositBase):
 
 
 class DepositInDBBase(DepositBase):
-    _id: ObjectId
+    id: str
+    _id: str
     
     class Config:
         orm_mode = True

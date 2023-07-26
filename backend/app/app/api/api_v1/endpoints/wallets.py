@@ -82,19 +82,18 @@ async def update_wallet(
     return wallet
 
 
-@router.delete("/{id}", response_model=schemas.Wallet)
+@router.delete("/{entity_id}", response_model=schemas.Wallet)
 async def delete_wallet(
     *,
     db: Session = Depends(deps.get_db),
-    id: str,
+    entity_id: str,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Delete an wallet.
     """
-    wallet = await crud.wallet.get(db=db, id=id)
+    wallet = await crud.wallet.get(db=db, entity_id=entity_id)
     if not wallet:
         raise HTTPException(status_code=404, detail="Wallet doesn't exists")
 
-    wallet = await crud.wallet.remove(db=db, id=id)
-    return wallet
+    return await crud.wallet.remove(db=db, entity_id=entity_id)

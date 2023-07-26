@@ -62,6 +62,10 @@ class Settings(BaseSettings):
     MONGO_HOST: str
     MONGO_DB: str
 
+    OKX_API_KEY: str
+    OKX_SECRET_KEY: str
+    OKX_PASSPHRASE: str
+
     class Config:
         case_sensitive = True
 

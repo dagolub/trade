@@ -22,6 +22,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         entity = await db[self.model.__tablename__].find_one({"_id": ObjectId(entity_id)})  # type: ignore
         if entity:
             entity["id"] = str(entity["_id"])
+            if "amount" in entity:
+                entity["amount"] = float(entity["amount"])
             return entity
         else:
             return None
@@ -37,7 +39,10 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
         async for document in db[self.model.__tablename__].find(search).skip(skip).limit(limit):  # type: ignore
             document["id"] = str(document["_id"])  # noqa
+            if "amount" in document:
+                document["amount"] = float(document["amount"])
             result.append(document)
+
         return result
 
     async def create(self, db: Session, obj_in: dict) -> Optional[ModelType]:
@@ -59,9 +64,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         user["id"] = str(user["_id"])
         return user
 
-    async def remove(self, db: AsyncIOMotorClient, id: str) -> None:
-        entity = await db[self.model.__tablename__].find_one({"_id": ObjectId(id)})
+    async def remove(self, db: AsyncIOMotorClient, entity_id: str) -> None:
+        entity = await db[self.model.__tablename__].find_one({"_id": ObjectId(entity_id)})
         if entity:
             entity["id"] = str(entity["_id"])
-        await db[self.model.__tablename__].delete_one({"_id": ObjectId(id)})
+        await db[self.model.__tablename__].delete_one({"_id": ObjectId(entity_id)})
         return entity

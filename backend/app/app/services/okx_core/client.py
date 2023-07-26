@@ -56,7 +56,7 @@ class OKX:
         )
         return account.subaccount_deposit_address(sub_account, ccy, chain, 1, 6)
 
-    def get_account_balance(self, api_key=None, secret_key=None, passphrase=None, ccy=None):
+    def get_account_balance(self, ccy=None, api_key=None, secret_key=None, passphrase=None):
         if api_key:
             api_key = api_key
         else:
@@ -86,52 +86,49 @@ class OKX:
         broker = BrokerAPI(
             self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
         )
-        return broker.nd_create_apikey(sub_account, sub_account_label, passphrase, ip,  "withdraw")
+        return broker.nd_create_apikey(sub_account, sub_account_label, passphrase, ip, "withdraw")
 
-    def get_pair(self, from_ccy, to_ccy):
-        convert = ConvertAPI(
-            self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
-        )
-        return convert.get_currency_pair(from_ccy, to_ccy)
+    def transfer_money_to_main_account(self,
+                                       ccy=None,
+                                       amt=None,
+                                       sub_account=None,
+                                       from_account=None,
+                                       to_account=None,
+                                       type_transfer=None):
 
-    def convert_trade(self, from_ccy, to_ccy, amount, quota_id):
-        convert = ConvertAPI(
-            self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
-        )
-        return convert.convert_trade(
-            baseCcy=to_ccy,
-            quoteCcy=from_ccy,
-            side="buy",
-            sz=amount,
-            szCcy=from_ccy,
-            quoteId=quota_id,
-        )
+        if from_account:
+            from_account = from_account
+        else:
+            from_account = 6
 
-    def estimate_quota(self, from_ccy, to_ccy, amount):
-        convert = ConvertAPI(
-            self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
-        )
-        return convert.estimate_quote(
-            from_ccy, to_ccy, side="buy", rfqSz=amount, rfqSzCcy=to_ccy
-        )
+        if to_account:
+            to_account = to_account
+        else:
+            to_account = 18
 
-    def make_withdrawal(self, currency=None, chain=None, amount=None, address=None):
-        account = self.get_sub_account()
+        if type_transfer is not None:
+            type_transfer = type_transfer
+        else:
+            type_transfer = 2
+        funding = Funding(self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0")
+        if sub_account:
+            return funding.funds_transfer(ccy, amt, from_account, to_account, subAcct=sub_account, type=type_transfer)
+        else:
+            return funding.funds_transfer(ccy, amt, from_account, to_account, type=type_transfer)
 
-        if not account:
-            raise ValueError("Account not found")
-
+    def make_withdrawal(self, currency=None, amount=None, address=None, chain=None,):
         try:
             funding = Funding(
                 self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
             )
+
             withdrawals = funding.coin_withdraw(
                 ccy=currency,
-                amt=amount,
+                amt=float(amount)-1,
                 dest=4,
                 toAddr=address,
-                fee=self.get_currency_fee(currency, chain),
-                chain=chain,
+                fee=1,
+                chain="USDT-TRC20",
             )
             if len(withdrawals.get("data")) > 0:
                 return withdrawals.get("data")[0]

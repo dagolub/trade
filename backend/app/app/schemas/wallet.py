@@ -5,6 +5,7 @@ from bson.objectid import ObjectId
 
 class WalletBase(BaseModel):
     owner_id: Optional[str] = None
+    deposit_id: Optional[str] = None
     wallet: Optional[str] = None
     type: Optional[str] = None
     

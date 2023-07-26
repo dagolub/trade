@@ -82,19 +82,18 @@ async def update_transaction(
     return transaction
 
 
-@router.delete("/{id}", response_model=schemas.Transaction)
+@router.delete("/{entity_id}", response_model=schemas.Transaction)
 async def delete_transaction(
     *,
     db: Session = Depends(deps.get_db),
-    id: str,
+    entity_id: str,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Delete an transaction.
     """
-    transaction = await crud.transaction.get(db=db, id=id)
+    transaction = await crud.transaction.get(db=db, entity_id=entity_id)
     if not transaction:
         raise HTTPException(status_code=404, detail="Transaction doesn't exists")
 
-    transaction = await crud.transaction.remove(db=db, id=id)
-    return transaction
+    return await crud.transaction.remove(db=db, entity_id=entity_id)
