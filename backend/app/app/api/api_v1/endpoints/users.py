@@ -133,16 +133,12 @@ async def update_user(
 
 @router.delete("/{id}", response_model=schemas.User)
 async def delete_deposit(
-    id: str,
+    entity_id: str,
     db: Session = Depends(deps.get_db),
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    """
-    Delete an deposit.
-    """
-    user = await crud.user.get(db=db, entity_id=id)
+    user = await crud.user.get(db=db, entity_id=entity_id)
     if not user:
         raise HTTPException(status_code=404, detail="User doesn't exists")
 
-    user = await crud.user.remove(db=db, id=id)
-    return user
+    return await crud.user.remove(db=db, entity_id=entity_id)
