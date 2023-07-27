@@ -82,7 +82,7 @@ class OKX:
         return broker.nd_select_apikey(sub_account, api_key)
 
     def create_sub_account_api_key(self, sub_account, sub_account_label, passphrase):
-        ip = "165.22.19.20,2a03:b0c0:3:d0::197d:20015"
+        ip = "165.22.19.20,2a03:b0c0:3:d0::197d:2001"
         broker = BrokerAPI(
             self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
         )
