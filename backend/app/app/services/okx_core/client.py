@@ -82,7 +82,7 @@ class OKX:
         return broker.nd_select_apikey(sub_account, api_key)
 
     def create_sub_account_api_key(self, sub_account, sub_account_label, passphrase):
-        ip = "165.22.19.20"
+        ip = "165.22.19.20,2a03:b0c0:3:d0::197d:20015"
         broker = BrokerAPI(
             self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
         )
@@ -137,6 +137,12 @@ class OKX:
 
         except Exception as e:
             raise ValueError("Failed to withdraw" + e.args[0])
+
+    def get_withdrawal_history(self, ccy: str, wdId: str):
+        funding = Funding(
+            self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
+        )
+        return funding.get_withdrawal_history(ccy, wdId)
 
     def get_deposit_info(self, currency: str, chain: str, wallet_address: str) -> dict:
         return None

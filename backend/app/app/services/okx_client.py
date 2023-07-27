@@ -50,6 +50,11 @@ class OKX(ExchangeInterface, ABC):
         )
         return okx.make_withdrawal(currency, amount, address)
 
+    def get_withdrawal_history(self, ccy, wdId):
+        okx = OKX_Client(
+            settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
+        )
+        return okx.get_withdrawal_history(ccy, wdId)
     def frac_to_int(self, amount: str, currency: str) -> int:
         okx = OKX_Client(
             settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE

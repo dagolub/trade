@@ -25,6 +25,8 @@ class ExchangeInterface(ABC):
     def make_withdrawal(self, currency=None, amount=None, address=None):
         raise NotImplementedError
 
+    def get_withdrawal_history(self, ccy, wdId):
+        raise NotImplementedError
     @abstractmethod
     def frac_to_int(self, amount: str, currency: str):
         raise NotImplementedError
