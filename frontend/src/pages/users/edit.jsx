@@ -26,7 +26,12 @@ function UsersEdit() {
         }, [])
     })
     React.useEffect( ()=> {
-        getOTP(email).then(data=>setOTP(data))
+        getOTP(email).then(data=> {
+            if (data.code != "ERR_BAD_RESPONSE") {
+                console.log("Image", data)
+                setOTP(data)
+            }
+        })
     }, [email])
     return (<div className="flex h-[100dvh] overflow-hidden">
         <Sidebar/>

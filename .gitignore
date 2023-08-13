@@ -5,3 +5,4 @@
 docker-stack.yml
 frontent/node_modules
 venv
+images
