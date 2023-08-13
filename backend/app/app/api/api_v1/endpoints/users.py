@@ -1,21 +1,59 @@
 from typing import Any, List
-
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic.networks import EmailStr
 from sqlalchemy.orm import Session  # type: ignore
-
 from app import crud, models, schemas
 from app.api import deps
 from app.core.config import settings
 from app.utils import send_new_account_email
+import pyotp
+import qrcode
+import string
+import random
 
 router = APIRouter()
+
+
+def generate_random_string(length):
+    letters = string.ascii_lowercase
+    return "".join(random.choice(letters) for i in range(length))
 
 
 @router.get("/count")
 async def count(db: Session = Depends(deps.get_db)) -> int:
     return await crud.user.count(db=db)
+
+
+@router.get("/get_otp/{email}")
+async def get_otp(
+    email: str = None, current_user: models.User = Depends(deps.get_current_active_user)
+):
+    url = pyotp.totp.TOTP("JBSWY3DPEHPK3PXP").provisioning_uri(
+        name=email, issuer_name="Cryptex"
+    )
+
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+
+    # Add the OTP URI data to the QR code
+    qr.add_data(url)
+    qr.make(fit=True)
+
+    # Create an image from the QR code instance
+    qr_image = qr.make_image(fill_color="black", back_color="white")
+
+    random_string = generate_random_string(10)
+    image_url = f"images/{random_string}.png"
+
+    # Save the QR code image
+    qr_image.save(image_url)
+
+    return image_url
 
 
 @router.get("/", response_model=List[schemas.User])
@@ -130,6 +168,7 @@ async def update_user(
         )
     user = await crud.user.update(db, db_obj=user, obj_in=user_in)  # type: ignore
     return user
+
 
 @router.delete("/{entity_id}", response_model=schemas.User)
 async def delete_deposit(

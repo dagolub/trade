@@ -84,15 +84,14 @@ const getPagination = (url) => {
     return GET('/api/' + url + '/pagination')
 }
 // USERS
-const createUser = (full_name, email, password, is_active, is_superuser) => {
+const createUser = (full_name, email, password, is_active, is_superuser, autotransfer) => {
     return POST('/api/users/', {
         "email": email,
         "is_active": is_active,
         "is_superuser": is_superuser,
         "full_name": full_name,
-        // "avatar": "string",
-        // "description": "string",
-        "password": password
+        "password": password,
+        "autotransfer": autotransfer
     })
 }
 const getUsers = (q="", skip=0, limit=10) => {
@@ -101,7 +100,7 @@ const getUsers = (q="", skip=0, limit=10) => {
 const getUser = (id) => {
     return GET('/api/users/' + id)
 }
-const updateUser = (id, full_name, email, password, is_active, is_superuser) => {
+const updateUser = (id, full_name, email, password, is_active, is_superuser, autotransfer) => {
     return PUT('/api/users/' + id, {
         "email": email,
         "is_active": is_active,
@@ -109,7 +108,8 @@ const updateUser = (id, full_name, email, password, is_active, is_superuser) => 
         "full_name": full_name,
         "avatar": "string",
         "description": "string",
-        "password": password
+        "password": password,
+        "autotransfer": autotransfer
     })
 }
 const deleteUser = (id) => {
@@ -118,12 +118,14 @@ const deleteUser = (id) => {
 
 
 
-const createDeposit = (wallet, type, sum, currency) => {
+const createDeposit = (wallet, type, sum, currency, status, callback) => {
   return POST('/api/deposits/', {
         "wallet": wallet,
         "type": type,
         "sum": sum,
         "currency": currency,
+        "status": status,
+        "callback": callback
 })
   }
 const getDeposits = (q="", skip=0, limit=10) => {
@@ -132,16 +134,22 @@ const getDeposits = (q="", skip=0, limit=10) => {
 const getDeposit = (id) => {
    return GET('/api/deposits/' + id)
 }
-const updateDeposit = (id, wallet, type, sum, currency) => {
+const updateDeposit = (id, wallet, type, sum, currency, status, callback) => {
       return PUT('/api/deposits/' + id, {
         "wallet": wallet,
         "type": type,
         "sum": sum,
         "currency": currency,
+        "status": status,
+        "callback": callback
   })
 }
 const deleteDeposit = (id) => {
    return DELETE('/api/deposits/' + id)
+}
+
+const callbackDeposit = (id) => {
+    return GET("/api/deposits/callback/" + id)
 }
 
 const createTransaction = (from_wallet, to_wallet, tx, amount, currency, type) => {
@@ -196,16 +204,27 @@ const deleteWallet = (id) => {
    return DELETE('/api/wallets/' + id)
 }
 //INSERT1
+const getSetting = () => {
+    return GET("/api/settings/all")
+}
+const putSetting = (data) => {
+    return PUT("/api/settings/all", data)
+}
 
+const getOTP = (email) => {
+    return GET("/api/users/get_otp/" + email)
+}
+const verifyOTP = () => {
+
+}
 export {
     Login, getPagination,
     GET, POST, PUT, DELETE,
     getUserMe, createUser, getUsers, getUser, updateUser, deleteUser, createAvatar,
-
-createDeposit, getDeposits, getDeposit, updateDeposit, deleteDeposit,
-
-createTransaction, getTransactions, getTransaction, updateTransaction, deleteTransaction,
-
-createWallet, getWallets, getWallet, updateWallet, deleteWallet
+    createDeposit, getDeposits, getDeposit, updateDeposit, deleteDeposit, callbackDeposit,
+    createTransaction, getTransactions, getTransaction, updateTransaction, deleteTransaction,
+    createWallet, getWallets, getWallet, updateWallet, deleteWallet,
+    getSetting, putSetting,
+    getOTP, verifyOTP
 //INSERT2
 }

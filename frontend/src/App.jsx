@@ -6,7 +6,11 @@ import {
 } from 'react-router-dom';
 
 import './css/style.css';
+
+import Settings from './pages/settings';
+
 import Dashboard from "./pages/dashboard";
+
 import Users from './pages/users/list';
 import UsersNew from './pages/users/new';
 import UsersEdit from './pages/users/edit';
@@ -25,6 +29,7 @@ import TransactionsEdit from './pages/transactions/edit';
 import Wallets from './pages/wallets/list';
 import WalletsNew from './pages/wallets/new';
 import WalletsEdit from './pages/wallets/edit';
+
 
 //INSERT_1
 
@@ -62,6 +67,8 @@ function App() {
         <Route path="/wallets/list" element={<Wallets />} />
         <Route path="/wallets/new" element={<WalletsNew />} />
         <Route path="/wallets/edit/:id" element={<WalletsEdit />} />
+
+        <Route path="/settings" element={<Settings />} />
 //INSERT_2
         <Route path="/signin" element={<Signin />} />
       </Routes>

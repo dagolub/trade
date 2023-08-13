@@ -64,7 +64,7 @@ function DepositTable({
                   <div className="font-semibold text-left">Currency</div>
                 </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">Sub Account</div>
+                  <div className="font-semibold text-left">Status</div>
                 </th>
 
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
@@ -86,7 +86,7 @@ function DepositTable({
                       type={entity.type}
                       sum={entity.sum}
                       currency={entity.currency}
-                      sub_account={entity.sub_account}
+                      status={entity.status}
 
                       handleClick={handleClick}
                       isChecked={isCheck.includes(entity.id)}

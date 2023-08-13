@@ -6,6 +6,7 @@ import re
 from app.db.base_class import Base
 from fastapi.encoders import jsonable_encoder
 from motor.motor_asyncio import AsyncIOMotorClient
+
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
@@ -34,8 +35,12 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         result = []
         search = {}
         if q != "":
-            regex_pattern = re.compile(q)
-            search = {"_id": {"$regex": regex_pattern}}
+            search = {
+                "$or": [
+                    {"full_name": {"$regex": str(q)}},
+                    {"email": {"$regex": str(q)}},
+                ]
+            }
 
         async for document in db[self.model.__tablename__].find(search).skip(skip).limit(limit):  # type: ignore
             document["id"] = str(document["_id"])  # noqa
@@ -60,12 +65,14 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         update_data = obj_in
 
         await db[self.model.__tablename__].update_one({"_id": ObjectId(db_obj["id"])}, {"$set": update_data})  # type: ignore
-        user = await db[self.model.__tablename__].find_one({"_id": ObjectId(db_obj["id"])})  # type: ignore
-        user["id"] = str(user["_id"])
-        return user
+        entity = await db[self.model.__tablename__].find_one({"_id": ObjectId(db_obj["id"])})  # type: ignore
+        entity["id"] = str(entity["_id"])
+        return entity
 
     async def remove(self, db: AsyncIOMotorClient, entity_id: str) -> None:
-        entity = await db[self.model.__tablename__].find_one({"_id": ObjectId(entity_id)})
+        entity = await db[self.model.__tablename__].find_one(
+            {"_id": ObjectId(entity_id)}
+        )
         if entity:
             entity["id"] = str(entity["_id"])
         await db[self.model.__tablename__].delete_one({"_id": ObjectId(entity_id)})

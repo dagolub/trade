@@ -6,7 +6,7 @@ from app.core.config import settings
 
 
 class OKX(ExchangeInterface, ABC):
-    def get_address(self, sub_account, currency):
+    def get_address(self, sub_account, currency, chain):
         try:
             okx = OKX_Client(
                 settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
@@ -14,7 +14,9 @@ class OKX(ExchangeInterface, ABC):
         except ValueError:
             raise ValueError("OKX not available")
         sub_account_name = okx.create_sub_account(sub_account)
-        account = okx.get_account(sub_account_name["data"][0]["subAcct"], currency)
+        account = okx.get_account(
+            sub_account_name["data"][0]["subAcct"], currency, chain
+        )
         return account["data"][0]["addr"]
 
     def get_account_balance(self, ccy, api_key=None, secret_key=None, passphrase=None):
@@ -36,13 +38,25 @@ class OKX(ExchangeInterface, ABC):
         okx = OKX_Client(
             settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
         )
-        return okx.create_sub_account_api_key(sub_account, sub_account_label, passphrase)
+        return okx.create_sub_account_api_key(
+            sub_account, sub_account_label, passphrase
+        )
 
-    def transfer_money_to_main_account(self, ccy, amt, sub_account=None, from_account=None, to_account=None, type_transfer=None):
+    def transfer_money_to_main_account(
+        self,
+        ccy,
+        amt,
+        sub_account=None,
+        from_account=None,
+        to_account=None,
+        type_transfer=None,
+    ):
         okx = OKX_Client(
             settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
         )
-        return okx.transfer_money_to_main_account(ccy, amt, sub_account, from_account, to_account, type_transfer)
+        return okx.transfer_money_to_main_account(
+            ccy, amt, sub_account, from_account, to_account, type_transfer
+        )
 
     def make_withdrawal(self, currency=None, amount=None, address=None):
         okx = OKX_Client(
@@ -55,6 +69,7 @@ class OKX(ExchangeInterface, ABC):
             settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
         )
         return okx.get_withdrawal_history(ccy, wdId)
+
     def frac_to_int(self, amount: str, currency: str) -> int:
         okx = OKX_Client(
             settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE

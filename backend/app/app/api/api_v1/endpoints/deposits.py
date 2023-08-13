@@ -5,7 +5,8 @@ from starlette.responses import JSONResponse
 from app.services.exchanger import Exchanger
 from app import crud, models, schemas
 from app.api import deps
-
+from app.cron.callback import get_callback
+from app.db.session import database as db
 
 router = APIRouter()
 
@@ -30,7 +31,7 @@ async def read_deposits(
     deposits = await crud.deposit.get_multi(db, skip=skip, limit=limit)
     result = []
     for deposit in deposits:
-        deposit["sum"] = okx.int_to_frac(deposit["sum"], "usdt")
+        deposit = _parse_deposit(deposit)
         result.append(deposit)
     return result
 
@@ -46,7 +47,9 @@ async def create_deposit(
     Create new deposit.
     """
     try:
-        return await crud.deposit.create(db=db, obj_in=deposit_in, owner=current_user)
+        return _parse_deposit(
+            await crud.deposit.create(db=db, obj_in=deposit_in, owner=current_user)
+        )
     except ValueError as e:
         return JSONResponse(
             status_code=500,
@@ -54,35 +57,33 @@ async def create_deposit(
         )
 
 
-@router.get("/{id}", response_model=schemas.Deposit)
+@router.get("/{entity_id}", response_model=schemas.Deposit)
 async def read_deposit(
-    id: str,
+    entity_id: str,
     current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
 ) -> Any:
     """
     Get a deposit.
     """
-    deposit = await crud.deposit.get(db=db, entity_id=id)
+    deposit = _parse_deposit(await crud.deposit.get(db=db, entity_id=entity_id))
     if not deposit:
-        raise HTTPException(
-            status_code=400, detail="Deposit doesn't exists"
-        )
+        raise HTTPException(status_code=400, detail="Deposit doesn't exists")
     return deposit
 
 
-@router.put("/{id}", response_model=schemas.Deposit)
+@router.put("/{entity_id}", response_model=schemas.Deposit)
 async def update_deposit(
     *,
     db: Session = Depends(deps.get_db),
-    id: str,
+    entity_id: str,
     deposit_in: schemas.DepositUpdate,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Update a deposit.
     """
-    deposit = await crud.deposit.get(db=db, entity_id=id)
+    deposit = await crud.deposit.get(db=db, entity_id=entity_id)
     if not deposit:
         raise HTTPException(
             status_code=404,
@@ -109,3 +110,32 @@ async def delete_deposit(
         raise HTTPException(status_code=404, detail="Deposit doesn't exists")
 
     return await crud.deposit.remove(db=db, entity_id=entity_id)
+
+
+@router.get("/callback/{entity_id}")
+async def callback(entity_id: str):
+    original_deposit = await crud.deposit.get(db=db, entity_id=entity_id)
+    deposit = _parse_deposit(original_deposit)
+    response, status_code = get_callback(deposit["callback"], deposit)
+    await crud.deposit.update(
+        db=db, db_obj=original_deposit, obj_in={"callback_response": response}
+    )
+    return response
+
+
+def _parse_deposit(deposit):
+    exchanger = Exchanger()
+    okx = exchanger.get("OKX")
+    if not okx:
+        raise ValueError("Exchanger 'OKX' is not available.")
+    result = {}
+    result.setdefault("id", deposit["id"])
+    result.setdefault("wallet", deposit["wallet"])
+    result.setdefault("type", deposit["type"])
+    result.setdefault("status", deposit["status"])
+    result.setdefault("callback", deposit["callback"])
+    result.setdefault("callback_response", deposit["callback_response"])
+    result.setdefault("sum", okx.int_to_frac(deposit["sum"], deposit["currency"]))
+    result.setdefault("currency", deposit["currency"])
+    result.setdefault("chain", deposit["chain"])
+    return result

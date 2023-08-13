@@ -17,3 +17,6 @@ class Deposit(Base):
     sub_account_secret_key = Column(Integer)
     sub_account_passphrase = Column(Integer)
     currency = Column(String)
+    chain = Column(String)
+    callback = Column(String)
+    callback_response = Column(String)
