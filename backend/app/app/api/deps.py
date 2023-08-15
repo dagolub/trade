@@ -39,7 +39,7 @@ async def get_current_user(
 
     user = await crud.user.get(db, entity_id=token_data["sub"])  # type: ignore
     if not user:
-        raise HTTPException(status_code=404, detail="User not found2")
+        raise HTTPException(status_code=404, detail="User not found get current user")
     return user
 
 
