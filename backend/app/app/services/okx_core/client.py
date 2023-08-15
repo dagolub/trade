@@ -37,7 +37,7 @@ class OKX:
             )
             return broker.create_subaccount(sub_account, sub_account + "Label")
         except:
-            raise ValueError("Can not create sub account")
+            raise ValueError("Can not create sub account " + sub_account)
 
     def get_account(self, sub_account, ccy, chain):
         chain = self.get_currency_chain(ccy, chain)
