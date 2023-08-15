@@ -31,10 +31,13 @@ class OKX:
         self.main_passphrase = main_passphrase
 
     def create_sub_account(self, sub_account):
-        broker = BrokerAPI(
-            self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
-        )
-        return broker.create_subaccount(sub_account, sub_account + "Label")
+        try:
+            broker = BrokerAPI(
+                self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
+            )
+            return broker.create_subaccount(sub_account, sub_account + "Label")
+        except:
+            raise ValueError("Can not create sub account")
 
     def get_account(self, sub_account, ccy, chain):
         chain = self.get_currency_chain(ccy, chain)
