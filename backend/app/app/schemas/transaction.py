@@ -11,7 +11,8 @@ class TransactionBase(BaseModel):
     amount: Optional[int] = None
     currency: Optional[str] = None
     type: Optional[str] = None
-    
+    deposit_id: Optional[str] = None
+
     
 class TransactionCreate(TransactionBase):
     pass

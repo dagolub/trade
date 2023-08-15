@@ -13,3 +13,4 @@ class Transaction(Base):
     amount = Column(Integer)
     currency = Column(String)
     type = Column(String)
+    deposit_id = Column(String)

@@ -6,7 +6,7 @@ from app import crud
 
 
 async def create_transaction(
-    from_wallet, to_wallet, tx, amount, currency, type, owner_id
+    from_wallet, to_wallet, tx, amount, currency, type, owner_id, deposit_id
 ):
     await crud.transaction.create(
         db=db,
@@ -18,6 +18,7 @@ async def create_transaction(
             "amount": amount,
             "currency": currency,
             "type": type,
+            "deposit_id": deposit_id,
         },
     )
 
@@ -56,6 +57,7 @@ async def incoming_transaction():
                 currency=sub_account_balance["data"][0]["ccy"],
                 type="OKX",
                 owner_id=deposit["owner_id"],
+                deposit_id=deposit["id"],
             )
 
             main_account = okx.transfer_money_to_main_account(
@@ -76,6 +78,7 @@ async def incoming_transaction():
                 currency=sub_account_balance["data"][0]["ccy"],
                 type="OKX",
                 owner_id=deposit["owner_id"],
+                deposit_id=deposit["id"],
             )
 
             main_account_balance = okx.get_account_balance(
