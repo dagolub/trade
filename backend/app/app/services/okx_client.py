@@ -17,6 +17,8 @@ class OKX(ExchangeInterface, ABC):
         account = okx.get_account(
             sub_account_name["data"][0]["subAcct"], currency, chain
         )
+        if len(account.get("data")) == 0:
+            return "Cant create address"
         return account["data"][0]["addr"]
 
     def get_account_balance(self, ccy, api_key=None, secret_key=None, passphrase=None):
