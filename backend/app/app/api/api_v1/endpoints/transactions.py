@@ -1,10 +1,9 @@
 from typing import Any, List
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 from app import crud, models, schemas
 from app.api import deps
-
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 
 router = APIRouter()
 
@@ -55,9 +54,7 @@ async def read_transaction(
     """
     transaction = await crud.transaction.get(db=db, entity_id=id)
     if not transaction:
-        raise HTTPException(
-            status_code=400, detail="Transaction doesn't exists"
-        )
+        raise HTTPException(status_code=400, detail="Transaction doesn't exists")
     return transaction
 
 
@@ -78,7 +75,9 @@ async def update_transaction(
             status_code=404,
             detail="Transaction doesn't exists",
         )
-    transaction = await crud.transaction.update(db=db, db_obj=transaction, obj_in=transaction_in)
+    transaction = await crud.transaction.update(
+        db=db, db_obj=transaction, obj_in=transaction_in
+    )
     return transaction
 
 

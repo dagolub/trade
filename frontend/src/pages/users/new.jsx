@@ -1,6 +1,9 @@
-import Form from "../../components/users/from"
-import Sidebar from "../../partials/Sidebar";
-import Header from "../../partials/Header";
+import "../../components/users/from"
+import "../../partials/Header"
+import "../../partials/Sidebar"
+import Form
+import Header
+import Sidebar
 
 function UsersNew() {
     return (<div className="flex h-[100dvh] overflow-hidden">

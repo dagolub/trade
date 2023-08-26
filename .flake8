@@ -1,0 +1,5 @@
+[flake8]
+ignore = E226,E302,E41
+max-line-length = 160
+max-complexity = 10
+exclude = backend/app/app/services/okx_core, backend/app/app/tests, backend/app/app/codegen.py, backend/app/app/cron/transfer.py

@@ -1,5 +1,6 @@
 import uvicorn  # type: ignore
 from fastapi import FastAPI
+
 from app.api.api_v1.api import api_router
 from app.core.config import settings
 

@@ -1,5 +1,5 @@
 # MongoTech
-[![Flake8](https://github.com/mongotech/app/actions/workflows/flake8.yml/badge.svg)](https://github.com/mongotech/app/actions/workflows/flake8.yml)
+[![Flake8](https://github.com/K-I-S-S-Software/cryptopayments-back-end-python/actions/workflows/flake8.yml/badge.svg)](https://github.com/K-I-S-S-Software/cryptopayments-back-end-python/actions/workflows/flake8.yml)
 [![Black](https://github.com/mongotech/app/actions/workflows/black.yml/badge.svg)](https://github.com/mongotech/app/actions/workflows/black.yml)
 [![Bandit](https://github.com/mongotech/app/actions/workflows/bandit.yml/badge.svg)](https://github.com/mongotech/app/actions/workflows/bandit.yml)
 [![MyPy](https://github.com/mongotech/app/actions/workflows/mypy.yml/badge.svg)](https://github.com/mongotech/app/actions/workflows/mypy.yml)

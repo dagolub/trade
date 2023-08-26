@@ -1,9 +1,11 @@
+from typing import List, TypeVar
+
+from sqlalchemy.orm import Session
+
 from app.crud.base import CRUDBase
+from app.db.base_class import Base
 from app.models.transaction import Transaction
 from app.schemas.transaction import TransactionCreate, TransactionUpdate
-from app.db.base_class import Base
-from typing import TypeVar, List
-from sqlalchemy.orm import Session
 
 ModelType = TypeVar("ModelType", bound=Base)
 

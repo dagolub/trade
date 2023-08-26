@@ -1,5 +1,8 @@
-import React from 'react';
-import {createUser, updateUser} from "../../services/api";
+import "../../services/api"
+import 'react'
+import React
+import updateUser}
+import {createUser
 
 function Form({
                   name = "", email = "", is_active = false,

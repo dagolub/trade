@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import {{ entity }} from './{{ entity }}sTableItem.jsx';
-
+import './{{ entity }}sTableItem.jsx'
+import 'react'
+import React
+import useEffect }
+import { useState
+import {{ entity }}
 
 function {{ entity }}Table({
   selectedItems, list, settingList

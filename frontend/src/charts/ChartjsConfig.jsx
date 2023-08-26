@@ -1,7 +1,12 @@
 // Import Chart.js
-import { Chart, Tooltip } from 'chart.js';
+import 'chart.js'
+import Tooltip }
+import { Chart
+
 // Import Tailwind config
-import { tailwindConfig, hexToRGB } from '../utils/Utils';
+import '../utils/Utils'
+import hexToRGB }
+import { tailwindConfig
 
 Chart.register(Tooltip);
 

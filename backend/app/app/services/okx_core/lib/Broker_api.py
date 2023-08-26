@@ -53,7 +53,10 @@ class BrokerAPI(Client):
             "addrType": addrType,
             "to": to,
         }
-        return self._request_with_params(POST, SUBACCOUNT_DEPOSIT_ADDRESS, params)
+        print(params)
+        response = self._request_with_params(POST, SUBACCOUNT_DEPOSIT_ADDRESS, params)
+        print(response)
+        return response
 
     def subaccount_deposit_history(
         self, subAcct="", ccy="", txId="", state="", after="", before="", limit=""

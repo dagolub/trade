@@ -1,4 +1,5 @@
 from typing import Any
+
 from sqlalchemy.ext.declarative import as_declarative  # type:ignore
 from sqlalchemy.ext.declarative import declared_attr
 

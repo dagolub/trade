@@ -1,29 +1,41 @@
 import random
 import string
-from app.crud.base import CRUDBase
+from datetime import datetime
+from typing import Optional, TypeVar
+
+from sqlalchemy.orm import Session
+
 from app import crud
+from app.crud.base import CRUDBase
+from app.db.base_class import Base
 from app.models.deposit import Deposit
 from app.schemas.deposit import DepositCreate, DepositUpdate
-from typing import TypeVar, Optional
-from sqlalchemy.orm import Session
-from app.db.base_class import Base
-from app.services.exchanger import Exchanger
 from app.schemas.wallet import WalletCreate
-from app.tasks.incoming import incoming_transactions
+from app.services.exchanger import Exchanger
 
 ModelType = TypeVar("ModelType", bound=Base)
 
 
-def generate_random_string(length):
+def generate_random_ints(length):
+    letters = "01234567890"
+    return "".join(random.choice(letters) for i in range(length))
+
+
+def generate_random_small(length):
     letters = string.ascii_lowercase
     return "".join(random.choice(letters) for i in range(length))
 
 
-def generate_random_string_passphrase(length):
-    letters = (
-        "1234567890" + string.ascii_uppercase + string.ascii_lowercase + "!@#$%^&*()"
-    )
+def generate_random_big(length):
+    letters = string.ascii_uppercase
     return "".join(random.choice(letters) for i in range(length))
+
+
+def generate_random_string_passphrase(length):
+    letters = "!@#$%^&*()[]/?;':.,<>|-_=+`~"
+    random_int = generate_random_ints(4)
+    random_string = generate_random_small(2) + generate_random_big(2) + random_int
+    return random_string.join(random.choice(letters) for i in range(length - 8))
 
 
 class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
@@ -48,9 +60,11 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
         exchanger = Exchanger()
         okx = exchanger.get("OKX")
         if not okx:
-            raise ValueError("Exchanger 'OKX' is not available.")
+            raise ValueError("OKX is not available in crud_deposit create")
 
-        sub_account = owner["full_name"] + generate_random_string(5)
+        sub_account = (
+            owner["full_name"] + generate_random_small(3) + generate_random_big(3)
+        )
         wallet = okx.get_address(sub_account, obj_in.currency, obj_in.chain)
 
         if not getattr(obj_in, "sum") or not getattr(obj_in, "currency"):
@@ -61,7 +75,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
         else:
             deposit_type = obj_in.type
 
-        passphrase = generate_random_string_passphrase(16)
+        passphrase = generate_random_string_passphrase(12)
         sub = okx.create_sub_account_api_key(
             sub_account, sub_account + "Label", passphrase
         )
@@ -82,6 +96,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                 "sub_account_api_key": sub["data"][0]["apiKey"],
                 "sub_account_secret_key": sub["data"][0]["secretKey"],
                 "sub_account_passphrase": passphrase,
+                "created": datetime.now(),
             }
 
             current_deposit = await super().create(db=db, obj_in=obj_in)

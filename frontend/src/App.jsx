@@ -1,41 +1,47 @@
-import React from 'react';
+import 'react'
+import React
 import {
+
   Routes,
   Route,
   useLocation
 } from 'react-router-dom';
 
-import './css/style.css';
-
-import Settings from './pages/settings';
-
-import Dashboard from "./pages/dashboard";
-
-import Users from './pages/users/list';
-import UsersNew from './pages/users/new';
-import UsersEdit from './pages/users/edit';
-
-
-import Deposits from './pages/deposits/list';
-import DepositsNew from './pages/deposits/new';
-import DepositsEdit from './pages/deposits/edit';
-
-
-import Transactions from './pages/transactions/list';
-import TransactionsNew from './pages/transactions/new';
-import TransactionsEdit from './pages/transactions/edit';
-
-
-import Wallets from './pages/wallets/list';
-import WalletsNew from './pages/wallets/new';
-import WalletsEdit from './pages/wallets/edit';
-
+import "./pages/dashboard"
+import './css/style.css'
+import './pages/deposits/edit'
+import './pages/deposits/list'
+import './pages/deposits/new'
+import './pages/settings'
+import './pages/transactions/edit'
+import './pages/transactions/list'
+import './pages/transactions/new'
+import './pages/users/edit'
+import './pages/users/list'
+import './pages/users/new'
+import './pages/wallets/edit'
+import './pages/wallets/list'
+import './pages/wallets/new'
+import Dashboard
+import Deposits
+import DepositsEdit
+import DepositsNew
+import Settings
+import Transactions
+import TransactionsEdit
+import TransactionsNew
+import Users
+import UsersEdit
+import UsersNew
+import Wallets
+import WalletsEdit
+import WalletsNew
 
 //INSERT_1
 
 
-import Signin from './pages/Signin';
-
+import './pages/Signin'
+import Signin
 
 function App() {
 

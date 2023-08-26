@@ -1,10 +1,18 @@
-import React from 'react';
-import Sidebar from '../../partials/Sidebar';
-import Header from '../../partials/Header';
-import SearchForm from '../../partials/actions/SearchForm';
-import WalletsTable from '../../components/wallets/WalletsTable';
-import PaginationClassic from '../../components/PaginationClassic';
-import {getWallets, GET} from "../../services/api";
+import "../../services/api"
+import '../../components/PaginationClassic'
+import '../../components/wallets/WalletsTable'
+import '../../partials/actions/SearchForm'
+import '../../partials/Header'
+import '../../partials/Sidebar'
+import 'react'
+import GET}
+import Header
+import PaginationClassic
+import React
+import SearchForm
+import Sidebar
+import WalletsTable
+import {getWallets
 
 function Wallets() {
   const [selectedItems, setSelectedItems] = React.useState([]);

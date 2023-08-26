@@ -1,20 +1,32 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { useThemeProvider } from '../utils/ThemeContext';
-
-import { chartColors } from './ChartjsConfig';
+import '../utils/ThemeContext'
+import './ChartjsConfig'
+import 'react'
+import React
+import useEffect
+import useState }
 import {
+import { chartColors }
+import { useRef
+import { useThemeProvider }
+
   Chart, BarController, BarElement, LinearScale, CategoryScale, Tooltip, Legend,
 } from 'chart.js';
-import 'chartjs-adapter-moment';
+import 'chartjs-adapter-moment'
 
 // Import utilities
-import { tailwindConfig, formatValue } from '../utils/Utils';
+import '../utils/Utils'
+import formatValue }
+import { tailwindConfig
 
 // Import images
-import revolutIcon from '../images/company-icon-01.svg';
-import hsbcIcon from '../images/company-icon-02.svg';
-import qontoIcon from '../images/company-icon-03.svg';
-import n26Icon from '../images/company-icon-04.svg';
+import '../images/company-icon-01.svg'
+import '../images/company-icon-02.svg'
+import '../images/company-icon-03.svg'
+import '../images/company-icon-04.svg'
+import hsbcIcon
+import n26Icon
+import qontoIcon
+import revolutIcon
 
 Chart.register(BarController, BarElement, LinearScale, CategoryScale, Tooltip, Legend);
 

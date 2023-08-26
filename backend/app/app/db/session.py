@@ -10,8 +10,6 @@ if settings.MONGO_HOST == "localhost":
 else:
     MONGO_HOST = f"mongodb+srv://{MONGO_URL}/?retryWrites=true&w=majority"
 
-client = motor.motor_asyncio.AsyncIOMotorClient(
-    MONGO_HOST
-)
+client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_HOST)
 client.get_io_loop = asyncio.get_event_loop
 database = client.cryptopayments

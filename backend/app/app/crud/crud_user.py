@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, TypeVar, Union
+from typing import Any, Dict, Optional, TypeVar, Union
 
 from bson.objectid import ObjectId  # type: ignore
 from fastapi.encoders import jsonable_encoder
@@ -15,7 +15,6 @@ ModelType = TypeVar("ModelType", bound=Base)
 
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
-
     async def get_by_email(self, db: Session, email: str) -> Optional[User]:
         return await db["users"].find_one({"email": email})  # type: ignore
 

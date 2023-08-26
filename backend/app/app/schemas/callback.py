@@ -1,6 +1,6 @@
 from typing import Optional
+
 from pydantic import BaseModel
-from bson.objectid import ObjectId
 
 
 class DepositBase(BaseModel):
@@ -9,7 +9,7 @@ class DepositBase(BaseModel):
     callback: Optional[str] = None
     callback_response: Optional[str] = None
 
-    
+
 class DepositCreate(DepositBase):
     pass
 
@@ -21,7 +21,7 @@ class DepositUpdate(DepositBase):
 class DepositInDBBase(DepositBase):
     id: str
     _id: str
-    
+
     class Config:
         orm_mode = True
 

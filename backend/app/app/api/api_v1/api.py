@@ -1,12 +1,12 @@
 from fastapi import APIRouter
 
 from app.api.api_v1.endpoints import (
-    login,
-    users,
     deposits,
-    transactions,
-    wallets,
+    login,
     settings,
+    transactions,
+    users,
+    wallets,
 )
 
 api_router = APIRouter()

@@ -1,8 +1,8 @@
-from app.services.exchanger import Exchanger
 import asyncio
 import random
 import string
-from app.core.config import settings
+
+from app.services.exchanger import Exchanger
 
 
 def generate_random_string_passphrase(length):

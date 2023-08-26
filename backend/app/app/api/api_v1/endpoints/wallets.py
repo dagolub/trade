@@ -2,9 +2,9 @@ from typing import Any, List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+
 from app import crud, models, schemas
 from app.api import deps
-
 
 router = APIRouter()
 
@@ -55,9 +55,7 @@ async def read_wallet(
     """
     wallet = await crud.wallet.get(db=db, entity_id=id)
     if not wallet:
-        raise HTTPException(
-            status_code=400, detail="Wallet doesn't exists"
-        )
+        raise HTTPException(status_code=400, detail="Wallet doesn't exists")
     return wallet
 
 

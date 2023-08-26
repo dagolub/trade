@@ -1,10 +1,18 @@
-import React from 'react';
-import Sidebar from '../../partials/Sidebar';
-import Header from '../../partials/Header';
-import SearchForm from '../../partials/actions/SearchForm';
-import UsersTable from '../../components/users/UsersTable';
-import PaginationClassic from '../../components/PaginationClassic';
-import {getUsers, GET} from "../../services/api";
+import "../../services/api"
+import '../../components/PaginationClassic'
+import '../../components/users/UsersTable'
+import '../../partials/actions/SearchForm'
+import '../../partials/Header'
+import '../../partials/Sidebar'
+import 'react'
+import GET}
+import Header
+import PaginationClassic
+import React
+import SearchForm
+import Sidebar
+import UsersTable
+import {getUsers
 
 function Users() {
   const [selectedItems, setSelectedItems] = React.useState([]);

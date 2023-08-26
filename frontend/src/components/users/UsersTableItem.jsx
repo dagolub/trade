@@ -1,6 +1,10 @@
-import React from 'react';
-import {deleteUser} from "../../services/api";
-import {showError, deleteRow} from "../../utils";
+import "../../services/api"
+import "../../utils"
+import 'react'
+import deleteRow}
+import React
+import {deleteUser}
+import {showError
 
 // import {useAlert} from "react-alert";
 function UsersTableItem(props) {

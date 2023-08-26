@@ -1,5 +1,7 @@
-import UserMenu from '../components/DropdownProfile';
-import ThemeToggle from '../components/ThemeToggle';
+import '../components/DropdownProfile'
+import '../components/ThemeToggle'
+import ThemeToggle
+import UserMenu
 
 function Header() {
 

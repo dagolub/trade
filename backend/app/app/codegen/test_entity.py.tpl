@@ -1,16 +1,18 @@
 from typing import Dict
+
 import pytest  # type: ignore
 from fastapi.testclient import TestClient
 from jose import jwt  # type: ignore
 from sqlalchemy.orm import Session  # type: ignore
+
 from app import crud
 from app.api.deps import get_db
 from app.core import security
 from app.core.config import settings
 from app.main import app
-from app.schemas.{{ entity_lower }} import {{ entity }}Create
-from app.tests.utils.db import fake_db
+from app.schemas.{{entity_lower}} import {{ entity }}Create
 from app.tests.utils import {{ entity_lower }}
+from app.tests.utils.db import fake_db
 
 app.dependency_overrides[get_db] = fake_db
 

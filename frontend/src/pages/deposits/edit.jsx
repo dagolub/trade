@@ -1,9 +1,16 @@
-import Form from "../../components/deposits/form"
-import Sidebar from "../../partials/Sidebar";
-import {useParams} from "react-router-dom";
-import {getDeposit} from "../../services/api";
-import React from "react";
-import Header from "../../partials/Header";
+import "../../components/deposits/form"
+import "../../partials/Header"
+import "../../partials/Sidebar"
+import "../../services/api"
+import "react"
+import "react-router-dom"
+import Form
+import Header
+import React
+import Sidebar
+import {getDeposit}
+import {useParams}
+
 function DepositEdit() {
     const { id } = useParams();
 

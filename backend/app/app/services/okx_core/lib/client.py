@@ -1,13 +1,15 @@
-import requests
 import json
-from . import consts as c, utils, exceptions
+
+import requests
+
+from . import consts as c
+from . import exceptions, utils
 
 
 class Client(object):
     def __init__(
         self, api_key, api_secret_key, passphrase, use_server_time=False, flag="1"
     ):
-
         self.API_KEY = api_key
         self.API_SECRET_KEY = api_secret_key
         self.PASSPHRASE = passphrase
@@ -15,7 +17,6 @@ class Client(object):
         self.flag = flag
 
     def _request(self, method, request_path, params):
-
         if method == c.GET:
             request_path = request_path + utils.parse_params_to_str(params)
         # url

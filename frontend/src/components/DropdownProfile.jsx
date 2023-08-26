@@ -1,8 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import Transition from '../utils/Transition';
-
-import UserAvatar from '../images/user-avatar-32.png';
+import '../images/user-avatar-32.png'
+import '../utils/Transition'
+import 'react'
+import 'react-router-dom'
+import React
+import Transition
+import useEffect }
+import UserAvatar
+import useRef
+import { Link }
+import { useState
 
 function DropdownProfile({
   align

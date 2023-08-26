@@ -1,7 +1,9 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-
-import SidebarLinkGroup from './SidebarLinkGroup';
+import './SidebarLinkGroup'
+import 'react'
+import 'react-router-dom'
+import React
+import SidebarLinkGroup
+import { NavLink }
 
 function Sidebar() {
     const a_class = 'block transition duration-150 truncate text-slate-400 hover:text-slate-200';

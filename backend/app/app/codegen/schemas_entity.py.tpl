@@ -1,6 +1,7 @@
 from typing import Optional
-from pydantic import BaseModel
+
 from bson.objectid import ObjectId
+from pydantic import BaseModel
 
 
 class {{ entity }}Base(BaseModel):{% if schema_fields %}

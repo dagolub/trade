@@ -1,6 +1,5 @@
-from sqlalchemy import Column, String, Integer  # type: ignore
-
 from app.db.base_class import Base
+from sqlalchemy import Column, DateTime, Integer, String  # type: ignore
 
 
 class Deposit(Base):
@@ -20,3 +19,4 @@ class Deposit(Base):
     chain = Column(String)
     callback = Column(String)
     callback_response = Column(String)
+    created = Column(DateTime)

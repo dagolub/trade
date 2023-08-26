@@ -1,10 +1,18 @@
-import React from 'react';
-import Sidebar from '../../partials/Sidebar';
-import Header from '../../partials/Header';
-import SearchForm from '../../partials/actions/SearchForm';
-import DepositsTable from '../../components/deposits/DepositsTable';
-import PaginationClassic from '../../components/PaginationClassic';
-import {getDeposits, GET} from "../../services/api";
+import "../../services/api"
+import '../../components/deposits/DepositsTable'
+import '../../components/PaginationClassic'
+import '../../partials/actions/SearchForm'
+import '../../partials/Header'
+import '../../partials/Sidebar'
+import 'react'
+import DepositsTable
+import GET}
+import Header
+import PaginationClassic
+import React
+import SearchForm
+import Sidebar
+import {getDeposits
 
 function Deposits() {
   const [selectedItems, setSelectedItems] = React.useState([]);

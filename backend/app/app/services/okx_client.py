@@ -1,8 +1,8 @@
 from abc import ABC
 
+from app.core.config import settings
 from app.services.interface import ExchangeInterface
 from app.services.okx_core.client import OKX as OKX_Client
-from app.core.config import settings
 
 
 class OKX(ExchangeInterface, ABC):
@@ -26,7 +26,7 @@ class OKX(ExchangeInterface, ABC):
             okx = OKX_Client(
                 settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
             )
-        except:
+        except:  # noqa
             raise ValueError("OKX not accessible")
         return okx.get_account_balance(ccy, api_key, secret_key, passphrase)
 

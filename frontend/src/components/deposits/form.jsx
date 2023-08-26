@@ -1,5 +1,9 @@
-import React from 'react';
-import {createDeposit, updateDeposit, callbackDeposit} from "../../services/api";
+import "../../services/api"
+import 'react'
+import callbackDeposit}
+import React
+import updateDeposit
+import {createDeposit
 
 function Form({wallet = "",type = "",sum = "",currency = "", status="", callback="", callback_response="", id=""}) {
     const refWallet = React.useRef("")

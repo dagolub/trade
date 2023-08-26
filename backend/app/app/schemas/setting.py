@@ -1,4 +1,5 @@
 from typing import Dict
+
 from pydantic import BaseModel
 
 
@@ -17,7 +18,7 @@ class SettingUpdate(SettingBase):
 class SettingInDBBase(SettingBase):
     id: str
     _id: str
-    
+
     class Config:
         orm_mode = True
 

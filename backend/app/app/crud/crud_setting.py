@@ -1,8 +1,9 @@
+from typing import TypeVar
+
 from app.crud.base import CRUDBase
+from app.db.base_class import Base
 from app.models.setting import Setting
 from app.schemas.setting import SettingCreate, SettingUpdate
-from app.db.base_class import Base
-from typing import TypeVar
 
 ModelType = TypeVar("ModelType", bound=Base)
 

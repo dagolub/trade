@@ -1,6 +1,7 @@
-from app.services.okx_client import OKX  # noqa
-from app.services.interface import ExchangeInterface
 from dataclasses import dataclass
+
+from app.services.interface import ExchangeInterface
+from app.services.okx_client import OKX  # noqa
 
 
 @dataclass

@@ -1,12 +1,14 @@
 from typing import Any, List
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
-from app.services.exchanger import Exchanger
+
 from app import crud, models, schemas
 from app.api import deps
 from app.cron.callback import get_callback
 from app.db.session import database as db
+from app.services.exchanger import Exchanger
 
 router = APIRouter()
 
@@ -127,7 +129,7 @@ def _parse_deposit(deposit):
     exchanger = Exchanger()
     okx = exchanger.get("OKX")
     if not okx:
-        raise ValueError("Exchanger 'OKX' is not available.")
+        raise ValueError("Exchanger 'OKX' is not available in parse deposit")
     result = {}
     result.setdefault("id", deposit["id"])
     result.setdefault("wallet", deposit["wallet"])
@@ -138,4 +140,5 @@ def _parse_deposit(deposit):
     result.setdefault("sum", okx.int_to_frac(deposit["sum"], deposit["currency"]))
     result.setdefault("currency", deposit["currency"])
     result.setdefault("chain", deposit["chain"])
+    result.setdefault("created", deposit["created"])
     return result

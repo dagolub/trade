@@ -1,5 +1,8 @@
-import React from 'react';
-import {createWallet, updateWallet} from "../../services/api";
+import "../../services/api"
+import 'react'
+import React
+import updateWallet}
+import {createWallet
 
 function Form({wallet = "",type = "",id=""}) {
     const refWallet = React.useRef("")

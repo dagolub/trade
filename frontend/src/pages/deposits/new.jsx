@@ -1,5 +1,7 @@
-import Form from "../../components/deposits/form"
-import Sidebar from "../../partials/Sidebar";
+import "../../components/deposits/form"
+import "../../partials/Sidebar"
+import Form
+import Sidebar
 
 function DepositsNew() {
     return (<div className="flex h-[100dvh] overflow-hidden">

@@ -1,9 +1,15 @@
-import React from 'react';
-import AuthImage from '../images/auth-image.jpg';
-import AuthDecoration from '../images/auth-decoration.png';
-import {Login} from "../services/api";
-import {saveToken} from "../services/token";
-import {showError} from "../utils";
+import "../services/api"
+import "../services/token"
+import "../utils"
+import '../images/auth-decoration.png'
+import '../images/auth-image.jpg'
+import 'react'
+import AuthDecoration
+import AuthImage
+import React
+import {Login}
+import {saveToken}
+import {showError}
 
 function Signin() {
   const refEmail = React.useRef()

@@ -1,6 +1,10 @@
-import React from 'react';
-import {deleteTransaction} from "../../services/api";
-import {showError, deleteRow} from "../../utils";
+import "../../services/api"
+import "../../utils"
+import 'react'
+import deleteRow}
+import React
+import {deleteTransaction}
+import {showError
 
 // import {useAlert} from "react-alert";
 function TransactionTableItem(props) {

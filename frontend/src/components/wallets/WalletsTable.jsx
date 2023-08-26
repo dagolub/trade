@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import Wallet from './WalletsTableItem.jsx';
-
+import './WalletsTableItem.jsx'
+import 'react'
+import React
+import useEffect }
+import Wallet
+import { useState
 
 function WalletTable({
   selectedItems, list, settingList

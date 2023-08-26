@@ -1,8 +1,14 @@
-import Form from "../../components/wallets/form"
-import Sidebar from "../../partials/Sidebar";
-import {useParams} from "react-router-dom";
-import {getWallet} from "../../services/api";
-import React from "react";
+import "../../components/wallets/form"
+import "../../partials/Sidebar"
+import "../../services/api"
+import "react"
+import "react-router-dom"
+import Form
+import React
+import Sidebar
+import {getWallet}
+import {useParams}
+
 function WalletEdit() {
     const { id } = useParams();
 

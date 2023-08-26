@@ -1,5 +1,7 @@
-import React from "react"
-import {getToken} from "../services/token";
+import "../services/token"
+import "react"
+import React
+import {getToken}
 
 const withProtectedRoute = (Component) =>{
     return (props) => {

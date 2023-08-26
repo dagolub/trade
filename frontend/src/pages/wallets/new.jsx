@@ -1,5 +1,7 @@
-import Form from "../../components/wallets/form"
-import Sidebar from "../../partials/Sidebar";
+import "../../components/wallets/form"
+import "../../partials/Sidebar"
+import Form
+import Sidebar
 
 function WalletsNew() {
     return (<div className="flex h-[100dvh] overflow-hidden">

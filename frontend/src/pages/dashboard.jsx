@@ -1,7 +1,11 @@
-import React from 'react';
-import Sidebar from '../partials/Sidebar';
-import Header from '../partials/Header';
-import Currency from '../partials/dashboard/Currency';
+import '../partials/dashboard/Currency'
+import '../partials/Header'
+import '../partials/Sidebar'
+import 'react'
+import Currency
+import Header
+import React
+import Sidebar
 
 function Dashboard() {
 

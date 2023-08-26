@@ -1,5 +1,7 @@
-import axios from "axios";
-import {getToken} from "./token";
+import "./token"
+import "axios"
+import axios
+import {getToken}
 
 const getUrl = (url) => {
     const base = 'http://localhost:8001/api/v1'

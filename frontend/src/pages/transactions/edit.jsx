@@ -1,8 +1,14 @@
-import Form from "../../components/transactions/form"
-import Sidebar from "../../partials/Sidebar";
-import {useParams} from "react-router-dom";
-import {getTransaction} from "../../services/api";
-import React from "react";
+import "../../components/transactions/form"
+import "../../partials/Sidebar"
+import "../../services/api"
+import "react"
+import "react-router-dom"
+import Form
+import React
+import Sidebar
+import {getTransaction}
+import {useParams}
+
 function TransactionEdit() {
     const { id } = useParams();
 

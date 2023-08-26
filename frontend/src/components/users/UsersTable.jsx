@@ -1,5 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import Users from './UsersTableItem';
+import './UsersTableItem'
+import 'react'
+import React
+import useEffect }
+import Users
+import { useState
 
 function UsersTable({
   selectedItems, list, settingList

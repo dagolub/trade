@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer  # type: ignore
+from sqlalchemy import Column, String  # type: ignore
 
 from app.db.base_class import Base
 

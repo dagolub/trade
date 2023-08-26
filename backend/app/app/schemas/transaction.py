@@ -1,6 +1,6 @@
 from typing import Optional
+
 from pydantic import BaseModel
-from bson.objectid import ObjectId
 
 
 class TransactionBase(BaseModel):
@@ -13,7 +13,7 @@ class TransactionBase(BaseModel):
     type: Optional[str] = None
     deposit_id: Optional[str] = None
 
-    
+
 class TransactionCreate(TransactionBase):
     pass
 
@@ -25,7 +25,7 @@ class TransactionUpdate(TransactionBase):
 class TransactionInDBBase(TransactionBase):
     id: str
     _id: str
-    
+
     class Config:
         orm_mode = True
 

@@ -1,9 +1,17 @@
-import Form from "../../components/users/from"
-import Sidebar from "../../partials/Sidebar";
-import {useParams} from "react-router-dom";
-import {getUser, getOTP} from "../../services/api";
-import React from "react";
-import Header from "../../partials/Header";
+import "../../components/users/from"
+import "../../partials/Header"
+import "../../partials/Sidebar"
+import "../../services/api"
+import "react"
+import "react-router-dom"
+import Form
+import getOTP}
+import Header
+import React
+import Sidebar
+import {getUser
+import {useParams}
+
 function UsersEdit() {
     const { id } = useParams();
     const [full_name, setFullName] = React.useState("")

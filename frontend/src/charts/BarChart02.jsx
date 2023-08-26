@@ -1,14 +1,21 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { useThemeProvider } from '../utils/ThemeContext';
-
-import { chartColors } from './ChartjsConfig';
+import '../utils/ThemeContext'
+import './ChartjsConfig'
+import 'react'
+import React
+import useEffect
+import useState }
 import {
+import { chartColors }
+import { useRef
+import { useThemeProvider }
+
   Chart, BarController, BarElement, LinearScale, TimeScale, Tooltip, Legend,
 } from 'chart.js';
-import 'chartjs-adapter-moment';
+import 'chartjs-adapter-moment'
 
 // Import utilities
-import { formatValue } from '../utils/Utils';
+import '../utils/Utils'
+import { formatValue }
 
 Chart.register(BarController, BarElement, LinearScale, TimeScale, Tooltip, Legend);
 

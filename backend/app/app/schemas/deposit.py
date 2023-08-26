@@ -1,4 +1,6 @@
+from datetime import datetime
 from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -11,8 +13,9 @@ class DepositBase(BaseModel):
     sum: float = None
     currency: str = None
     chain: str = None
-    
-    
+    created: Optional[datetime]
+
+
 class DepositCreate(DepositBase):
     owner_id: Optional[str] = None
     sub_account: Optional[str] = None
@@ -22,7 +25,6 @@ class DepositCreate(DepositBase):
     sub_account_passphrase: Optional[str] = None
 
 
-
 class DepositUpdate(DepositBase):
     pass
 
@@ -30,7 +32,7 @@ class DepositUpdate(DepositBase):
 class DepositInDBBase(DepositBase):
     id: str
     _id: str
-    
+
     class Config:
         orm_mode = True
 

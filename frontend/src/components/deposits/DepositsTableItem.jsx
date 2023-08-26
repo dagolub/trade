@@ -1,6 +1,10 @@
-import React from 'react';
-import {deleteDeposit} from "../../services/api";
-import {showError, deleteRow} from "../../utils";
+import "../../services/api"
+import "../../utils"
+import 'react'
+import deleteRow}
+import React
+import {deleteDeposit}
+import {showError
 
 // import {useAlert} from "react-alert";
 function DepositTableItem(props) {

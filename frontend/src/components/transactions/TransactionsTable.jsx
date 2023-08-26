@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import Transaction from './TransactionsTableItem.jsx';
-
+import './TransactionsTableItem.jsx'
+import 'react'
+import React
+import Transaction
+import useEffect }
+import { useState
 
 function TransactionTable({
   selectedItems, list, settingList

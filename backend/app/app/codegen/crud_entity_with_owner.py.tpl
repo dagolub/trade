@@ -2,10 +2,11 @@ from typing import List, Optional, TypeVar
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
-from app.db.base_class import Base
+
 from app.crud.base import CRUDBase
-from app.models.{{ entity_lower }} import {{ entity }}
-from app.schemas.{{ entity_lower }} import {{ entity }}Create,  {{ entity }}Update
+from app.db.base_class import Base
+from app.models.{{entity_lower}} import {{ entity }}
+from app.schemas.{{entity_lower}} import {{ entity }}Create, {{ entity }}Update
 
 ModelType = TypeVar("ModelType", bound=Base)
 

@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import Deposit from './DepositsTableItem.jsx';
-
+import './DepositsTableItem.jsx'
+import 'react'
+import Deposit
+import React
+import useEffect }
+import { useState
 
 function DepositTable({
   selectedItems, list, settingList

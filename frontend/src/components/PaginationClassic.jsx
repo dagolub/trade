@@ -1,4 +1,5 @@
-import React from 'react';
+import 'react'
+import React
 
 function PaginationClassic({total, settingList}) {
     let hash = parseInt(window.location.hash.split("#")[1])

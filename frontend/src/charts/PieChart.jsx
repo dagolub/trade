@@ -1,14 +1,21 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { useThemeProvider } from '../utils/ThemeContext';
-
-import { chartColors } from './ChartjsConfig';
+import '../utils/ThemeContext'
+import './ChartjsConfig'
+import 'react'
+import React
+import useEffect
+import useState }
 import {
+import { chartColors }
+import { useRef
+import { useThemeProvider }
+
   Chart, PieController, ArcElement, TimeScale, Tooltip,
 } from 'chart.js';
-import 'chartjs-adapter-moment';
+import 'chartjs-adapter-moment'
 
 // Import utilities
-import { tailwindConfig } from '../utils/Utils';
+import '../utils/Utils'
+import { tailwindConfig }
 
 Chart.register(PieController, ArcElement, TimeScale, Tooltip);
 

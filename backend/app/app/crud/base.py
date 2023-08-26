@@ -1,11 +1,12 @@
-from typing import Generic, Type, TypeVar, Optional, List
-from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from typing import Generic, List, Optional, Type, TypeVar
+
 from bson.objectid import ObjectId  # type: ignore
-import re
-from app.db.base_class import Base
 from fastapi.encoders import jsonable_encoder
 from motor.motor_asyncio import AsyncIOMotorClient
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from app.db.base_class import Base
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)

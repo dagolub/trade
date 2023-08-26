@@ -1,6 +1,5 @@
-from sqlalchemy import Column, String, Integer  # type: ignore
-
 from app.db.base_class import Base
+from sqlalchemy import Column, String  # type: ignore
 
 
 class Wallet(Base):

@@ -1,7 +1,12 @@
-import React from 'react';
-import Sidebar from '../partials/Sidebar';
-import Header from '../partials/Header';
-import {getSetting, putSetting} from "../services/api";
+import "../services/api"
+import '../partials/Header'
+import '../partials/Sidebar'
+import 'react'
+import Header
+import putSetting}
+import React
+import Sidebar
+import {getSetting
 
 function Settings() {
   const usdt = React.useRef()

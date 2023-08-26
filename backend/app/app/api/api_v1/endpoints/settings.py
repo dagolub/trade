@@ -1,11 +1,10 @@
-from typing import Any, List
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from starlette.responses import JSONResponse
-from app.services.exchanger import Exchanger
+
 from app import crud, models, schemas
 from app.api import deps
-from app.cron.callback import get_callback
 from app.db.session import database as db
 
 router = APIRouter()

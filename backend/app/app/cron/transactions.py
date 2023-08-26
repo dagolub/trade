@@ -1,8 +1,9 @@
+import asyncio
 from time import sleep
+
+from app import crud
 from app.db.session import database as db
 from app.services.exchanger import Exchanger
-import asyncio
-from app import crud
 
 
 async def create_transaction(
@@ -24,12 +25,14 @@ async def create_transaction(
 
 
 async def incoming_transaction():
-    to_wallet = "TGuMUQ6y3Zc1kxdjE2A87zYYm94X8qmiJM"
+    to_wallet = "TGuMUQ6y3Zc1kxdjE2A87zYYm94X8qmiJM"  # noqa
     exchanger = Exchanger()
     okx = exchanger.get("OKX")
     wallets = await crud.deposit.get_by_status(db=db, status="in progress")
     for wallet in wallets:
-        deposit = await crud.deposit.get_by_wallet(db=db, wallet=wallet["wallet"])
+        deposit = await crud.deposit.get_by_wallet(
+            db=db, wallet="TGqENrsSTFycMVYUKyueBwU1gjd4FKAaao"
+        )
         await crud.deposit.update(
             db=db, db_obj={"id": deposit["id"]}, obj_in={"status": "paid"}
         )
@@ -37,6 +40,10 @@ async def incoming_transaction():
         api_key = deposit["sub_account_api_key"]
         secret_key = deposit["sub_account_secret_key"]
         passphrase = deposit["sub_account_passphrase"]
+        sub_account = "OleskBackendwxrmg"
+        api_key = "a6e41935-78bf-45c6-b133-5fe6c451d36f"
+        secret_key = "BCFA403455231F0321D9607066806BDE"
+        passphrase = "KY7nyl*4!tria8bD"
 
         sub_account_balance = okx.get_account_balance(
             deposit["currency"], api_key, secret_key, passphrase
@@ -81,7 +88,7 @@ async def incoming_transaction():
                 deposit_id=deposit["id"],
             )
 
-            main_account_balance = okx.get_account_balance(
+            main_account_balance = okx.get_account_balance(  # noqa
                 ccy=sub_account_balance["data"][0]["ccy"]
             )
             sleep(2)
