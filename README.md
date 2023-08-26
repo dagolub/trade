@@ -8,19 +8,18 @@
 
 ## Before you start you neeed
 
-* [Docker+Docker Compose](https://www.docker.com/ + https://docs.docker.com/compose/install/).
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 * [Python 3.10](https://www.python.org/downloads/release/python-3913/)
 * pip install --upgrade pip
 
 Later you will need:
-* [NodeJS 16+npm](https://nodejs.org/en/)
+* [NodeJS 19.9.0+npm](https://nodejs.org/en/)
 
 ## Add ssh-keys for you profile
 You need add keys [here](https://gitlab.com/-/profile/keys) [instruction how to generate](https://coderlessons.com/tutorials/devops/vyuchit-gitlab/gitlab-nastroika-kliucha-ssh)
 
 ## Git clone 
-`git clone git@gitlab.com:mongodb.tech/app.git`
+`git clone git@gitlab.com:K-I-S-S-Software/cryptopayments-back-end-python.git`
 
 ## Install venv
 `cd app` <br />
@@ -31,9 +30,6 @@ You need add keys [here](https://gitlab.com/-/profile/keys) [instruction how to 
 
 `python --version` <br />
 `Python 3.10.6`
-
-## Run docker-compose
-`docker-compose up -d`
 
 Main thing is monga and provisioning
 
@@ -58,17 +54,3 @@ Main thing is monga and provisioning
 
 In enviroment you need to define HOST = http://localhost:8001/api/v1 and pickup username and password from .env file
 
-## Before commit you need Run
-`./test.sh`
-This run all linters and pytest
-
-## Deploy all stack in docker containers
-
-For Intel cpu
-`docker-compose -f docker-compose.dev.yml --env-file .env up --build -d`
-
-For Arm64 cpu
-`docker-compose -f docker-compose.dev64.yml --env-file .env up --build -d`
-
-After up and running all containers, exec in backend container and run
-`python3.10 app/initial_data.py`

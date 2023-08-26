@@ -5,12 +5,13 @@ repos:
 #        name: Run isort
 #        entry: isort
 #        language: system
-#      - id: black
-#        name: Run black
-#        entry: black
-#        language: system
+      - id: black
+        name: Run black
+        entry: black
+        language: system
+        exclude: (.pre-commit-config.yaml|README.md|.github/workflows/black.yml)
       - id: flake8
         name: Run flake8
         entry: flake8
         language: system
-        exclude: (backend/app/app/services/okx_core|frontend|backend/app/app/test|backend/app/app/codegen|.flake8|.github/workflows/flake8.yml|README.md|backend/.gitignore|backend/app/pyproject.toml|backend/app/pyproject.toml|backend/app/prestart.sh|.pre-commit-config.yaml|backend/app/poetry.lock)
+        exclude: (.github/workflows/black.yml|backend/app/app/services/okx_core|frontend|backend/app/app/test|backend/app/app/codegen|.flake8|.github/workflows/flake8.yml|README.md|backend/.gitignore|backend/app/pyproject.toml|backend/app/pyproject.toml|backend/app/prestart.sh|.pre-commit-config.yaml|backend/app/poetry.lock)
