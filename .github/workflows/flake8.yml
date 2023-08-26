@@ -18,5 +18,5 @@ jobs:
       - name: Run flake8
         uses: TrueBrain/actions-flake8@v2
         with:
-          ignore: .venv
+          ignore: .venv, frontend
           max_line_length: 160
