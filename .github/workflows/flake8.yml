@@ -18,5 +18,3 @@ jobs:
       - name: Run flake8
         run: |
           flake8 --exclude=".venv,frontend" .
-        with:
-          max_line_length: 160
