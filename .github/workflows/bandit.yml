@@ -11,7 +11,7 @@ jobs:
         python-version: ["3.10"]
     steps:
     - uses: actions/checkout@v2
-    - uses: shundor/bandit-action@v1
+    - uses: shundor/python-bandit-scan@v1.0
       with:
         path: "./backend/app/app"
         excluded_paths: "./backend/app/app/tests,backend/app/app/services/okx_core"
