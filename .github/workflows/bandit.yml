@@ -11,7 +11,8 @@ jobs:
         python-version: ["3.10"]
     steps:
     - uses: actions/checkout@v2
-    - uses: jpetrucciani/bandit-check@master
-    - name: Run bandit
-      run: |
-        bandit -x ./backend/app/app/tests,backend/app/app/services/okx_core -r ./backend/app/app -s "B311,B105,B113,B307"
+    - uses: shundor/bandit-action@v1
+      with:
+        path: "./backend/app/app"
+        excluded_paths: "./backend/app/app/tests,backend/app/app/services/okx_core"
+        skips: "B311,B105,B113,B307"
