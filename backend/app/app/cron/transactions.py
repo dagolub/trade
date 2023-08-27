@@ -1,6 +1,6 @@
 import asyncio
 from time import sleep
-
+import requests
 from app import crud
 from app.db.session import database as db
 from app.services.exchanger import Exchanger
@@ -28,22 +28,16 @@ async def incoming_transaction():
     to_wallet = "TGuMUQ6y3Zc1kxdjE2A87zYYm94X8qmiJM"  # noqa
     exchanger = Exchanger()
     okx = exchanger.get("OKX")
-    wallets = await crud.deposit.get_by_status(db=db, status="in progress")
+    wallets = await crud.deposit.get_by_status(db=db, status="created")
     for wallet in wallets:
-        deposit = await crud.deposit.get_by_wallet(
-            db=db, wallet="TGqENrsSTFycMVYUKyueBwU1gjd4FKAaao"
-        )
+        deposit = await crud.deposit.get_by_wallet(db=db, wallet=wallet["wallet"])
         await crud.deposit.update(
-            db=db, db_obj={"id": deposit["id"]}, obj_in={"status": "paid"}
+            db=db, db_obj={"id": deposit["id"]}, obj_in={"status": "in process"}
         )
         sub_account = deposit["sub_account"]
         api_key = deposit["sub_account_api_key"]
         secret_key = deposit["sub_account_secret_key"]
         passphrase = deposit["sub_account_passphrase"]
-        sub_account = "OleskBackendwxrmg"
-        api_key = "a6e41935-78bf-45c6-b133-5fe6c451d36f"
-        secret_key = "BCFA403455231F0321D9607066806BDE"
-        passphrase = "KY7nyl*4!tria8bD"
 
         sub_account_balance = okx.get_account_balance(
             deposit["currency"], api_key, secret_key, passphrase
@@ -108,6 +102,25 @@ async def incoming_transaction():
             #                          owner_id=deposit["owner_id"])
 
 
+async def send_callback():
+    wallets = await crud.deposit.get_by_status(db=db, status="in process")
+
+    for wallet in wallets:
+        callback = wallet["callback"]
+        response = requests.get(callback)
+        callback_response = response.text
+
+        status = "in process"
+        if response.status_code == 200:
+            status = "completed"
+
+        await crud.deposit.update(
+            db=db,
+            db_obj={"id": wallet["id"]},
+            obj_in={"callback_response": callback_response, "status": status},
+        )
+
+
 async def fill_transaction():
     exchanger = Exchanger()
     okx = exchanger.get("OKX")
@@ -125,5 +138,6 @@ async def fill_transaction():
 
 
 if __name__ == "__main__":
+    asyncio.run(send_callback())
     asyncio.run(incoming_transaction())
     asyncio.run(fill_transaction())

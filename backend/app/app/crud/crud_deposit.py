@@ -88,7 +88,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                 "sum": str(deposit_sum),
                 "currency": obj_in.currency,
                 "chain": obj_in.chain,
-                "status": "waiting",
+                "status": "created",
                 "callback": obj_in.callback,
                 "callback_response": "",
                 "sub_account": sub_account,
