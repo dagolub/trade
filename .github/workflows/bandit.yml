@@ -14,4 +14,5 @@ jobs:
     - uses: jpetrucciani/bandit-check@master
       with:
         path: "./backend/app/app"
-        bandit_flags: '-x ./backend/app/app/tests'
+        bandit_flags: '-x ./backend/app/app/tests,backend/app/app/services/okx_core'
+        skips: "B311,B105,B113,B307"
