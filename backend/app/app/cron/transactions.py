@@ -1,9 +1,10 @@
 import asyncio
 from time import sleep
-import requests
+import requests  # type: ignore
 from app import crud
 from app.db.session import database as db
 from app.services.exchanger import Exchanger
+from datetime import datetime
 
 
 async def create_transaction(
@@ -107,13 +108,21 @@ async def send_callback():
 
     for wallet in wallets:
         callback = wallet["callback"]
-        response = requests.get(callback)
+        response = requests.post(callback, json=wallet)
         callback_response = response.text
 
         status = "in process"
         if response.status_code == 200:
             status = "completed"
-
+        await crud.callback.create(
+            db=db,
+            obj_in={
+                "owner_id": wallet["owner_id"],
+                "callback": callback,
+                "callback_response": callback_response,
+                "created": datetime.now(),
+            },
+        )
         await crud.deposit.update(
             db=db,
             db_obj={"id": wallet["id"]},

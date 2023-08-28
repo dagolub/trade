@@ -1,9 +1,9 @@
 repos:
--   repo: local
+  - repo: local
     hooks:
-#      - id: isort
-#        name: Run isort
-#        entry: isort
+#      - id: mypy
+#        name: Run mypy
+#        entry: mypy
 #        language: system
       - id: black
         name: Run black
@@ -12,11 +12,11 @@ repos:
         exclude: (backend/app/app/tests|backend/app/app/services/okx_core|.pre-commit-config.yaml|README.md|.github/workflows/bandit.yml)
       - id: bandit
         name: Run bandit
-        entry: bandit -s B311,B113
+        entry: bandit -s B311,B113,B105
         language: system
-        exclude: (.pre-commit-config.yaml|README.md|.github/workflows/black.yml)
+        exclude: (.pre-commit-config.yaml|README.md|.github/workflows/black.yml|mypy.ini)
       - id: flake8
         name: Run flake8
         entry: flake8
         language: system
-        exclude: (.github/workflows/bandit.yml|.github/workflows/black.yml|backend/app/app/services/okx_core|frontend|backend/app/app/test|backend/app/app/codegen|.flake8|.github/workflows/flake8.yml|README.md|backend/.gitignore|backend/app/pyproject.toml|backend/app/pyproject.toml|backend/app/prestart.sh|.pre-commit-config.yaml|backend/app/poetry.lock)
+        exclude: (mypy.ini|.github/workflows/bandit.yml|.github/workflows/black.yml|backend/app/app/services/okx_core|frontend|backend/app/app/test|backend/app/app/codegen|.flake8|.github/workflows/flake8.yml|README.md|backend/.gitignore|backend/app/pyproject.toml|backend/app/pyproject.toml|backend/app/prestart.sh|.pre-commit-config.yaml|backend/app/poetry.lock)

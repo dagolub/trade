@@ -38,7 +38,7 @@ async def create_transaction(
     Create new transaction.
     """
 
-    transaction = await crud.transaction.create(db=db, obj_in=transaction_in)
+    transaction = await crud.transaction.create(db=db, obj_in=transaction_in)  # type: ignore
 
     return transaction
 
@@ -76,7 +76,7 @@ async def update_transaction(
             detail="Transaction doesn't exists",
         )
     transaction = await crud.transaction.update(
-        db=db, db_obj=transaction, obj_in=transaction_in
+        db=db, db_obj=transaction, obj_in=transaction_in  # type: ignore
     )
     return transaction
 

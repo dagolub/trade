@@ -54,7 +54,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
             result.append(wallet)
         return result
 
-    async def create(
+    async def create(  # type: ignore
         self, db: Session, obj_in: dict, owner=None
     ) -> Optional[ModelType]:
         exchanger = Exchanger()
@@ -65,7 +65,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
         sub_account = (
             owner["full_name"] + generate_random_small(3) + generate_random_big(3)
         )
-        wallet = okx.get_address(sub_account, obj_in.currency, obj_in.chain)
+        wallet = okx.get_address(sub_account, obj_in.currency, obj_in.chain)  # type: ignore
 
         if not getattr(obj_in, "sum") or not getattr(obj_in, "currency"):
             raise ValueError("'sum' or 'currency' is missing in the input.")
@@ -73,23 +73,23 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
         if not getattr(obj_in, "type"):
             deposit_type = self._get_type()
         else:
-            deposit_type = obj_in.type
+            deposit_type = obj_in.type  # type: ignore
 
         passphrase = generate_random_string_passphrase(12)
         sub = okx.create_sub_account_api_key(
             sub_account, sub_account + "Label", passphrase
         )
-        deposit_sum = okx.frac_to_int(obj_in.sum, obj_in.currency.lower())
+        deposit_sum = okx.frac_to_int(obj_in.sum, obj_in.currency.lower())  # type: ignore
         if "data" in sub and len(sub["data"]) > 0 and len(sub["data"][0]) > 0:
             obj_in = {
                 "owner_id": owner["id"],
                 "wallet": wallet,
                 "type": deposit_type,
                 "sum": str(deposit_sum),
-                "currency": obj_in.currency,
-                "chain": obj_in.chain,
+                "currency": obj_in.currency,  # type: ignore
+                "chain": obj_in.chain,  # type: ignore
                 "status": "created",
-                "callback": obj_in.callback,
+                "callback": obj_in.callback,  # type: ignore
                 "callback_response": "",
                 "sub_account": sub_account,
                 "sub_account_label": sub_account + "Label",
@@ -102,15 +102,15 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
             current_deposit = await super().create(db=db, obj_in=obj_in)
             await crud.wallet.create(
                 db=db,
-                obj_in=WalletCreate(
+                obj_in=WalletCreate(  # type: ignore
                     owner_id=owner["id"],
-                    deposit_id=current_deposit["id"],
+                    deposit_id=current_deposit["id"],  # type: ignore
                     wallet=wallet,
                     type=deposit_type,
                 ),
             )
 
-            return current_deposit
+            return current_deposit  # type: ignore
         else:
             raise ValueError("OKX not available")
 

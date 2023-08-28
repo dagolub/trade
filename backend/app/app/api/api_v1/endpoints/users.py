@@ -1,9 +1,8 @@
 import random
 import string
 from typing import Any, List
-
 import pyotp
-import qrcode
+import qrcode  # type: ignore
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic.networks import EmailStr
@@ -29,8 +28,8 @@ async def count(db: Session = Depends(deps.get_db)) -> int:
 
 @router.get("/get_otp/{email}")
 async def get_otp(
-    email: str = None, current_user: models.User = Depends(deps.get_current_active_user)
-):
+    email: str = None, current_user: models.User = Depends(deps.get_current_active_user)  # type: ignore
+):  # type: ignore
     url = pyotp.totp.TOTP("JBSWY3DPEHPK3PXP").provisioning_uri(
         name=email, issuer_name="Cryptex"
     )

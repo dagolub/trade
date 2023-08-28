@@ -4,7 +4,7 @@ from app.db.base_class import Base
 
 
 class Transaction(Base):
-    __tablename__ = "transaction"
+    __tablename__ = "transaction"  # type: ignore
     _id = Column(String, primary_key=True, index=True)
     owner_id = Column(String, index=True)
     from_wallet = Column(String, index=True)

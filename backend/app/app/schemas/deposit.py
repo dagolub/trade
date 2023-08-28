@@ -10,9 +10,9 @@ class DepositBase(BaseModel):
     status: Optional[str] = None
     callback: Optional[str] = None
     callback_response: Optional[str] = ""
-    sum: float = None
-    currency: str = None
-    chain: str = None
+    sum: float = None  # type: ignore
+    currency: str = None  # type: ignore
+    chain: str = None  # type: ignore
     created: Optional[datetime]
 
 

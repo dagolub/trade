@@ -1,14 +1,6 @@
-from datetime import datetime
-
-import requests
-
-from app.services.okx_core.lib.Account_api import AccountAPI
+import requests  # type: ignore
 from app.services.okx_core.lib.Broker_api import BrokerAPI
-from app.services.okx_core.lib.Convert_api import ConvertAPI
 from app.services.okx_core.lib.Funding_api import FundingAPI as Funding
-from app.services.okx_core.lib.Market_api import MarketAPI
-from app.services.okx_core.lib.Public_api import PublicAPI
-from app.services.okx_core.lib.Trade_api import TradeAPI
 
 
 def get_ip():
@@ -182,7 +174,7 @@ class OKX:
             _amount = int(amount) * 0.000000000000000001
             return float(f"{_amount:.100f}")
 
-    def fractional_to_integer(self, amount: str, currency: str) -> int:
+    def fractional_to_integer(self, amount: str, currency: str) -> int:  # type: ignore
         if currency.lower() in ("ltc", "bch", "btc", "waves"):
             _amount = float(amount) * 100000000
             return int(f"{_amount:.0f}")

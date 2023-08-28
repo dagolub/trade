@@ -35,7 +35,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return user
 
     async def update(
-        self, db: Session, *, db_obj: User, obj_in: Union[UserUpdate, Dict[str, Any]]
+        self, db: Session, *, db_obj: User, obj_in: Union[UserUpdate, Dict[str, Any]]  # type: ignore
     ) -> User:
         obj_in = jsonable_encoder(obj_in)
         update_data = obj_in

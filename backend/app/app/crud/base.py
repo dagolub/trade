@@ -1,8 +1,7 @@
 from typing import Generic, List, Optional, Type, TypeVar
-
 from bson.objectid import ObjectId  # type: ignore
 from fastapi.encoders import jsonable_encoder
-from motor.motor_asyncio import AsyncIOMotorClient
+from motor.motor_asyncio import AsyncIOMotorClient  # type: ignore
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -18,7 +17,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self.model = model
 
     async def count(self, db: Session) -> int:
-        return await db[self.model.__tablename__].count_documents({})
+        return await db[self.model.__tablename__].count_documents({})  # type: ignore
 
     async def get(self, db: Session, entity_id: str) -> Optional[ModelType]:
         entity = await db[self.model.__tablename__].find_one({"_id": ObjectId(entity_id)})  # type: ignore

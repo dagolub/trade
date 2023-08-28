@@ -1,7 +1,5 @@
 import json
-
-import requests
-
+import requests  # type: ignore
 from . import consts as c
 from . import exceptions, utils
 

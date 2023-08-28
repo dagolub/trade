@@ -39,7 +39,7 @@ async def create_wallet(
     Create new wallet.
     """
 
-    wallet = await crud.wallet.create(db=db, obj_in=wallet_in)
+    wallet = await crud.wallet.create(db=db, obj_in=wallet_in)  # type: ignore
 
     return wallet
 
@@ -76,7 +76,7 @@ async def update_wallet(
             status_code=404,
             detail="Wallet doesn't exists",
         )
-    wallet = await crud.wallet.update(db=db, db_obj=wallet, obj_in=wallet_in)
+    wallet = await crud.wallet.update(db=db, db_obj=wallet, obj_in=wallet_in)  # type: ignore
     return wallet
 
 

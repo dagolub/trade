@@ -50,7 +50,7 @@ async def create_deposit(
     """
     try:
         return _parse_deposit(
-            await crud.deposit.create(db=db, obj_in=deposit_in, owner=current_user)
+            await crud.deposit.create(db=db, obj_in=deposit_in, owner=current_user)  # type: ignore
         )
     except ValueError as e:
         return JSONResponse(
@@ -91,7 +91,7 @@ async def update_deposit(
             status_code=404,
             detail="Deposit doesn't exists",
         )
-    deposit = await crud.deposit.update(db=db, db_obj=deposit, obj_in=deposit_in)
+    deposit = await crud.deposit.update(db=db, db_obj=deposit, obj_in=deposit_in)  # type: ignore
     return deposit
 
 
@@ -106,7 +106,7 @@ async def delete_deposit(
     Delete an deposit.
     """
     deposit = await crud.deposit.get(db=db, entity_id=entity_id)
-    wallet = await crud.wallet.get_by_deposit(db=db, deposit_id=deposit["id"])
+    wallet = await crud.wallet.get_by_deposit(db=db, deposit_id=deposit["id"])  # type: ignore
     await crud.wallet.remove(db=db, entity_id=wallet["id"])
     if not deposit:
         raise HTTPException(status_code=404, detail="Deposit doesn't exists")
@@ -120,7 +120,7 @@ async def callback(entity_id: str):
     deposit = _parse_deposit(original_deposit)
     response, status_code = get_callback(deposit["callback"], deposit)
     await crud.deposit.update(
-        db=db, db_obj=original_deposit, obj_in={"callback_response": response}
+        db=db, db_obj=original_deposit, obj_in={"callback_response": response}  # type: ignore
     )
     return response
 

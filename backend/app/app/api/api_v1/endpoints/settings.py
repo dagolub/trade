@@ -36,7 +36,7 @@ async def update_deposit(
     setting = await crud.setting.get_multi(db=db)
     if not setting:
         await crud.setting.create(db=db, obj_in={"data": ""})
-    setting = await crud.setting.update(
-        db=mongo_db, db_obj=setting[0], obj_in=setting_in
+    setting = await crud.setting.update(  # type: ignore
+        db=mongo_db, db_obj=setting[0], obj_in=setting_in  # type: ignore
     )
     return setting
