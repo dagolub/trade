@@ -33,7 +33,7 @@ async def read_deposits(
     deposits = await crud.deposit.get_multi(db, skip=skip, limit=limit)
     result = []
     for deposit in deposits:
-        deposit = _parse_deposit(deposit)
+        deposit = deposit(deposit)
         result.append(deposit)
     return result
 
@@ -49,7 +49,7 @@ async def create_deposit(
     Create new deposit.
     """
     try:
-        return _parse_deposit(
+        return _deposit(
             await crud.deposit.create(db=db, obj_in=deposit_in, owner=current_user)  # type: ignore
         )
     except ValueError as e:
@@ -68,7 +68,7 @@ async def read_deposit(
     """
     Get a deposit.
     """
-    deposit = _parse_deposit(await crud.deposit.get(db=db, entity_id=entity_id))
+    deposit = _deposit(await crud.deposit.get(db=db, entity_id=entity_id))
     if not deposit:
         raise HTTPException(status_code=400, detail="Deposit doesn't exists")
     return deposit
@@ -117,7 +117,7 @@ async def delete_deposit(
 @router.get("/callback/{entity_id}")
 async def callback(entity_id: str):
     original_deposit = await crud.deposit.get(db=db, entity_id=entity_id)
-    deposit = _parse_deposit(original_deposit)
+    deposit = _deposit(original_deposit)
     response, status_code = get_callback(deposit["callback"], deposit)
     await crud.deposit.update(
         db=db, db_obj=original_deposit, obj_in={"callback_response": response}  # type: ignore
@@ -125,7 +125,7 @@ async def callback(entity_id: str):
     return response
 
 
-def _parse_deposit(deposit):
+def _deposit(deposit):
     exchanger = Exchanger()
     okx = exchanger.get("OKX")
     if not okx:

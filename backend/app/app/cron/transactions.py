@@ -2,6 +2,7 @@ import asyncio
 from time import sleep
 import requests  # type: ignore
 from app import crud
+from app.api.api_v1.endpoints.deposits import _deposit
 from app.db.session import database as db
 from app.services.exchanger import Exchanger
 from datetime import datetime
@@ -33,7 +34,7 @@ async def incoming_transaction():
     for wallet in wallets:
         deposit = await crud.deposit.get_by_wallet(db=db, wallet=wallet["wallet"])
         await crud.deposit.update(
-            db=db, db_obj={"id": deposit["id"]}, obj_in={"status": "in process"}
+            db=db, db_obj={"id": deposit["id"]}, obj_in={"status": "paid"}
         )
         sub_account = deposit["sub_account"]
         api_key = deposit["sub_account_api_key"]
@@ -104,12 +105,12 @@ async def incoming_transaction():
 
 
 async def send_callback():
-    wallets = await crud.deposit.get_by_status(db=db, status="in process")
+    wallets = await crud.deposit.get_by_status(db=db, status="paid")
 
     for wallet in wallets:
         callback = wallet["callback"]
-        del wallet["_id"]
-        response = requests.post(callback, json=wallet)
+
+        response = requests.post(callback, json=_deposit(wallet))
         callback_response = response.text
 
         status = "in process"
