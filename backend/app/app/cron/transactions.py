@@ -108,6 +108,7 @@ async def send_callback():
 
     for wallet in wallets:
         callback = wallet["callback"]
+        del wallet["_id"]
         response = requests.post(callback, json=wallet)
         callback_response = response.text
 
