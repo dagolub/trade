@@ -1,49 +1,65 @@
-import "../../services/api"
-import 'react'
-import React
-import updateTransaction}
-import {createTransaction
+import React, { useRef, useEffect } from 'react';
+import { createTransaction, updateTransaction } from '../../services/api'; // Correct path to your API service
 
-function Form({from_wallet = "",to_wallet = "",tx = "",amount = "",currency = "",type = "",id=""}) {
-    const refFromWallet = React.useRef("")
-    const refToWallet = React.useRef("")
-    const refTx = React.useRef("")
-    const refAmount = React.useRef("")
-    const refCurrency = React.useRef("")
-    const refType = React.useRef("")
-    
-    const setResp = (resp) => {
-        if( resp.tx ==  refTx.current.value ) {
-            window.location.href = "/transactions/list"
-        } else {
-            alert(resp.response.data.detail)
-        }
+function Form({
+  from_wallet = "",
+  to_wallet = "",
+  tx = "",
+  amount = "",
+  currency = "",
+  type = "",
+  id = ""
+}) {
+  const refFromWallet = useRef("");
+  const refToWallet = useRef("");
+  const refTx = useRef("");
+  const refAmount = useRef("");
+  const refCurrency = useRef("");
+  const refType = useRef("");
+
+  const setResp = (resp) => {
+    if (resp.tx === refTx.current.value) {
+      window.location.href = "/transactions/list";
+    } else {
+      alert(resp.response.data.detail);
     }
-    const submitHandler = async (e) => {
-        e.preventDefault()
+  };
 
-        if (id) {
-            const r = await updateTransaction(id, refFromWallet.current.value, refToWallet.current.value,refTx.current.value,
-                refAmount.current.value, refCurrency.current.value, refType.current.value, )
-            setResp(r)
-        } else {
-            const r = await createTransaction(refFromWallet.current.value, refToWallet.current.value, refTx.current.value,
-                refAmount.current.value, refCurrency.current.value, refType.current.value, )
-            setResp(r)
-        }
+  const submitHandler = async (e) => {
+    e.preventDefault();
+
+    if (id) {
+      const r = await updateTransaction(
+        id,
+        refFromWallet.current.value,
+        refToWallet.current.value,
+        refTx.current.value,
+        refAmount.current.value,
+        refCurrency.current.value,
+        refType.current.value
+      );
+      setResp(r);
+    } else {
+      const r = await createTransaction(
+        refFromWallet.current.value,
+        refToWallet.current.value,
+        refTx.current.value,
+        refAmount.current.value,
+        refCurrency.current.value,
+        refType.current.value
+      );
+      setResp(r);
     }
-    React.useEffect(()=> {
-        if (from_wallet||to_wallet||tx||amount||currency||type||true) {
-            refFromWallet.current.value = from_wallet
-            refToWallet.current.value = to_wallet
-            refTx.current.value = tx
-            refAmount.current.value = amount
-            refCurrency.current.value = currency
-            refType.current.value = type
-            
-        }
+  }
 
-    })
+  useEffect(() => {
+    refFromWallet.current.value = from_wallet;
+    refToWallet.current.value = to_wallet;
+    refTx.current.value = tx;
+    refAmount.current.value = amount;
+    refCurrency.current.value = currency;
+    refType.current.value = type;
+  }, [from_wallet, to_wallet, tx, amount, currency, type]);
     return (
         <div className="max-w-sm mx-auto w-full px-4 py-8">
             <h1 className="text-3xl text-slate-800 dark:text-slate-100 font-bold mb-6">Ceating Transaction</h1>

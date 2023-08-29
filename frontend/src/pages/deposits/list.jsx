@@ -1,46 +1,38 @@
-import "../../services/api"
-import '../../components/deposits/DepositsTable'
-import '../../components/PaginationClassic'
-import '../../partials/actions/SearchForm'
-import '../../partials/Header'
-import '../../partials/Sidebar'
-import 'react'
-import DepositsTable
-import GET}
-import Header
-import PaginationClassic
-import React
-import SearchForm
-import Sidebar
-import {getDeposits
+import React, { useEffect, useState } from 'react';
+import Header from '../../partials/Header';
+import PaginationClassic from '../../components/PaginationClassic';
+import SearchForm from '../../partials/actions/SearchForm';
+import Sidebar from '../../partials/Sidebar';
+import DepositsTable from '../../components/deposits/DepositsTable'; // Corrected import
+import { getDeposits, GET } from '../../services/api'; // Corrected import
 
 function Deposits() {
-  const [selectedItems, setSelectedItems] = React.useState([]);
-  const [list, setList] = React.useState([]);
-  const [total, setTotal] = React.useState(0);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [list, setList] = useState([]);
+  const [total, setTotal] = useState(0);
+
   const handleSelectedItems = (selectedItems) => {
     setSelectedItems([...selectedItems]);
   };
-  const settingList = (q="", count) => {
-    setTimeout(()=>{
-      let q = document.location.search.split("=")[1]
-      getDeposits(q, count).then((data)=>setList(data))
 
-    }, 500)
+  const settingList = (q = '', count) => {
+    setTimeout(() => {
+      q = document.location.search.split('=')[1];
+      getDeposits(q, count).then((data) => setList(data));
+    }, 500);
+  };
 
-  }
-  React.useEffect(()=> {
-    let hash = parseInt(window.location.hash.split("#")[1])
-    hash = hash > 0 ? hash : 0
+  useEffect(() => {
+    let hash = parseInt(window.location.hash.split('#')[1]);
+    hash = hash > 0 ? hash : 0;
 
-    let q = document.location.search.split("=")[1]
-    getDeposits(q,hash*10).then((data)=>setList(data))
-
-    GET("/api/deposits/count").then((data)=>setTotal(data))
-  }, [])
+    let q = document.location.search.split('=')[1];
+    getDeposits(q, hash * 10).then((data) => setList(data));
+    GET('/api/deposits/count').then((data) => setTotal(data));
+  }, []);
 
   return (
-    <div className="flex h-[100dvh] overflow-hidden">
+    <div className="flex h-[100vh] overflow-hidden">
       <Sidebar />
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
         <Header />
@@ -53,12 +45,13 @@ function Deposits() {
               <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
                 <SearchForm placeholder="Search by user ID…" />
                 <a href="/deposits/new">
-                <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white">
-                  <svg className="w-4 h-4 fill-current opacity-50 shrink-0" viewBox="0 0 16 16">
-                    <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
-                  </svg>
-                  <span className="hidden xs:block ml-2">Create Deposits</span>
-                </button></a>
+                  <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white">
+                    <svg className="w-4 h-4 fill-current opacity-50 shrink-0" viewBox="0 0 16 16">
+                      <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
+                    </svg>
+                    <span className="hidden xs:block ml-2">Create Deposits</span>
+                  </button>
+                </a>
               </div>
             </div>
             <div className="sm:flex sm:justify-between sm:items-center mb-5">
@@ -69,20 +62,14 @@ function Deposits() {
                   </li>
                 </ul>
               </div>
-
             </div>
-
-            <DepositsTable selectedItems={handleSelectedItems} list={list} settingList={settingList}/>
-
+            <DepositsTable selectedItems={handleSelectedItems} list={list} settingList={settingList} />
             <div className="mt-8">
               <PaginationClassic total={total} settingList={settingList} />
             </div>
-
           </div>
         </main>
-
       </div>
-
     </div>
   );
 }

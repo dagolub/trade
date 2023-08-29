@@ -1,53 +1,69 @@
-import "../../services/api"
-import 'react'
-import React
-import updateUser}
-import {createUser
+import React from 'react';
+import { updateUser, createUser } from '../../services/api'; // Make sure to provide the correct path to your API methods
 
 function Form({
-                  name = "", email = "", is_active = false,
-                  is_superuser = false, id = "", auto = false,
-                  otp = ""
-              }) {
-    const refName = React.useRef("")
-    const refEmail = React.useRef("")
-    const refPassword = React.useRef("")
-    const refActive = React.useRef(false)
-    const refSuperuser = React.useRef(false)
-    const [autotransfer, setAutoTransfer] = React.useState(false)
-    const [first_time, setFirstTime] = React.useState(false)
+  name = '',
+  email = '',
+  is_active = false,
+  is_superuser = false,
+  id = '',
+  auto = false,
+  otp = ''
+}) {
+  const refName = React.useRef('');
+  const refEmail = React.useRef('');
+  const refPassword = React.useRef('');
+  const refActive = React.useRef(false);
+  const refSuperuser = React.useRef(false);
+  const [autotransfer, setAutoTransfer] = React.useState(false);
+  const [first_time, setFirstTime] = React.useState(false);
 
-    const setResp = (resp) => {
-        if (resp.email == refEmail.current.value) {
-            window.location.href = "/users/list"
-        } else {
-            alert(resp.response.data.detail)
-        }
+  const setResp = (resp) => {
+    if (resp.email === refEmail.current.value) {
+      window.location.href = '/users/list';
+    } else {
+      alert(resp.response.data.detail);
     }
-    const submitHandler = async (e) => {
-        e.preventDefault()
+  };
 
-        if (id) {
-            const r = await updateUser(id, refName.current.value, refEmail.current.value, refPassword.current.value,
-                refActive.current.checked, refSuperuser.current.checked, autotransfer)
-            setResp(r)
-        } else {
-            const r = await createUser(refName.current.value, refEmail.current.value, refPassword.current.value,
-                refActive.current.checked, refSuperuser.current.checked, autotransfer)
-            setResp(r)
-        }
+  const submitHandler = async (e) => {
+    e.preventDefault();
+
+    if (id) {
+      const r = await updateUser(
+        id,
+        refName.current.value,
+        refEmail.current.value,
+        refPassword.current.value,
+        refActive.current.checked,
+        refSuperuser.current.checked,
+        autotransfer
+      );
+      setResp(r);
+    } else {
+      const r = await createUser(
+        refName.current.value,
+        refEmail.current.value,
+        refPassword.current.value,
+        refActive.current.checked,
+        refSuperuser.current.checked,
+        autotransfer
+      );
+      setResp(r);
     }
-    React.useEffect(() => {
-        if ((name || email || is_active || is_superuser || auto ) && !first_time ) {
-            refName.current.value = name
-            refEmail.current.value = email
-            refActive.current.checked = is_active
-            refSuperuser.current.checked = is_superuser
-            setAutoTransfer(auto)
-            setFirstTime(true)
-        }
+  };
 
-    })
+  React.useEffect(() => {
+    if ((name || email || is_active || is_superuser || auto) && !first_time) {
+      refName.current.value = name;
+      refEmail.current.value = email;
+      refActive.current.checked = is_active;
+      refSuperuser.current.checked = is_superuser;
+      setAutoTransfer(auto);
+      setFirstTime(true);
+    }
+  });
+
     return (
         <div className="max-w-sm mx-auto w-full px-4 py-8">
             <h1 className="text-3xl text-slate-800 dark:text-slate-100 font-bold mb-6">User</h1>

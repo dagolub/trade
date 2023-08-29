@@ -1,12 +1,11 @@
-import './TransactionsTableItem.jsx'
-import 'react'
-import React
-import Transaction
-import useEffect }
-import { useState
+import './TransactionsTableItem.jsx';
+import React, { useState, useEffect } from 'react';
+import Transaction from './TransactionsTableItem'; // Correct path to your TransactionsTableItem component
 
 function TransactionTable({
-  selectedItems, list, settingList
+  selectedItems,
+  list,
+  settingList
 }) {
   const [selectAll, setSelectAll] = useState(false);
   const [isCheck, setIsCheck] = useState([]);
@@ -31,7 +30,6 @@ function TransactionTable({
   useEffect(() => {
     selectedItems(isCheck);
   }, [isCheck]);
-
   return (
     <div className="bg-white dark:bg-slate-800 shadow-lg rounded-sm border border-slate-200 dark:border-slate-700 relative">
       <header className="px-5 py-4">

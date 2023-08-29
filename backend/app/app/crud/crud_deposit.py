@@ -70,6 +70,9 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
         if not getattr(obj_in, "sum") or not getattr(obj_in, "currency"):
             raise ValueError("'sum' or 'currency' is missing in the input.")
 
+        if not getattr(obj_in, "chain") or not getattr(obj_in, "currency"):
+            raise ValueError("Chain is empty")
+
         if not getattr(obj_in, "type"):
             deposit_type = self._get_type()
         else:

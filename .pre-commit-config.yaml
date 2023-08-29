@@ -9,7 +9,7 @@ repos:
         name: Run black
         entry: black
         language: system
-        exclude: (backend/app/app/tests|backend/app/app/services/okx_core|.pre-commit-config.yaml|README.md|.github/workflows/bandit.yml)
+        exclude: (frontend|backend/app/app/tests|backend/app/app/services/okx_core|.pre-commit-config.yaml|README.md|.github/workflows/bandit.yml)
       - id: bandit
         name: Run bandit
         entry: bandit -s B311,B113,B105

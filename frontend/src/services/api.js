@@ -1,15 +1,13 @@
-import "./token"
-import "axios"
-import axios
-import {getToken}
+import axios from 'axios';
+import { getToken } from './token'; // Import getToken from the appropriate location
 
 const getUrl = (url) => {
-    const base = 'http://localhost:8001/api/v1'
-    if ( window.location.port > 80 ) {
-        return base + url.replace("/api", "");
-    }
-    return url
-}
+  const base = 'http://localhost:8001/api/v1';
+  if (window.location.port > 80) {
+    return base + url.replace('/api', '');
+  }
+  return url;
+};
 const Login = (authenticate) => {
     return axios({
             method: 'post',
@@ -220,13 +218,14 @@ const verifyOTP = () => {
 
 }
 export {
-    Login, getPagination,
-    GET, POST, PUT, DELETE,
-    getUserMe, createUser, getUsers, getUser, updateUser, deleteUser, createAvatar,
-    createDeposit, getDeposits, getDeposit, updateDeposit, deleteDeposit, callbackDeposit,
-    createTransaction, getTransactions, getTransaction, updateTransaction, deleteTransaction,
-    createWallet, getWallets, getWallet, updateWallet, deleteWallet,
-    getSetting, putSetting,
-    getOTP, verifyOTP
-//INSERT2
-}
+  Login,
+  getPagination,
+  GET, POST, PUT, DELETE,
+  getUserMe, createUser, getUsers, getUser, updateUser, deleteUser, createAvatar,
+  createDeposit, getDeposits, getDeposit, updateDeposit, deleteDeposit, callbackDeposit,
+  createTransaction, getTransactions, getTransaction, updateTransaction, deleteTransaction,
+  createWallet, getWallets, getWallet, updateWallet, deleteWallet,
+  getSetting, putSetting,
+  getOTP, verifyOTP
+  // INSERT2
+};

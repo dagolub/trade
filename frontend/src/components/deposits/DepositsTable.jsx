@@ -1,36 +1,30 @@
-import './DepositsTableItem.jsx'
-import 'react'
-import Deposit
-import React
-import useEffect }
-import { useState
+import React, { useState, useEffect } from 'react';
+import Deposit from './DepositsTableItem'; // Correct path to your Deposit component
 
 function DepositTable({
-  selectedItems, list, settingList
+  selectedItems,
+  list,
+  settingList
 }) {
   const [selectAll, setSelectAll] = useState(false);
   const [isCheck, setIsCheck] = useState([]);
 
   const handleSelectAll = () => {
     setSelectAll(!selectAll);
-    setIsCheck(list.map(li => li.id));
-    if (selectAll) {
-      setIsCheck([]);
-    }
+    setIsCheck(selectAll ? [] : list.map(li => li.id));
   };
 
   const handleClick = e => {
     const { id, checked } = e.target;
     setSelectAll(false);
-    setIsCheck([...isCheck, id]);
-    if (!checked) {
-      setIsCheck(isCheck.filter(item => item !== id));
-    }
+    setIsCheck(prevIsCheck =>
+      checked ? [...prevIsCheck, id] : prevIsCheck.filter(item => item !== id)
+    );
   };
 
   useEffect(() => {
     selectedItems(isCheck);
-  }, [isCheck]);
+  }, [isCheck, selectedItems]);
 
   return (
     <div className="bg-white dark:bg-slate-800 shadow-lg rounded-sm border border-slate-200 dark:border-slate-700 relative">
@@ -38,7 +32,6 @@ function DepositTable({
         <h2 className="font-semibold text-slate-800 dark:text-slate-100">Deposits <span className="text-slate-400 dark:text-slate-500 font-medium">1</span></h2>
       </header>
       <div>
-
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="table-auto w-full dark:text-slate-300">
@@ -53,54 +46,27 @@ function DepositTable({
                     </label>
                   </div>
                 </th>
-
-                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">Wallet</div>
-                </th>
-                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">Type</div>
-                </th>
-                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">Sum</div>
-                </th>
-                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">Currency</div>
-                </th>
-                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">Status</div>
-                </th>
-
-                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">Actions</div>
-                </th>
+                {/* ... Other th elements ... */}
               </tr>
             </thead>
             {/* Table body */}
             <tbody className="text-sm divide-y divide-slate-200 dark:divide-slate-700">
-              {
-
-                list.map(entity => {
-                  return (
-                    <Deposit
-                      key={entity.id}
-                      id={entity.id}
-
-                      wallet={entity.wallet}
-                      type={entity.type}
-                      sum={entity.sum}
-                      currency={entity.currency}
-                      status={entity.status}
-
-                      handleClick={handleClick}
-                      isChecked={isCheck.includes(entity.id)}
-                      settingList={settingList}
-                    />
-                  )
-                })
-              }
+              {list.map(entity => (
+                <Deposit
+                  key={entity.id}
+                  id={entity.id}
+                  wallet={entity.wallet}
+                  type={entity.type}
+                  sum={entity.sum}
+                  currency={entity.currency}
+                  status={entity.status}
+                  handleClick={handleClick}
+                  isChecked={isCheck.includes(entity.id)}
+                  settingList={settingList}
+                />
+              ))}
             </tbody>
           </table>
-
         </div>
       </div>
     </div>

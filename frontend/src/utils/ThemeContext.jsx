@@ -1,15 +1,11 @@
-import 'react'
-import useContext
-import useEffect }
-import useState
-import { createContext
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const ThemeContext = createContext({
   currentTheme: 'light',
   changeCurrentTheme: () => {},
 });
 
-export default function ThemeProvider({children}) {  
+export default function ThemeProvider({ children }) {
   const persistedTheme = localStorage.getItem('theme');
   const [theme, setTheme] = useState(persistedTheme || 'light');
 
@@ -19,7 +15,7 @@ export default function ThemeProvider({children}) {
   };
 
   useEffect(() => {
-    document.documentElement.classList.add('[&_*]:!transition-none');
+    document.documentElement.classList.add('transition-none'); // Removed invalid class name
     if (theme === 'light') {
       document.documentElement.classList.remove('dark');
       document.documentElement.style.colorScheme = 'light';
@@ -29,9 +25,9 @@ export default function ThemeProvider({children}) {
     }
 
     const transitionTimeout = setTimeout(() => {
-      document.documentElement.classList.remove('[&_*]:!transition-none');
+      document.documentElement.classList.remove('transition-none');
     }, 1);
-    
+
     return () => clearTimeout(transitionTimeout);
   }, [theme]);
 

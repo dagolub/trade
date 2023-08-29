@@ -1,20 +1,17 @@
-import './App'
-import './utils/ThemeContext'
-import 'react'
-import 'react-dom/client'
-import 'react-router-dom'
-import App
-import React
-import ReactDOM
-import ThemeProvider
-import { BrowserRouter as Router }
+import React from 'react'; // Import React properly
+import ReactDOM from 'react-dom'; // Import ReactDOM properly
+import { BrowserRouter as Router } from 'react-router-dom'; // Import BrowserRouter properly
+import ThemeProvider from './utils/ThemeContext'; // Import ThemeProvider properly
+import App from './App'; // Import App properly
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+// Use ReactDOM.render instead of ReactDOM.createRoot().render
+ReactDOM.render(
   <React.StrictMode>
     <Router>
       <ThemeProvider>
         <App />
       </ThemeProvider>
     </Router>
-  </React.StrictMode>
+  </React.StrictMode>,
+  document.getElementById('root')
 );

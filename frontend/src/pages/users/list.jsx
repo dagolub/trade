@@ -1,46 +1,41 @@
-import "../../services/api"
-import '../../components/PaginationClassic'
-import '../../components/users/UsersTable'
-import '../../partials/actions/SearchForm'
-import '../../partials/Header'
-import '../../partials/Sidebar'
-import 'react'
-import GET}
-import Header
-import PaginationClassic
-import React
-import SearchForm
-import Sidebar
-import UsersTable
-import {getUsers
+import React, { useState, useEffect } from 'react';
+import Sidebar from '../../partials/Sidebar';
+import Header from '../../partials/Header';
+import PaginationClassic from '../../components/PaginationClassic';
+import UsersTable from '../../components/users/UsersTable';
+import SearchForm from '../../partials/actions/SearchForm';
+import { getUsers } from '../../services/api';
 
-function Users() {
-  const [selectedItems, setSelectedItems] = React.useState([]);
-  const [list, setList] = React.useState([]);
-  const [total, setTotal] = React.useState(0);
-  const handleSelectedItems = (selectedItems) => {
-    setSelectedItems([...selectedItems]);
+function UsersList() {
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [list, setList] = useState([]);
+  const [total, setTotal] = useState(0);
+
+  const settingList = (q = '', count) => {
+    getUsers(q, count)
+      .then((data) => setList(data))
+      .catch((error) => {
+        console.error('Error fetching users list:', error);
+      });
   };
-  const settingList = (q="", count) => {
-    setTimeout(()=>{
-      console.log("In list", count)
-      let q = document.location.search.split("=")[1]
-      getUsers(q, count).then((data)=>setList(data))
-    }, 500)
 
-  }
-  React.useEffect(()=> {
-    let hash = parseInt(window.location.hash.split("#")[1])
-    hash = hash > 0 ? hash : 0
+  useEffect(() => {
+    settingList();
 
-    let q = document.location.search.split("=")[1]
-    getUsers(q,hash*10).then((data)=>setList(data))
+    // Fetch total count of users
+    fetchUsersCount();
+  }, []);
 
-    GET("/api/users/count").then((data)=>setTotal(data))
-  }, [])
+  const fetchUsersCount = () => {
+    getUsers('', 0, 1) // Fetch the first item to get the total count
+      .then((data) => setTotal(data.total))
+      .catch((error) => {
+        console.error('Error fetching total users count:', error);
+      });
+  };
 
   return (
-    <div className="flex h-[100dvh] overflow-hidden">
+    <div className="flex h-[100vh] overflow-hidden">
       <Sidebar />
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
         <Header />
@@ -53,12 +48,13 @@ function Users() {
               <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
                 <SearchForm placeholder="Search by user ID…" />
                 <a href="/users/new">
-                <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white">
-                  <svg className="w-4 h-4 fill-current opacity-50 shrink-0" viewBox="0 0 16 16">
-                    <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
-                  </svg>
-                  <span className="hidden xs:block ml-2">Create User</span>
-                </button></a>
+                  <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white">
+                    <svg className="w-4 h-4 fill-current opacity-50 shrink-0" viewBox="0 0 16 16">
+                      <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
+                    </svg>
+                    <span className="hidden xs:block ml-2">Create User</span>
+                  </button>
+                </a>
               </div>
             </div>
             <div className="sm:flex sm:justify-between sm:items-center mb-5">
@@ -69,22 +65,16 @@ function Users() {
                   </li>
                 </ul>
               </div>
-
             </div>
-
-            <UsersTable selectedItems={handleSelectedItems} list={list} settingList={settingList}/>
-
+            <UsersTable selectedItems={selectedItems} list={list} settingList={settingList} />
             <div className="mt-8">
               <PaginationClassic total={total} settingList={settingList} />
             </div>
-
           </div>
         </main>
-
       </div>
-
     </div>
   );
 }
 
-export default Users;
+export default UsersList;

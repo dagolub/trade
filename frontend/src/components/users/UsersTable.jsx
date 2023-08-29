@@ -1,19 +1,13 @@
-import './UsersTableItem'
-import 'react'
-import React
-import useEffect }
-import Users
-import { useState
+import React, { useState, useEffect } from 'react';
+import Users from './UsersTableItem'; // Make sure to provide the correct path to UsersTableItem
 
-function UsersTable({
-  selectedItems, list, settingList
-}) {
+function UsersTable({ selectedItems, list, settingList }) {
   const [selectAll, setSelectAll] = useState(false);
   const [isCheck, setIsCheck] = useState([]);
 
   const handleSelectAll = () => {
     setSelectAll(!selectAll);
-    setIsCheck(list.map(li => li.id));
+    setIsCheck(list.map(user => user.id));
     if (selectAll) {
       setIsCheck([]);
     }
@@ -22,10 +16,9 @@ function UsersTable({
   const handleClick = e => {
     const { id, checked } = e.target;
     setSelectAll(false);
-    setIsCheck([...isCheck, id]);
-    if (!checked) {
-      setIsCheck(isCheck.filter(item => item !== id));
-    }
+    setIsCheck(prevIsCheck => (
+      checked ? [...prevIsCheck, id] : prevIsCheck.filter(item => item !== id)
+    ));
   };
 
   useEffect(() => {

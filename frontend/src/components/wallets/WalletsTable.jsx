@@ -1,12 +1,10 @@
-import './WalletsTableItem.jsx'
-import 'react'
-import React
-import useEffect }
-import Wallet
-import { useState
+import React, { useState, useEffect } from 'react';
+import Wallet from './WalletsTableItem'; // Make sure to provide the correct path
 
 function WalletTable({
-  selectedItems, list, settingList
+  selectedItems,
+  list,
+  settingList
 }) {
   const [selectAll, setSelectAll] = useState(false);
   const [isCheck, setIsCheck] = useState([]);
@@ -22,16 +20,18 @@ function WalletTable({
   const handleClick = e => {
     const { id, checked } = e.target;
     setSelectAll(false);
-    setIsCheck([...isCheck, id]);
-    if (!checked) {
-      setIsCheck(isCheck.filter(item => item !== id));
-    }
+    setIsCheck(prevState => {
+      if (checked) {
+        return [...prevState, id];
+      } else {
+        return prevState.filter(item => item !== id);
+      }
+    });
   };
 
   useEffect(() => {
     selectedItems(isCheck);
   }, [isCheck]);
-
   return (
     <div className="bg-white dark:bg-slate-800 shadow-lg rounded-sm border border-slate-200 dark:border-slate-700 relative">
       <header className="px-5 py-4">

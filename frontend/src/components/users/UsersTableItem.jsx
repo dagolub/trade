@@ -1,35 +1,27 @@
-import "../../services/api"
-import "../../utils"
-import 'react'
-import deleteRow}
-import React
-import {deleteUser}
-import {showError
+import React, { useState } from 'react';
+import { deleteRow, showError } from '../../utils'; // Make sure to provide the correct path to deleteRow
+import { deleteUser } from '../../services/api'; // Make sure to provide the correct path to deleteUser
 
-// import {useAlert} from "react-alert";
 function UsersTableItem(props) {
-    // const alert = useAlert()
+    // const alert = useAlert();
 
     const deleteHandler = (id) => {
-        deleteRow(id)
+        deleteRow(id);
         setTimeout(() => {
             deleteUser(id).then((response) => {
-                response.email ? document.getElementById("tr" + id).remove() : ""
+                if (response.email) {
+                    document.getElementById("tr" + id).remove();
+                }
                 // setTimeout(()=>{
-                //     let hash = parseInt(window.location.hash.split("#")[1])
-                //     hash = hash > 0 ? hash : 0
-                //     props.settingList(hash * 10)
-                // }, 200)
+                //     let hash = parseInt(window.location.hash.split("#")[1]);
+                //     hash = hash > 0 ? hash : 0;
+                //     props.settingList(hash * 10);
+                // }, 200);
 
-            })
+            });
+        }, 200);
+    };
 
-
-        }, 200)
-
-            // setTimeout(()=>{
-
-            // }, 500)
-    }
     const typeIcon = (type) => {
         switch (type) {
             case true:
@@ -42,7 +34,7 @@ function UsersTableItem(props) {
                     </svg>
                 );
             default:
-                return;
+                return null;
         }
     };
 

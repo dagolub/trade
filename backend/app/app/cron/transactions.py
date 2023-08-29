@@ -108,6 +108,8 @@ async def send_callback():
     wallets = await crud.deposit.get_by_status(db=db, status="paid")
 
     for wallet in wallets:
+        if "callback" not in wallet:
+            continue
         callback = wallet["callback"]
 
         response = requests.post(callback, json=_deposit(wallet))

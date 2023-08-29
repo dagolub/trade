@@ -1,10 +1,7 @@
-import "../../services/api"
-import "../../utils"
-import 'react'
-import deleteRow}
-import React
-import {deleteWallet}
-import {showError
+import {deleteRow, showError} from "../../utils"; // Replace with the correct path
+import React from "react"
+import { deleteWallet } from "../../services/api"; // Replace with the correct path
+
 
 // import {useAlert} from "react-alert";
 function WalletTableItem(props) {
@@ -15,36 +12,9 @@ function WalletTableItem(props) {
         setTimeout(() => {
             deleteWallet(id).then((response) => {
                 response.wallet ? document.getElementById("tr" + id).remove() : ""
-                // setTimeout(()=>{
-                //     let hash = parseInt(window.location.hash.split("#")[1])
-                //     hash = hash > 0 ? hash : 0
-                //     props.settingList(hash * 10)
-                // }, 200)
-
             })
-
-
         }, 200)
-
-            // setTimeout(()=>{
-
-            // }, 500)
     }
-    const typeIcon = (type) => {
-        switch (type) {
-            case true:
-                return (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                         className="bi bi-check"
-                         viewBox="0 0 16 16">
-                        <path
-                            d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/>
-                    </svg>
-                );
-            default:
-                return;
-        }
-    };
 
     return (
         <tr id={"tr" + props.id}>
@@ -64,7 +34,7 @@ function WalletTableItem(props) {
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
                 <div className="font-medium text-slate-800 dark:text-slate-100">{props.type}</div>
             </td>
-            
+
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px td" + props.id}>
                 <div className="space-x-1">
                     <a href={"/wallets/edit/" + props.id}>
