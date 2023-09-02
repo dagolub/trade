@@ -55,12 +55,20 @@ function WalletTable({
                 </th>
 
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                  <div className="font-semibold text-left">Owner ID</div>
+                </th>
+                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                  <div className="font-semibold text-left">Deposit ID</div>
+                </th>
+                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                   <div className="font-semibold text-left">Wallet</div>
                 </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                   <div className="font-semibold text-left">Type</div>
                 </th>
-                
+                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                  <div className="font-semibold text-left">Created</div>
+                </th>
 
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                   <div className="font-semibold text-left">Actions</div>
@@ -77,9 +85,12 @@ function WalletTable({
                       key={entity.id}
                       id={entity.id}
 
+                      owner_id={entity.owner_id}
+                      deposit_id={entity.deposit_id}
                       wallet={entity.wallet}
                       type={entity.type}
-                      
+                      created={entity.created}
+
                       handleClick={handleClick}
                       isChecked={isCheck.includes(entity.id)}
                       settingList={settingList}

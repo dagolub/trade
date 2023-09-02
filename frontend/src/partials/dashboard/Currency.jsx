@@ -1,6 +1,4 @@
-import 'react'
-import React
-
+import React from 'react'
 function Currency({currency, amount}) {
 
 

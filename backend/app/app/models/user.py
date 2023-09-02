@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, String  # type: ignore
+from sqlalchemy import Boolean, Column, String, DateTime  # type: ignore
 
 from app.db.base_class import Base
 
@@ -12,3 +12,4 @@ class User(Base):
     is_active = Column(Boolean(), default=True)
     is_superuser = Column(Boolean(), default=False)
     autotransfer = Column(Boolean(), default=False)
+    created = Column(DateTime)

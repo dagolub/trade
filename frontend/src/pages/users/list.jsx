@@ -4,13 +4,16 @@ import Header from '../../partials/Header';
 import PaginationClassic from '../../components/PaginationClassic';
 import UsersTable from '../../components/users/UsersTable';
 import SearchForm from '../../partials/actions/SearchForm';
-import { getUsers } from '../../services/api';
+import {GET, getUsers} from '../../services/api';
 
 function UsersList() {
   const [selectedItems, setSelectedItems] = useState([]);
   const [list, setList] = useState([]);
   const [total, setTotal] = useState(0);
 
+  const handleSelectedItems = (selectedItems) => {
+    setSelectedItems([...selectedItems]);
+  };
   const settingList = (q = '', count) => {
     getUsers(q, count)
       .then((data) => setList(data))
@@ -23,16 +26,9 @@ function UsersList() {
     settingList();
 
     // Fetch total count of users
-    fetchUsersCount();
+    GET('/api/users/count').then((data) => setTotal(data));
   }, []);
 
-  const fetchUsersCount = () => {
-    getUsers('', 0, 1) // Fetch the first item to get the total count
-      .then((data) => setTotal(data.total))
-      .catch((error) => {
-        console.error('Error fetching total users count:', error);
-      });
-  };
 
   return (
     <div className="flex h-[100vh] overflow-hidden">
@@ -66,7 +62,7 @@ function UsersList() {
                 </ul>
               </div>
             </div>
-            <UsersTable selectedItems={selectedItems} list={list} settingList={settingList} />
+            <UsersTable selectedItems={handleSelectedItems} list={list} settingList={settingList}  />
             <div className="mt-8">
               <PaginationClassic total={total} settingList={settingList} />
             </div>

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String  # type: ignore
+from sqlalchemy import Column, Integer, String, DateTime  # type: ignore
 
 from app.db.base_class import Base
 
@@ -14,3 +14,4 @@ class Transaction(Base):
     currency = Column(String)
     type = Column(String)
     deposit_id = Column(String)
+    created = Column(DateTime)

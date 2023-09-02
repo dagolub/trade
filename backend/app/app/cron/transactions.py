@@ -22,6 +22,7 @@ async def create_transaction(
             "currency": currency,
             "type": type,
             "deposit_id": deposit_id,
+            "created": datetime.utcnow(),
         },
     )
 

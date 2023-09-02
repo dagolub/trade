@@ -1,5 +1,5 @@
 from typing import Optional
-
+from datetime import datetime
 from pydantic import BaseModel, EmailStr
 
 
@@ -10,6 +10,7 @@ class UserBase(BaseModel):
     is_superuser: bool = False
     autotransfer: bool = False
     full_name: Optional[str] = None
+    created: Optional[datetime]
 
 
 # Properties to receive via API on creation

@@ -1,13 +1,8 @@
-import "../../components/{{ entity_lower}}/form"
-import "../../partials/Sidebar"
-import "../../services/api"
-import "react"
-import "react-router-dom"
-import Form
-import React
-import Sidebar
-import {get{{ entity }}}
-import {useParams}
+import Form from "../../components/{{ entity_lower}}/form"
+import Sidebar from "../../partials/Sidebar";
+import {useParams} from "react-router-dom";
+import {get{{ entity }}} from "../../services/api";
+import React from "react"
 
 function {{ entity }}Edit() {
     const { id } = useParams();

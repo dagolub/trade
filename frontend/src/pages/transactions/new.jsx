@@ -1,6 +1,6 @@
 import React from 'react';
 import Sidebar from '../../partials/Sidebar';
-import Form from '../../components/transactions/Form';
+import Form from '../../components/transactions/form';
 
 function TransactionsNew() {
   return (

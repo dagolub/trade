@@ -1,7 +1,5 @@
-import "../../components/{{ entity_lower }}/form"
-import "../../partials/Sidebar"
-import Form
-import Sidebar
+import Form from "../../components/{{ entity_lower }}/form"
+import Sidebar from "../../partials/Sidebar";
 
 function {{ entity }}sNew() {
     return (<div className="flex h-[100dvh] overflow-hidden">

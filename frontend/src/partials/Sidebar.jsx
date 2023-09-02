@@ -1,5 +1,7 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { NavLink } from 'react-router-dom';
+import {getUserMe} from "../services/api";
+import {deleteToken} from "../services/token";
 
 function Sidebar() {
   const div_class =
@@ -10,6 +12,19 @@ function Sidebar() {
   const span_class =
     'text-sm font-medium lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200';
   const li_class = 'mb-1 last:mb-0';
+  const [superuser, setSuperUser] = useState();
+    useEffect(() => {
+      getUserMe().then(data => {
+        if(data)
+        {
+          setSuperUser(data["is_superuser"]);
+        }
+      else
+        {
+          deleteToken();
+        }
+      })
+  }, []);
 
   return (
     <div className="min-w-fit" style={{ width: '150px' }}>
@@ -33,11 +48,12 @@ function Sidebar() {
         </NavLink>
         <div className="space-y-8">
           <ul className="mt-3">
+            {superuser &&
             <li className={li_class}>
               <NavLink to="/users/list" className={a_class}>
                 <span className={span_class}>Users</span>
               </NavLink>
-            </li>
+            </li>}
             <li className={li_class}>
               <NavLink to="/wallets/list" className={a_class}>
                 <span className={span_class}>Wallets</span>

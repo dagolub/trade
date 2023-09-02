@@ -1,8 +1,5 @@
-import "../../services/api"
-import 'react'
-import React
-import update{{ entity }}}
-import {create{{ entity }}
+import React from 'react';
+import {create{{ entity }}, update{{ entity }}} from "../../services/api";
 
 function Form({{ '{' }}{% for field in schema_fields %}{{field}} = "",{% endfor %}id=""{{'}'}}) {
     {% for field in schema_fields_capitalize %}const ref{{ field }} = React.useRef("")

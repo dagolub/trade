@@ -1,5 +1,5 @@
 from typing import Optional
-
+from datetime import datetime
 from pydantic import BaseModel
 
 
@@ -12,6 +12,7 @@ class TransactionBase(BaseModel):
     currency: Optional[str] = None
     type: Optional[str] = None
     deposit_id: Optional[str] = None
+    created: Optional[datetime]
 
 
 class TransactionCreate(TransactionBase):

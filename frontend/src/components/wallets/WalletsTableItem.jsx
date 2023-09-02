@@ -1,7 +1,7 @@
 import {deleteRow, showError} from "../../utils"; // Replace with the correct path
 import React from "react"
 import { deleteWallet } from "../../services/api"; // Replace with the correct path
-
+import dayjs from "dayjs"
 
 // import {useAlert} from "react-alert";
 function WalletTableItem(props) {
@@ -27,14 +27,21 @@ function WalletTableItem(props) {
                     </label>
                 </div>
             </td>
-
+            <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
+                <div className="font-medium text-slate-800 dark:text-slate-100">{props.owner_id}</div>
+            </td>
+            <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
+                <div className="font-medium text-slate-800 dark:text-slate-100">{props.deposit_id}</div>
+            </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
                 <div className="font-medium text-slate-800 dark:text-slate-100">{props.wallet}</div>
             </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
                 <div className="font-medium text-slate-800 dark:text-slate-100">{props.type}</div>
             </td>
-
+            <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
+                <div className="font-medium text-slate-800 dark:text-slate-100">{dayjs(props.created).format("HH:mm DD MMM YY")}</div>
+            </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px td" + props.id}>
                 <div className="space-x-1">
                     <a href={"/wallets/edit/" + props.id}>

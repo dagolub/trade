@@ -1,29 +1,40 @@
-import postcss from 'postcss'; // Import postcss properly
-import react from '@vitejs/plugin-react'; // Import the react plugin properly
-import {defineConfig} from 'vite'; // Import defineConfig from 'vite'
+import {defineConfig} from 'vite'
+import postcss from './postcss.config.js'
+import react from '@vitejs/plugin-react'
 
-// https://vitejs.dev/config/
 export default defineConfig({
+    server: {
+        proxy: {
+            '/websocket': {
+                target: 'ws://localhost:3000', // WebSocket server address
+                changeOrigin: true,
+                ws: true,
+            },
+        },
+        hmr:{
+            port: 3000
+        }
+    },
     define: {
-        'process.env': process.env
+        'process.en': process.env
     },
     css: {
-        postcss: {} // You can add postcss plugins and options here
+        postcss
     },
-    plugins: [react()], // Use the react plugin as an array
+    plugins: [react()],
     resolve: {
         alias: [
             {
                 find: /^~.+/,
                 replacement: (val) => {
-                    return val.replace(/^~/, "");
-                },
-            },
-        ],
+                    return val.replace(/^~/, "")
+                }
+            }
+        ]
     },
     build: {
         commonjsOptions: {
-            transformMixedEsModules: true,
+            transformMixedEsModules: true
         }
     }
-});
+})

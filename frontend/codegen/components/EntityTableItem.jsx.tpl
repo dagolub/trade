@@ -1,10 +1,6 @@
+import React from 'react';
 import "../../services/api"
-import "../../utils"
-import 'react'
-import deleteRow}
-import React
-import {delete{{ entity }}}
-import {showError
+import {delete{{ entity }}} from "../../services/api";
 
 // import {useAlert} from "react-alert";
 function {{ entity }}TableItem(props) {

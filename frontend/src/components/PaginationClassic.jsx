@@ -1,5 +1,4 @@
-import 'react'
-import React
+import React from 'react'
 
 function PaginationClassic({total, settingList}) {
     let hash = parseInt(window.location.hash.split("#")[1])
@@ -7,7 +6,7 @@ function PaginationClassic({total, settingList}) {
     const next = hash > 0 ? hash*10 + 10 : 10
     let showTotal = parseInt((hash+1)*10)
     showTotal = showTotal > total ? total : showTotal
-    console.log(hash, next, showTotal)
+
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <nav className="mb-4 sm:mb-0 sm:order-1" role="navigation" aria-label="Navigation">

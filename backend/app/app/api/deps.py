@@ -34,7 +34,6 @@ async def get_current_user(
     except (jwt.JWTError, ValidationError) as e:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            auth=False,
             detail="Could not validate credentials",
         ) from e
 

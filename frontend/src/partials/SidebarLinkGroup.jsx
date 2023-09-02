@@ -1,6 +1,4 @@
-import 'react'
-import React
-import { useState }
+import React, { useState } from 'react';
 
 function SidebarLinkGroup({
   children,

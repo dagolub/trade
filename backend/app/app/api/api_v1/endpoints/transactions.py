@@ -23,7 +23,12 @@ async def read_transactions(
     """
     Retrieve transaction.
     """
-    transactions = await crud.transaction.get_multi(db, skip=skip, limit=limit)
+    if current_user["is_superuser"]:
+        transactions = await crud.transaction.get_multi(db, skip=skip, limit=limit)
+    else:
+        transactions = await crud.transaction.get_multi_by_owner(
+            db, owner_id=current_user["id"], skip=skip, limit=limit
+        )
     return transactions
 
 

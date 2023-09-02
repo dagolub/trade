@@ -1,8 +1,5 @@
-import '../utils/ThemeContext'
-import 'react'
-import React
-import { useThemeProvider }
-
+import React from 'react'
+import { useThemeProvider } from '../utils/ThemeContext'
 export default function ThemeToggle() {
   const { currentTheme, changeCurrentTheme } = useThemeProvider();
 

@@ -1,5 +1,5 @@
 from app.db.base_class import Base
-from sqlalchemy import Column, String  # type: ignore
+from sqlalchemy import Column, String, DateTime  # type: ignore
 
 
 class Wallet(Base):
@@ -8,3 +8,4 @@ class Wallet(Base):
     owner_id = Column(String, index=True)
     wallet = Column(String, index=True)
     type = Column(String)
+    created = Column(DateTime)

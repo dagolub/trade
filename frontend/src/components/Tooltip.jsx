@@ -1,9 +1,5 @@
-import '../utils/Transition'
-import 'react'
-import React
-import Transition
-import { useState }
-
+import React, { useState } from 'react'
+import Transition from '../utils/Transition'
 function Tooltip({
   children,
   className,

@@ -1,5 +1,5 @@
 from typing import Optional
-
+from datetime import datetime
 from pydantic import BaseModel
 
 
@@ -8,6 +8,7 @@ class WalletBase(BaseModel):
     deposit_id: Optional[str] = None
     wallet: Optional[str] = None
     type: Optional[str] = None
+    created: Optional[datetime]
 
 
 class WalletCreate(WalletBase):

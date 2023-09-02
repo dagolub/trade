@@ -10,8 +10,12 @@ router = APIRouter()
 
 
 @router.get("/count")
-async def count(db: Session = Depends(deps.get_db)) -> int:
-    return await crud.wallet.count(db=db)
+async def count(
+    db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_active_user),
+) -> int:
+    owner_id = False if current_user["is_superuser"] else current_user["id"]
+    return await crud.deposit.count(db=db, owner_id=owner_id)
 
 
 @router.get("/", response_model=List[schemas.Wallet])
@@ -24,7 +28,12 @@ async def read_wallets(
     """
     Retrieve wallet.
     """
-    wallets = await crud.wallet.get_multi(db, skip=skip, limit=limit)
+    if current_user["is_superuser"]:
+        wallets = await crud.wallet.get_multi(db, skip=skip, limit=limit)
+    else:
+        wallets = await crud.wallet.get_multi_by_owner(
+            db, owner_id=current_user["id"], skip=skip, limit=limit
+        )
     return wallets
 
 

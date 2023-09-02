@@ -16,8 +16,13 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def __init__(self, model: Type[ModelType]):
         self.model = model
 
-    async def count(self, db: Session) -> int:
-        return await db[self.model.__tablename__].count_documents({})  # type: ignore
+    async def count(self, db: Session, owner_id=False) -> int:
+        if owner_id:
+            return await db[self.model.__tablename__].count_documents(
+                {"owner_id": owner_id}
+            )
+        else:
+            return await db[self.model.__tablename__].count_documents({})  # type: ignore
 
     async def get(self, db: Session, entity_id: str) -> Optional[ModelType]:
         entity = await db[self.model.__tablename__].find_one({"_id": ObjectId(entity_id)})  # type: ignore
@@ -42,7 +47,29 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                 ]
             }
 
-        async for document in db[self.model.__tablename__].find(search).skip(skip).limit(limit):  # type: ignore
+        async for document in db[self.model.__tablename__].find(search).sort("created", -1).skip(skip).limit(limit):  # type: ignore
+            document["id"] = str(document["_id"])  # noqa
+            if "amount" in document:
+                document["amount"] = float(document["amount"])
+            result.append(document)
+
+        return result
+
+    async def get_multi_by_owner(
+        self, db: Session, owner_id, skip: int = 0, limit: int = 100, q=""
+    ) -> List[ModelType]:
+        result = []
+        search = {"owner_id": owner_id}
+        if q != "":
+            search.setdefault(
+                "$or",
+                [
+                    {"full_name": {"$regex": str(q)}},
+                    {"email": {"$regex": str(q)}},
+                ],
+            )
+
+        async for document in db[self.model.__tablename__].find(search).sort("created", -1).skip(skip).limit(limit):  # type: ignore
             document["id"] = str(document["_id"])  # noqa
             if "amount" in document:
                 document["amount"] = float(document["amount"])
@@ -51,7 +78,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return result
 
     async def create(self, db: Session, obj_in: dict) -> Optional[ModelType]:
-        obj = await db[self.model.__tablename__].insert_one(document=jsonable_encoder(obj_in))  # type: ignore
+        obj = await db[self.model.__tablename__].insert_one(document=obj_in)  # type: ignore
         object = await db[self.model.__tablename__].find_one(  # type: ignore
             {"_id": ObjectId(obj.inserted_id)}
         )  # type: ignore

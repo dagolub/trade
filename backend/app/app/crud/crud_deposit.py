@@ -10,7 +10,6 @@ from app.crud.base import CRUDBase
 from app.db.base_class import Base
 from app.models.deposit import Deposit
 from app.schemas.deposit import DepositCreate, DepositUpdate
-from app.schemas.wallet import WalletCreate
 from app.services.exchanger import Exchanger
 
 ModelType = TypeVar("ModelType", bound=Base)
@@ -99,18 +98,19 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                 "sub_account_api_key": sub["data"][0]["apiKey"],
                 "sub_account_secret_key": sub["data"][0]["secretKey"],
                 "sub_account_passphrase": passphrase,
-                "created": datetime.now(),
+                "created": datetime.utcnow(),
             }
 
             current_deposit = await super().create(db=db, obj_in=obj_in)
             await crud.wallet.create(
                 db=db,
-                obj_in=WalletCreate(  # type: ignore
-                    owner_id=owner["id"],
-                    deposit_id=current_deposit["id"],  # type: ignore
-                    wallet=wallet,
-                    type=deposit_type,
-                ),
+                obj_in={  # type: ignore
+                    "owner_id": owner["id"],
+                    "deposit_id": current_deposit["id"],  # type: ignore
+                    "wallet": wallet,
+                    "type": deposit_type,
+                    "created": datetime.utcnow(),
+                },
             )
 
             return current_deposit  # type: ignore
