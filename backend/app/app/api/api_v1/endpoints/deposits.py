@@ -149,5 +149,5 @@ def _deposit(deposit):
     result.setdefault("sum", okx.int_to_frac(deposit["sum"], deposit["currency"]))
     result.setdefault("currency", deposit["currency"])
     result.setdefault("chain", deposit["chain"])
-    result.setdefault("created", deposit["created"])
+    result.setdefault("created", str(deposit["created"]))
     return result
