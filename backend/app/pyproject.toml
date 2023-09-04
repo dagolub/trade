@@ -36,6 +36,7 @@ pyotp = "^2.9.0"
 qrcode = "^7.4.2"
 websockets = "^11.0.3"
 pre-commit = "^3.3.3"
+sentry-sdk = {extras = ["fastapi"], version = "^1.30.0"}
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.1.1"
