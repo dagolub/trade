@@ -1,24 +1,26 @@
 import asyncio
-import random
-import string
+from app.services.okx_client import OKX
+from app.core.config import settings
 
-from app.services.exchanger import Exchanger
-
-
-def generate_random_string_passphrase(length):
-    letters = (
-        "1234567890" + string.ascii_uppercase + string.ascii_lowercase + "!@#$%^&*()"
-    )
-    return "".join(random.choice(letters) for i in range(length))
-
-
-async def incoming_transaction():
-    to_wallet = "TGuMUQ6y3Zc1kxdjE2A87zYYm94X8qmiJM"
-    exchanger = Exchanger()
-    okx = exchanger.get("OKX")
-    tx = okx.get_withdrawal_history("USDT", 98842367)
-    pass
-
+sub_accounts = [
+    "postertsknb",
+    "Userjmgav",
+    # "OleskBackendhfxDDL",
+    # "OleskBackendwxrmg",
+]
 
 if __name__ == "__main__":
-    asyncio.run(incoming_transaction())
+    for sub_account in sub_accounts:
+        okx = OKX()
+        api = okx.get_sub_account_api_key(sub_account, settings.OKX_API_KEY)
+
+        sub_account_balance = okx.get_account_balance(
+            "USDT", api_key, secret_key, passphrase
+        )
+        # if float(sub_account_balance["data"][0]["bal"]) > 0:
+        #     balance = okx.transfer_money_to_main_account(
+        #         ccy=sub_account_balance["data"][0]["ccy"],
+        #         amt=sub_account_balance["data"][0]["bal"],
+        #         sub_account=sub_account,
+        #     )
+        #     sleep(2)

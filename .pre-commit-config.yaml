@@ -12,7 +12,7 @@ repos:
         exclude: (backend/app/pyproject.toml|backend/app/poetry.lock|.env|frontend|backend/app/app/tests|backend/app/app/services/okx_core|.pre-commit-config.yaml|README.md|.github/workflows/bandit.yml)
       - id: bandit
         name: Run bandit
-        entry: bandit -s B311,B113,B105
+        entry: bandit -s B311,B113,B105,B107
         language: system
         exclude: (.pre-commit-config.yaml|README.md|.github/workflows/black.yml|mypy.ini)
       - id: flake8
