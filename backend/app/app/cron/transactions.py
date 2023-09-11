@@ -113,26 +113,27 @@ async def send_callback():
             continue
         callback = wallet["callback"]
 
-        response = requests.post(callback, json=_deposit(wallet))
-        callback_response = response.text
+        if wallet["status"] == "paid":
+            response = requests.post(callback, json=_deposit(wallet))
+            callback_response = response.text
 
-        status = "in process"
-        if response.status_code == 200:
-            status = "completed"
-        await crud.callback.create(
-            db=db,
-            obj_in={
-                "owner_id": wallet["owner_id"],
-                "callback": callback,
-                "callback_response": callback_response,
-                "created": datetime.now(),
-            },
-        )
-        await crud.deposit.update(
-            db=db,
-            db_obj={"id": wallet["id"]},
-            obj_in={"callback_response": callback_response, "status": status},
-        )
+            status = "in process"
+            if response.status_code == 200:
+                status = "completed"
+            await crud.callback.create(
+                db=db,
+                obj_in={
+                    "owner_id": wallet["owner_id"],
+                    "callback": callback,
+                    "callback_response": callback_response,
+                    "created": datetime.now(),
+                },
+            )
+            await crud.deposit.update(
+                db=db,
+                db_obj={"id": wallet["id"]},
+                obj_in={"callback_response": callback_response, "status": status},
+            )
 
 
 async def fill_transaction():

@@ -29,7 +29,8 @@ class OKX:
             broker = BrokerAPI(
                 self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
             )
-            return broker.create_subaccount(sub_account, sub_account + "Label")
+            result = broker.create_subaccount(sub_account, sub_account + "Label")
+            return result
         except:
             raise ValueError("Can not create sub account " + sub_account)
 

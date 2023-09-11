@@ -116,7 +116,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                 return current_deposit  # type: ignore
         except Exception as e:
             sentry_sdk.capture_exception(e)
-            raise ValueError("Can;t create deposit" + e.args[0])
+            raise ValueError("Can not create deposit for --- " + e.args[0])
         else:
             raise ValueError("OKX not available")
 
