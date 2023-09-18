@@ -76,7 +76,8 @@ class FundingAPI(Client):
             "txId": txId,
             "depId": depId,
         }
-        return self._request_with_params(GET, DEPOSIT_HISTORIY, params)
+        result = self._request_with_params(GET, DEPOSIT_HISTORIY, params)
+        return result
 
     # Get Withdrawal History
     def get_withdrawal_history(

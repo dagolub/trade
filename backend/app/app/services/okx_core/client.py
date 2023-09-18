@@ -69,7 +69,7 @@ class OKX:
         return broker.nd_select_apikey(sub_account, api_key)
 
     def create_sub_account_api_key(self, sub_account, sub_account_label, passphrase):
-        ip = "165.22.19.20,2a03:b0c0:3:d0::197d:2001"
+        ip = "178.128.196.184,165.22.19.20"
         broker = BrokerAPI(
             self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
         )
@@ -163,6 +163,16 @@ class OKX:
 
         return None
 
+    def get_deposit_history(self, ccy=None, api_key=None, secret=None, passphrase=None):
+        funding = Funding(api_key, secret, passphrase, flag="0")
+        return funding.get_deposit_history(ccy)
+
+    def get_asset_currencies(self):
+        funding = Funding(
+            self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
+        )
+        return funding.get_currency()
+
     @staticmethod
     def integer_to_fractional(amount: str, currency: str):
         if currency.lower() in ("ltc", "bch", "btc", "waves"):
@@ -188,22 +198,24 @@ class OKX:
 
     @staticmethod
     def get_currency_fee(currency: str, chain: str):
-        if currency.lower() == "ltc":
+        currency = currency.lower()
+        chain = chain.lower()
+        if currency == "ltc":
             return 0.001
         if currency.lower() == "bch":
             return 0.00064
-        if currency.lower() == "btc":
+        if currency == "btc":
             return 0.0002
-        if currency.lower() == "waves":
+        if currency == "waves":
             return 0.0016
-        if currency.lower() == "etc":
+        if currency == "etc":
             return 0.008
-        if currency.lower() == "eth":
+        if currency == "eth":
             return 0.0006144
-        if currency.lower() == "usdt":
-            if chain.lower() == "usdt-erc20" or chain.lower() == "eth":
+        if currency == "usdt":
+            if chain == "usdt-erc20" or chain == "eth":
                 return 3.7778016
-            elif chain.lower() == "usdt-trc20" or chain.lower() == "trx":
+            elif chain == "usdt-trc20" or chain == "trx":
                 return 0.8
 
     @staticmethod
@@ -221,6 +233,8 @@ class OKX:
                 return "USDT-ERC20"
             elif chain == "trx":
                 return "USDT-TRC20"
+            elif chain == "plg":
+                return "USDT-Polygon"
         if currency == "etc":
             return "ETC-Ethereum Classic"
         if currency == "eth":

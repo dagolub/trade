@@ -43,3 +43,10 @@ class Deposit(DepositInDBBase):
 
 class DepositInDB(DepositInDBBase):
     pass
+
+
+class DepositBaseCreate(BaseModel):
+    sum: float = None
+    currency: str = None
+    chain: str = None
+    callback: str = None

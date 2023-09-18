@@ -72,7 +72,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
             if not getattr(obj_in, "chain") or not getattr(obj_in, "currency"):
                 raise ValueError("Chain is empty")
 
-            if not getattr(obj_in, "type"):
+            if not "type" in dir(obj_in) or not getattr(obj_in, "type"):  # noqa
                 deposit_type = self._get_type()
             else:
                 deposit_type = obj_in.type  # type: ignore

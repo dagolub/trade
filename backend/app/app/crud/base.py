@@ -16,13 +16,14 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def __init__(self, model: Type[ModelType]):
         self.model = model
 
-    async def count(self, db: Session, owner_id=False) -> int:
+    async def count(self, db: Session, owner_id=False, search="") -> int:
         if owner_id:
-            return await db[self.model.__tablename__].count_documents(
-                {"owner_id": owner_id}
-            )
+            if search != "":
+                search.update({"owner_id": owner_id})
+        if owner_id:
+            return await db[self.model.__tablename__].count_documents(search)
         else:
-            return await db[self.model.__tablename__].count_documents({})  # type: ignore
+            return await db[self.model.__tablename__].count_documents(search)  # type: ignore
 
     async def get(self, db: Session, entity_id: str) -> Optional[ModelType]:
         entity = await db[self.model.__tablename__].find_one({"_id": ObjectId(entity_id)})  # type: ignore
@@ -35,17 +36,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             return None
 
     async def get_multi(
-        self, db: Session, *, skip: int = 0, limit: int = 100, q=""
+        self, db: Session, *, skip: int = 0, limit: int = 100, search=""
     ) -> List[ModelType]:
         result = []
-        search = {}
-        if q != "":
-            search = {
-                "$or": [
-                    {"full_name": {"$regex": str(q)}},
-                    {"email": {"$regex": str(q)}},
-                ]
-            }
 
         async for document in db[self.model.__tablename__].find(search).sort("created", -1).skip(skip).limit(limit):  # type: ignore
             document["id"] = str(document["_id"])  # noqa
@@ -56,18 +49,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return result
 
     async def get_multi_by_owner(
-        self, db: Session, owner_id, skip: int = 0, limit: int = 100, q=""
+        self, db: Session, owner_id, skip: int = 0, limit: int = 100, search=""
     ) -> List[ModelType]:
         result = []
-        search = {"owner_id": owner_id}
-        if q != "":
-            search.setdefault(
-                "$or",
-                [
-                    {"full_name": {"$regex": str(q)}},
-                    {"email": {"$regex": str(q)}},
-                ],
-            )
 
         async for document in db[self.model.__tablename__].find(search).sort("created", -1).skip(skip).limit(limit):  # type: ignore
             document["id"] = str(document["_id"])  # noqa

@@ -33,7 +33,12 @@ function Deposits() {
             }
             setList(data)
         });
-        GET('/api/deposits/count').then((data) => setTotal(data));
+        q = document.location.search.split('=')[1];
+        if (q) {
+            GET('/api/deposits/count?q=' + q).then((data) => setTotal(data));
+        } else {
+            GET('/api/deposits/count').then((data) => setTotal(data));
+        }
     }, []);
 
     return (

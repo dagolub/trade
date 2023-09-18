@@ -36,6 +36,12 @@ class OKX(ExchangeInterface, ABC):
         )
         return okx.get_sub_account_api_key(sub_account, api_key)
 
+    def get_asset_currencies(self):
+        okx = OKX_Client(
+            settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
+        )
+        return okx.get_asset_currencies()
+
     def create_sub_account_api_key(self, sub_account, sub_account_label, passphrase):
         okx = OKX_Client(
             settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
@@ -58,6 +64,12 @@ class OKX(ExchangeInterface, ABC):
         )
         return okx.transfer_money_to_main_account(
             ccy, amt, sub_account, from_account, to_account, type_transfer
+        )
+
+    def get_deposit_history(self, ccy=None, api_key=None, secret=None, passphrase=None):
+        okx = OKX_Client(api_key, secret, passphrase)
+        return okx.get_deposit_history(
+            ccy, api_key=api_key, secret=secret, passphrase=passphrase
         )
 
     def make_withdrawal(self, currency=None, amount=None, address=None):

@@ -16,10 +16,12 @@ router = APIRouter()
 @router.get("/count")
 async def count(
     db: Session = Depends(deps.get_db),
+    q: str = "",
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> int:
+    _search = _get_search(q)
     owner_id = False if current_user["is_superuser"] else current_user["id"]
-    return await crud.deposit.count(db=db, owner_id=owner_id)
+    return await crud.deposit.count(db=db, owner_id=owner_id, search=_search)
 
 
 @router.get("/", response_model=List[schemas.Deposit])
@@ -27,6 +29,7 @@ async def read_deposits(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
+    q: str = "",
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     exchanger = Exchanger()
@@ -34,11 +37,14 @@ async def read_deposits(
     if not okx:
         raise ValueError("Exchanger 'OKX' is not available.")
 
+    search = _get_search(q)
     if current_user["is_superuser"]:
-        deposits = await crud.deposit.get_multi(db, skip=skip, limit=limit)
+        deposits = await crud.deposit.get_multi(
+            db, skip=skip, limit=limit, search=search
+        )
     else:
         deposits = await crud.deposit.get_multi_by_owner(
-            db, owner_id=current_user["id"], skip=skip, limit=limit
+            db, owner_id=current_user["id"], skip=skip, limit=limit, search=search
         )
     result = []
     for deposit in deposits:
@@ -51,11 +57,27 @@ async def read_deposits(
 async def create_deposit(
     *,
     db: Session = Depends(deps.get_db),
-    deposit_in: schemas.DepositCreate,
+    deposit_in: schemas.DepositBaseCreate,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
-    Create new deposit.
+    Currency: \n
+        BTC
+        BCH
+        USDT
+        USDT
+        USDT
+        ETC
+        ETH
+    Chain: \n
+        BTC -> (OKX) BTC-Bitcoin
+        LTC -> (OKX) LTC-Litecoin
+        BCH -> (OKX) BCH-BitcoinCash
+        ETH -> (OKX) USDT-ERC20
+        TRX -> (OKX) USDT-TRC20
+        PLG -> (OKX) USDT-Polygon
+        ETC -> (OKX) ETC-Ethereum Classic
+        ETH -> (OKX) ETH-ERC20"
     """
     try:
         return _deposit(
@@ -151,3 +173,18 @@ def _deposit(deposit):
     result.setdefault("chain", deposit["chain"])
     result.setdefault("created", str(deposit["created"]))
     return result
+
+
+def _get_search(q: str = ""):
+    search = {}
+    if q != "":
+        search = {
+            "$or": [
+                {"sum": {"$regex": str(q)}},
+                {"currency": {"$regex": str(q)}},
+                {"status": {"$regex": str(q)}},
+                {"wallet": {"$regex": str(q)}},
+                {"chain": {"$regex": str(q)}},
+            ]
+        }
+    return search
