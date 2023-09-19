@@ -14,7 +14,7 @@ repos:
         name: Run bandit
         entry: bandit -s B311,B113,B105,B107
         language: system
-        exclude: (.pre-commit-config.yaml|README.md|.github/workflows/black.yml|mypy.ini)
+        exclude: (.pre-commit-config.yaml|README.md|.github/workflows/black.yml|mypy.ini|tests)
       - id: flake8
         name: Run flake8
         entry: flake8

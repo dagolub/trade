@@ -1,0 +1,11 @@
+from sqlalchemy import Column, String, DateTime, Integer  # type: ignore
+from app.db.base_class import Base
+
+
+class Withdraw(Base):
+    __tablename__ = "withdraw"  # type: ignore
+    _id = Column(String, primary_key=True, index=True)
+    owner_id = Column(String, index=True)
+    to = Column(String, index=True)
+    sum = Column(Integer)
+    created = Column(DateTime)

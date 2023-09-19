@@ -46,6 +46,7 @@ def parse_model(model_name):
         "String": "str",
         "Integer": "int",
         "Date": "datetime.date",
+        "DateTime": "datetime.date",
         "Float": "float",
         "Boolean": "bool",
         "JSON": "list",

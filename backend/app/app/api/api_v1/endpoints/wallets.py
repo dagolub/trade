@@ -37,22 +37,6 @@ async def read_wallets(
     return wallets
 
 
-@router.post("/", response_model=schemas.Wallet)
-async def create_wallet(
-    *,
-    db: Session = Depends(deps.get_db),
-    wallet_in: schemas.WalletCreate,
-    current_user: models.User = Depends(deps.get_current_active_user),
-) -> Any:
-    """
-    Create new wallet.
-    """
-
-    wallet = await crud.wallet.create(db=db, obj_in=wallet_in)  # type: ignore
-
-    return wallet
-
-
 @router.get("/{id}", response_model=schemas.Wallet)
 async def read_wallet(
     id: str,
@@ -66,41 +50,3 @@ async def read_wallet(
     if not wallet:
         raise HTTPException(status_code=400, detail="Wallet doesn't exists")
     return wallet
-
-
-@router.put("/{id}", response_model=schemas.Wallet)
-async def update_wallet(
-    *,
-    db: Session = Depends(deps.get_db),
-    id: str,
-    wallet_in: schemas.WalletUpdate,
-    current_user: models.User = Depends(deps.get_current_active_user),
-) -> Any:
-    """
-    Update a wallet.
-    """
-    wallet = await crud.wallet.get(db=db, entity_id=id)
-    if not wallet:
-        raise HTTPException(
-            status_code=404,
-            detail="Wallet doesn't exists",
-        )
-    wallet = await crud.wallet.update(db=db, db_obj=wallet, obj_in=wallet_in)  # type: ignore
-    return wallet
-
-
-@router.delete("/{entity_id}", response_model=schemas.Wallet)
-async def delete_wallet(
-    *,
-    db: Session = Depends(deps.get_db),
-    entity_id: str,
-    current_user: models.User = Depends(deps.get_current_active_user),
-) -> Any:
-    """
-    Delete an wallet.
-    """
-    wallet = await crud.wallet.get(db=db, entity_id=entity_id)
-    if not wallet:
-        raise HTTPException(status_code=404, detail="Wallet doesn't exists")
-
-    return await crud.wallet.remove(db=db, entity_id=entity_id)

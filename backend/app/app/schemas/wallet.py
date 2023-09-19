@@ -4,15 +4,14 @@ from pydantic import BaseModel
 
 
 class WalletBase(BaseModel):
-    owner_id: Optional[str] = None
-    deposit_id: Optional[str] = None
     wallet: Optional[str] = None
     type: Optional[str] = None
     created: Optional[datetime]
 
 
 class WalletCreate(WalletBase):
-    pass
+    owner_id: Optional[str] = None
+    deposit_id: Optional[str] = None
 
 
 class WalletUpdate(WalletBase):

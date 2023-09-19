@@ -4,19 +4,18 @@ from pydantic import BaseModel
 
 
 class TransactionBase(BaseModel):
-    owner_id: Optional[str] = None
     from_wallet: Optional[str] = None
     to_wallet: Optional[str] = None
     tx: Optional[str] = None
     amount: Optional[int] = None
     currency: Optional[str] = None
     type: Optional[str] = None
-    deposit_id: Optional[str] = None
     created: Optional[datetime]
 
 
 class TransactionCreate(TransactionBase):
-    pass
+    owner_id: Optional[str] = None
+    deposit_id: Optional[str] = None
 
 
 class TransactionUpdate(TransactionBase):
