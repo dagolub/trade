@@ -115,7 +115,7 @@ async def incoming_transaction():
                         bal = user["bal"]
                     else:
                         bal = {}
-                    if "bal" not in user:
+                    if "bal" not in user or not bal:
                         bal = {
                             "btc": 0,
                             "ltc": 0,

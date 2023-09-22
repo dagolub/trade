@@ -3,7 +3,7 @@ import { getDeposit } from '../../services/api';
 import Header from '../../partials/Header';
 import Sidebar from '../../partials/Sidebar';
 import Form from '../../components/deposits/form'; // Make sure to import your Form component
-
+import { useParams } from 'react-router-dom';
 function DepositEdit() {
   const { id } = useParams();
 

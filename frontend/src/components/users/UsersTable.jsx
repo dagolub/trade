@@ -27,11 +27,7 @@ function UsersTable({ selectedItems, list, settingList }) {
 
   return (
     <div className="bg-white dark:bg-slate-800 shadow-lg rounded-sm border border-slate-200 dark:border-slate-700 relative">
-      <header className="px-5 py-4">
-        <h2 className="font-semibold text-slate-800 dark:text-slate-100">Users <span className="text-slate-400 dark:text-slate-500 font-medium">1</span></h2>
-      </header>
       <div>
-
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="table-auto w-full dark:text-slate-300">
