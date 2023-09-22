@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-
+from datetime import datetime
 from app import crud
 from app.core.config import settings
 from app.db import base  # noqa: F401
@@ -13,5 +13,6 @@ async def init_db(db: Session) -> None:
             "password": settings.FIRST_SUPERUSER_PASSWORD,
             "is_superuser": True,
             "full_name": "Admin",
+            "created": datetime.utcnow(),
         }
         user = await crud.user.create(db, obj_in=user_in)  # noqa: F841

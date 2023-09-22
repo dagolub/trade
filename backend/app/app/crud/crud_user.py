@@ -1,5 +1,5 @@
 from typing import Any, Dict, Optional, TypeVar, Union
-
+from datetime import datetime
 from bson.objectid import ObjectId  # type: ignore
 from fastapi.encoders import jsonable_encoder
 from motor.motor_asyncio import AsyncIOMotorClient  # type: ignore
@@ -26,6 +26,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             "full_name": obj_in.get("full_name"),
             "is_superuser": obj_in.get("is_superuser") or False,
             "is_active": True,
+            "created": datetime.utcnow(),
         }
         obj = await db[self.model.__tablename__].insert_one(document=db_obj)  # type: ignore
         user = await db[self.model.__tablename__].find_one(  # type: ignore

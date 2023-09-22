@@ -138,11 +138,12 @@ async def delete_deposit(
     """
     deposit = await crud.deposit.get(db=db, entity_id=entity_id)
     wallet = await crud.wallet.get_by_deposit(db=db, deposit_id=deposit["id"])  # type: ignore
-    transaction = await crud.transaction.get_by_deposit(db=db, deposit_id=deposit["id"])  # type: ignore
+    transactions = await crud.transaction.get_by_deposit(db=db, deposit_id=deposit["id"])  # type: ignore
     if wallet:
         await crud.wallet.remove(db=db, entity_id=wallet["id"])
-    if transaction:
-        await crud.transaction.remove(db=db, entity_id=transaction["id"])
+    if transactions:
+        for transaction in transactions:
+            await crud.transaction.remove(db=db, entity_id=transaction["id"])
     if not deposit:
         raise HTTPException(status_code=404, detail="Deposit doesn't exists")
 

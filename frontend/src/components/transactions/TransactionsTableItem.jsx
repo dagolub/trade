@@ -1,9 +1,16 @@
 import React from 'react';
-import { deleteTransaction } from '../../services/api'; // Make sure to provide the correct path to your API methods
-import {deleteRow, showError} from '../../utils';
 import dayjs from "dayjs"; // Make sure to provide the correct path to your deleteRow utility
 
 function TransactionTableItem(props) {
+    const [fill, setFill] =  React.useState("light")
+
+    React.useEffect(()=>{
+        if ( document.documentElement.style.colorScheme == "light") {
+            setFill("#000000")
+        } else {
+            setFill("#FFFFFF")
+        }
+    })
     return (
         <tr id={"tr" + props.id}>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px td" + props.id}>
@@ -42,8 +49,7 @@ function TransactionTableItem(props) {
                     <a href={"/transactions/view/" + props.id}>
                         <button
                             className="text-slate-400 hover:text-slate-500 dark:text-slate-500 dark:hover:text-slate-400 rounded-full">
-                            <svg fill="#FFFFFF" height="20px" width="20px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
-                                 viewBox="0 0 80.794 80.794">
+                            <svg fill={fill} height="20px" width="20px" viewBox="0 0 80.794 80.794">
                             <g>
                                 <g>
                                     <path d="M79.351,38.549c-0.706-0.903-17.529-22.119-38.953-22.119c-21.426,0-38.249,21.216-38.955,22.119L0,40.396l1.443,1.847

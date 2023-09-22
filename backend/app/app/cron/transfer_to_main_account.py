@@ -26,15 +26,7 @@ def generate_random_string_passphrase(length):
     return random_string.join(random.choice(letters) for i in range(length - 8))
 
 
-sub_accounts = [
-    "OPrjdNGD",
-    "OBrugHDJ",
-    "OBnbdVSD",
-    "OByyxDYQ",
-    "OBdatSII",
-    "OBagoPET",
-    "OBxmrATA",
-]
+sub_accounts = ["OPpzeVRV", "OPhrqQWG"]
 
 if __name__ == "__main__":
     for sub_account in sub_accounts:
