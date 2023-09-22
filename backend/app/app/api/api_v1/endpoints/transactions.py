@@ -24,13 +24,17 @@ async def read_transactions(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
+    q: str = "",
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Retrieve transaction.
     """
+    _search = _get_search(q)
     if current_user["is_superuser"]:
-        transactions = await crud.transaction.get_multi(db, skip=skip, limit=limit)
+        transactions = await crud.transaction.get_multi(
+            db, skip=skip, limit=limit, search=_search
+        )
     else:
         transactions = await crud.transaction.get_multi_by_owner(
             db, owner_id=current_user["id"], skip=skip, limit=limit

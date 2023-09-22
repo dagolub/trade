@@ -190,8 +190,8 @@ def _get_search(q: str = ""):
     if q != "":
         search = {
             "$or": [
-                {"wallet": {"$regex": str(q)}},
-                {"type": {"$regex": str(q)}},
+                {"full_name": {"$regex": str(q)}},
+                {"email": {"$regex": str(q)}},
             ]
         }
     return search
