@@ -68,7 +68,8 @@ async def read_users(
     """
     Retrieve users.
     """
-    users = await crud.user.get_multi(db, skip=skip, limit=limit, q=q)  # type: ignore
+    _search = _get_search(q)
+    users = await crud.user.get_multi(db, skip=skip, limit=limit, search=_search)  # type: ignore
     return users
 
 
@@ -182,3 +183,15 @@ async def delete_deposit(
         raise HTTPException(status_code=404, detail="User doesn't exists")
 
     return await crud.user.remove(db=db, entity_id=entity_id)
+
+
+def _get_search(q: str = ""):
+    search = {}
+    if q != "":
+        search = {
+            "$or": [
+                {"wallet": {"$regex": str(q)}},
+                {"type": {"$regex": str(q)}},
+            ]
+        }
+    return search
