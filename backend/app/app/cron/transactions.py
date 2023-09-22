@@ -161,9 +161,9 @@ async def send_callback():
             response = requests.post(callback, json=_deposit(wallet))
             callback_response = response.text
 
-            status = "in process"
+            _status = "in process"
             if response.status_code == 200:
-                status = "completed"
+                _status = "completed"
             await crud.callback.create(
                 db=db,
                 obj_in={
@@ -176,7 +176,7 @@ async def send_callback():
             await crud.deposit.update(
                 db=db,
                 db_obj={"id": wallet["id"]},
-                obj_in={"callback_response": callback_response, "status": status},
+                obj_in={"callback_response": callback_response, "status": _status},
             )
 
 

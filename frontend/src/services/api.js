@@ -129,7 +129,13 @@ const createDeposit = (wallet, type, sum, currency, status, callback) => {
 })
   }
 const getDeposits = (q="", skip=0, limit=10) => {
-  return GET('/api/deposits/?skip=' + skip + '&limit=' + limit + '&q=' + q)
+    let url
+    if (q == "") {
+        url = '/api/deposits/?skip=' + skip + '&limit=' + limit
+    } else {
+        url = '/api/deposits/?skip=' + skip + '&limit=' + limit + '&q=' + q
+    }
+  return GET(url)
 }
 const getDeposit = (id) => {
    return GET('/api/deposits/' + id)
@@ -195,7 +201,13 @@ const createWallet = (wallet, type) => {
 })
   }
 const getWallets = (q="", skip=0, limit=10) => {
-  return GET('/api/wallets/?skip=' + skip + '&limit=' + limit + '&q=' + q)
+    let url = ""
+    if (q == "") {
+        url = '/api/wallets/?skip=' + skip + '&limit=' + limit
+    } else {
+        url = '/api/wallets/?skip=' + skip + '&limit=' + limit + '&q=' + q
+    }
+    return GET(url)
 }
 const getWallet = (id) => {
    return GET('/api/wallets/' + id)

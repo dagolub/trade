@@ -25,7 +25,7 @@ async def read_wallets(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
-    q: str = ("",),
+    q: str = "",
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """

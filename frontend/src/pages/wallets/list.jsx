@@ -18,8 +18,8 @@ function Wallets() {
 
   const settingList = (q = '', count) => {
     setTimeout(() => {
-      const queryString = document.location.search.split('=')[1];
-      getWallets(queryString, count).then((data) => setList(data));
+      const q = document.location.search.split('=')[1];
+      getWallets(q, count).then((data) => setList(data));
     }, 500);
   };
 
