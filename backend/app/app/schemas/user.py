@@ -11,6 +11,7 @@ class UserBase(BaseModel):
     autotransfer: bool = False
     full_name: Optional[str] = None
     created: Optional[datetime]
+    bal: Optional[dict]
 
 
 # Properties to receive via API on creation

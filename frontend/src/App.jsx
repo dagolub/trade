@@ -6,14 +6,12 @@ import DepositsEdit from './pages/deposits/edit'; // Import DepositsEdit properl
 import DepositsNew from './pages/deposits/new'; // Import DepositsNew properly
 import Settings from './pages/settings'; // Import Settings properly
 import Transactions from './pages/transactions/list'; // Import Transactions properly
-import TransactionsEdit from './pages/transactions/edit'; // Import TransactionsEdit properly
-import TransactionsNew from './pages/transactions/new'; // Import TransactionsNew properly
+import TransactionsView from './pages/transactions/view'; // Import TransactionsNew properly
 import Users from './pages/users/list'; // Import Users properly
 import UsersEdit from './pages/users/edit'; // Import UsersEdit properly
 import UsersNew from './pages/users/new'; // Import UsersNew properly
 import Wallets from './pages/wallets/list'; // Import Wallets properly
-import WalletsEdit from './pages/wallets/edit'; // Import WalletsEdit properly
-import WalletsNew from './pages/wallets/new'; // Import WalletsNew properly
+import WalletsView from './pages/wallets/view'; // Import WalletsNew properly
 import Signin from './pages/Signin'; // Import Signin properly
 import './css/style.css';
 
@@ -33,15 +31,17 @@ function App() {
         <Route path="/users/list" element={<Users />} />
         <Route path="/users/new" element={<UsersNew />} />
         <Route path="/users/edit/:id" element={<UsersEdit />} />
+
         <Route path="/deposits/list" element={<Deposits />} />
         <Route path="/deposits/new" element={<DepositsNew />} />
         <Route path="/deposits/edit/:id" element={<DepositsEdit />} />
+
         <Route path="/transactions/list" element={<Transactions />} />
-        <Route path="/transactions/new" element={<TransactionsNew />} />
-        <Route path="/transactions/edit/:id" element={<TransactionsEdit />} />
+        <Route path="/transactions/view/:id" element={<TransactionsView />} />
+
         <Route path="/wallets/list" element={<Wallets />} />
-        <Route path="/wallets/new" element={<WalletsNew />} />
-        <Route path="/wallets/edit/:id" element={<WalletsEdit />} />
+        <Route path="/wallets/view/:id" element={<WalletsView />} />
+
         <Route path="/settings" element={<Settings />} />
         <Route path="/signin" element={<Signin />} />
       </Routes>

@@ -27,25 +27,13 @@ def generate_random_string_passphrase(length):
 
 
 sub_accounts = [
-    "UseraekSDL",
-    "UserudrLKM",
-    "UseretjTNV",
-    "UserxzzGZJ",
-    "UsersnnQUR",
-    "UserevlTXE",
-    "UsermhiEPG",
-    "UsertgaIYW",
-    "UserxdjLZK",
-    "UserwaeYJD",
-    "UsertjhTEG",
-    "UserhwtYIA",
-    "postertsknb",
-    "OleskBackendytzKPE",
-    "OleskBackendbrsXLJ",
-    "OleskBackendhfxDDL",
-    "OleskBackendwxrmg",
-    "Userjmgav",
-    "postertsknb",
+    "OPrjdNGD",
+    "OBrugHDJ",
+    "OBnbdVSD",
+    "OByyxDYQ",
+    "OBdatSII",
+    "OBagoPET",
+    "OBxmrATA",
 ]
 
 if __name__ == "__main__":
@@ -68,6 +56,7 @@ if __name__ == "__main__":
                 sub_account_api_keys["data"][0]["secretKey"],
                 sub_account_api_keys["data"][0]["passphrase"],
             )
+            time.sleep(2)
             # print(sub_account_api_keys)
             # print(sub_account_balance)
             if float(sub_account_balance["data"][0]["bal"]) > 0:

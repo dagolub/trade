@@ -1,4 +1,4 @@
-# MongoTech
+# Crypto Payment
 [![Flake8](https://github.com/K-I-S-S-Software/cryptopayments-back-end-python/actions/workflows/flake8.yml/badge.svg)](https://github.com/K-I-S-S-Software/cryptopayments-back-end-python/actions/workflows/flake8.yml)
 [![Black](https://github.com/K-I-S-S-Software/cryptopayments-back-end-python/actions/workflows/black.yml/badge.svg)](https://github.com/K-I-S-S-Software/cryptopayments-back-end-python/actions/workflows/black.yml)
 [![Bandit](https://github.com/K-I-S-S-Software/cryptopayments-back-end-python/actions/workflows/bandit.yml/badge.svg)](https://github.com/K-I-S-S-Software/cryptopayments-back-end-python/actions/workflows/bandit.yml)
@@ -9,7 +9,7 @@
 ## Before you start you neeed
 
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-* [Python 3.10](https://www.python.org/downloads/release/python-3913/)
+* [Python 3.10.12](https://www.python.org/downloads/release/python-3913/)
 * pip install --upgrade pip
 
 Later you will need:
@@ -29,7 +29,7 @@ You need add keys [here](https://gitlab.com/-/profile/keys) [instruction how to 
 ## Verfify python version
 
 `python --version` <br />
-`Python 3.10.6`
+`Python 3.10.12`
 
 Main thing is monga and provisioning
 

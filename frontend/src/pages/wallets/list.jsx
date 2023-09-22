@@ -27,10 +27,15 @@ function Wallets() {
     const hash = parseInt(window.location.hash.split('#')[1]);
     const hashValue = hash > 0 ? hash : 0;
 
-    const queryString = document.location.search.split('=')[1];
-    getWallets(queryString, hashValue * 10).then((data) => setList(data));
+    let q = document.location.search.split('=')[1];
+    getWallets(q, hashValue * 10).then((data) => setList(data));
 
-    GET('/api/wallets/count').then((data) => setTotal(data));
+    q = document.location.search.split('=')[1];
+    if (q) {
+        GET('/api/wallets/count?q=' + q).then((data) => setTotal(data));
+    } else {
+        GET('/api/wallets/count').then((data) => setTotal(data));
+    }
   }, []);
 
   return (

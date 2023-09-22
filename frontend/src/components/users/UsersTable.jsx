@@ -76,6 +76,7 @@ function UsersTable({ selectedItems, list, settingList }) {
                       email={user.email}
                       is_active={user.is_active}
                       is_superuser={user.is_superuser}
+                      created={user.created}
                       handleClick={handleClick}
                       isChecked={isCheck.includes(user.id)}
                       settingList={settingList}

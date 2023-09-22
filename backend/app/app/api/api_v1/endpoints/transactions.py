@@ -9,8 +9,14 @@ router = APIRouter()
 
 
 @router.get("/count")
-async def count(db: Session = Depends(deps.get_db)) -> int:
-    return await crud.transaction.count(db=db)
+async def count(
+    database: Session = Depends(deps.get_db),
+    q: str = "",
+    current_user: models.User = Depends(deps.get_current_active_user),
+) -> int:
+    _search = _get_search(q)
+    owner_id = False if current_user["is_superuser"] else current_user["id"]
+    return await crud.transaction.count(db=database, owner_id=owner_id, search=_search)
 
 
 @router.get("/", response_model=List[schemas.Transaction])
@@ -45,3 +51,18 @@ async def read_transaction(
     if not transaction:
         raise HTTPException(status_code=400, detail="Transaction doesn't exists")
     return transaction
+
+
+def _get_search(q: str = ""):
+    search = {}
+    if q != "":
+        search = {
+            "$or": [
+                {"from_wallet": {"$regex": str(q)}},
+                {"to_wallet": {"$regex": str(q)}},
+                {"tx": {"$regex": str(q)}},
+                {"currency": {"$regex": str(q)}},
+                {"amount": {"$regex": str(q)}},
+            ]
+        }
+    return search

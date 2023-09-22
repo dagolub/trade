@@ -17,6 +17,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self.model = model
 
     async def count(self, db: Session, owner_id=False, search="") -> int:
+        if search == "":
+            search = {}
         if owner_id:
             if search != "":
                 search.update({"owner_id": owner_id})
@@ -52,6 +54,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self, db: Session, owner_id, skip: int = 0, limit: int = 100, search=""
     ) -> List[ModelType]:
         result = []
+        if search == "":
+            search = {}
 
         async for document in db[self.model.__tablename__].find(search).sort("created", -1).skip(skip).limit(limit):  # type: ignore
             document["id"] = str(document["_id"])  # noqa
@@ -88,3 +92,11 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             entity["id"] = str(entity["_id"])
         await db[self.model.__tablename__].delete_one({"_id": ObjectId(entity_id)})
         return entity
+
+    async def get_by_deposit(self, db, deposit_id):
+        entity = await db[self.model.__tablename__].find_one({"deposit_id": deposit_id})  # type: ignore
+        if entity:
+            entity["id"] = str(entity["_id"])
+            return entity
+        else:
+            return None

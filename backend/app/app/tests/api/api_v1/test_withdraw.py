@@ -22,16 +22,22 @@ app.dependency_overrides[get_db] = fake_db
 # test update by id
 # test delete by id
 
+
 @pytest.mark.asyncio
 async def test_get_withdraw(
     client: TestClient, superuser_token_headers: dict, db: Session
 ) -> None:
     payload = {}
-    for field in {'owner_id': 'owner_id: Optional[str] = None', 'to': 'to: Optional[str] = None', 'sum': 'sum: Optional[int] = None', 'created': 'created: Optional[datetime.date] = None'}:
+    for field in {
+        "owner_id": "owner_id: Optional[str] = None",
+        "to": "to: Optional[str] = None",
+        "sum": "sum: Optional[int] = None",
+        "created": "created: Optional[datetime.date] = None",
+    }:
         value = False
-        if 'str' in field[1]:
+        if "str" in field[1]:
             value = "Some string"
-        if 'int' in field[1]:
+        if "int" in field[1]:
             value = 1111
         payload.setdefault(field[0], value)
     entity = withdraw.create_withdraw(db, payload)

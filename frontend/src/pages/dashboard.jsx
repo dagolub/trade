@@ -17,8 +17,7 @@ function Dashboard() {
               <Currency currency="BTC" amount={0} />
               <Currency currency="LTC" amount={0} />
               <Currency currency="BCH" amount={0} />
-              <Currency currency="USDT-ETH" amount={0} />
-              <Currency currency="USDT-TRX" amount={0} />
+              <Currency currency="USDT" amount={0} />
               <Currency currency="ETC" amount={0} />
               <Currency currency="ETH" amount={0} />
             </div>

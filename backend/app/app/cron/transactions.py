@@ -110,6 +110,23 @@ async def incoming_transaction():
                         owner_id=deposit["owner_id"],
                         deposit_id=deposit["id"],
                     )
+                    user = await crud.user.get(db=db, entity_id=deposit["owner_id"])
+                    if "bal" in user:
+                        bal = user["bal"]
+                    else:
+                        bal = {}
+                    if "bal" not in user:
+                        bal = {
+                            "btc": 0,
+                            "ltc": 0,
+                            "bch": 0,
+                            "usdt": 0,
+                            "etc": 0,
+                            "eth": 0,
+                        }
+
+                    bal[currency.lower()] += float(amount)
+                    await crud.user.update(db=db, db_obj=user, obj_in={"bal": bal})
                     #  auto exchange
         # if float(sub_account_balance["data"][0]["bal"]) > 0:
         #     main_account_balance = okx.get_account_balance(  # noqa
@@ -180,6 +197,6 @@ async def fill_transaction():
 
 
 if __name__ == "__main__":
-    asyncio.run(send_callback())
     asyncio.run(incoming_transaction())
+    asyncio.run(send_callback())
     asyncio.run(fill_transaction())

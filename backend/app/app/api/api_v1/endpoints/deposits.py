@@ -15,13 +15,13 @@ router = APIRouter()
 
 @router.get("/count")
 async def count(
-    db: Session = Depends(deps.get_db),
+    database: Session = Depends(deps.get_db),
     q: str = "",
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> int:
     _search = _get_search(q)
     owner_id = False if current_user["is_superuser"] else current_user["id"]
-    return await crud.deposit.count(db=db, owner_id=owner_id, search=_search)
+    return await crud.deposit.count(db=database, owner_id=owner_id, search=_search)
 
 
 @router.get("/", response_model=List[schemas.Deposit])
@@ -138,7 +138,9 @@ async def delete_deposit(
     """
     deposit = await crud.deposit.get(db=db, entity_id=entity_id)
     wallet = await crud.wallet.get_by_deposit(db=db, deposit_id=deposit["id"])  # type: ignore
+    transaction = await crud.transaction.get_by_deposit(db=db, deposit_id=deposit["id"])  # type: ignore
     await crud.wallet.remove(db=db, entity_id=wallet["id"])
+    await crud.transaction.remove(db=db, entity_id=transaction["id"])
     if not deposit:
         raise HTTPException(status_code=404, detail="Deposit doesn't exists")
 

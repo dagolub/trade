@@ -163,7 +163,13 @@ const createTransaction = (from_wallet, to_wallet, tx, amount, currency, type) =
 })
   }
 const getTransactions = (q="", skip=0, limit=10) => {
-  return GET('/api/transactions/?skip=' + skip + '&limit=' + limit + '&q=' + q)
+    let url = ""
+    if (q == "") {
+        url = '/api/transactions/?skip=' + skip + '&limit=' + limit
+    } else {
+        url = '/api/transactions/?skip=' + skip + '&limit=' + limit + '&q=' + q
+    }
+  return GET(url)
 }
 const getTransaction = (id) => {
    return GET('/api/transactions/' + id)

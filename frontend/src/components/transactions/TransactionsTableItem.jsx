@@ -1,17 +1,9 @@
 import React from 'react';
 import { deleteTransaction } from '../../services/api'; // Make sure to provide the correct path to your API methods
-import {deleteRow, showError} from '../../utils'; // Make sure to provide the correct path to your deleteRow utility
+import {deleteRow, showError} from '../../utils';
+import dayjs from "dayjs"; // Make sure to provide the correct path to your deleteRow utility
 
 function TransactionTableItem(props) {
-  const deleteHandler = (id) => {
-    deleteRow(id);
-    setTimeout(() => {
-      deleteTransaction(id).then((response) => {
-        response.currency ? document.getElementById('tr' + id).remove() : '';
-      });
-    }, 200);
-  };
-
     return (
         <tr id={"tr" + props.id}>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px td" + props.id}>
@@ -31,7 +23,7 @@ function TransactionTableItem(props) {
                 <div className="font-medium text-slate-800 dark:text-slate-100">{props.to_wallet}</div>
             </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
-                <div className="font-medium text-slate-800 dark:text-slate-100">{props.tx}</div>
+                <div className="font-medium text-slate-800 dark:text-slate-100">{ props.tx.length > 10 ?  props.tx.substring(0,10)+" ... "+props.tx.substring(props.tx.length-10) : props.tx} copy</div>
             </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
                 <div className="font-medium text-slate-800 dark:text-slate-100">{props.amount}</div>
@@ -42,7 +34,9 @@ function TransactionTableItem(props) {
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
                 <div className="font-medium text-slate-800 dark:text-slate-100">{props.type}</div>
             </td>
-            
+            <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
+                <div className="font-medium text-slate-800 dark:text-slate-100">{dayjs(props.created).format("HH:mm DD MMM YY")}</div>
+            </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px td" + props.id}>
                 <div className="space-x-1">
                     <a href={"/transactions/edit/" + props.id}>
@@ -54,14 +48,6 @@ function TransactionTableItem(props) {
                             </svg>
                         </button>
                     </a>
-                    <button className="text-rose-500 hover:text-rose-600 rounded-full"
-                            onClick={() => deleteHandler(props.id)}>
-                        <svg className="w-8 h-8 fill-current" viewBox="0 0 32 32">
-                            <path d="M13 15h2v6h-2zM17 15h2v6h-2z"/>
-                            <path
-                                d="M20 9c0-.6-.4-1-1-1h-6c-.6 0-1 .4-1 1v2H8v2h1v10c0 .6.4 1 1 1h12c.6 0 1-.4 1-1V13h1v-2h-4V9zm-6 1h4v1h-4v-1zm7 3v9H11v-9h10z"/>
-                        </svg>
-                    </button>
                 </div>
             </td>
         </tr>

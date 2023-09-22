@@ -17,8 +17,7 @@ function Transactions() {
 
   const settingList = (q = '', count) => {
     setTimeout(() => {
-      console.log('In list', count);
-      const query = document.location.search.split('=')[1];
+      const q = document.location.search.split('=')[1];
       getTransactions(q, count).then((data) => setList(data));
     }, 500);
   };
@@ -27,10 +26,15 @@ function Transactions() {
     let hash = parseInt(window.location.hash.split('#')[1]);
     hash = hash > 0 ? hash : 0;
 
-    const query = document.location.search.split('=')[1];
-    getTransactions(query, hash * 10).then((data) => setList(data));
+    let q = document.location.search.split('=')[1];
+    getTransactions(q, hash * 10).then((data) => setList(data));
 
-    GET('/api/transactions/count').then((data) => setTotal(data));
+    q = document.location.search.split('=')[1];
+    if (q) {
+        GET('/api/transactions/count?q=' + q).then((data) => setTotal(data));
+    } else {
+        GET('/api/transactions/count').then((data) => setTotal(data));
+    }
   }, []);
 
   return (

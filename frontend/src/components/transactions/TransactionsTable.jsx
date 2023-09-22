@@ -69,7 +69,9 @@ function TransactionTable({
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                   <div className="font-semibold text-left">Type</div>
                 </th>
-                
+                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                  <div className="font-semibold text-left">Created</div>
+                </th>
 
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                   <div className="font-semibold text-left">Actions</div>
@@ -92,6 +94,7 @@ function TransactionTable({
                       amount={entity.amount}
                       currency={entity.currency}
                       type={entity.type}
+                      created={entity.created}
                       
                       handleClick={handleClick}
                       isChecked={isCheck.includes(entity.id)}
