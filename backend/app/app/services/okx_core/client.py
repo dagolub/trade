@@ -133,6 +133,9 @@ class OKX:
                 fee=fee,
                 chain=chain,
             )
+            if withdrawals["code"] == "58350":
+                raise ValueError("Insufficient balance, try to " + str(amount))
+
             if len(withdrawals.get("data")) > 0:
                 return withdrawals.get("data")[0]
 

@@ -19,10 +19,6 @@ class DepositBase(BaseModel):
 class DepositCreate(DepositBase):
     owner_id: Optional[str] = None
     sub_account: Optional[str] = None
-    sub_account_label: Optional[str] = None
-    sub_account_secret_key: Optional[str] = None
-    sub_account_api_key: Optional[str] = None
-    sub_account_passphrase: Optional[str] = None
 
 
 class DepositUpdate(DepositBase):

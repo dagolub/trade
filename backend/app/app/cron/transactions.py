@@ -235,22 +235,29 @@ async def outgoing_transaction():
         owner_id = withdraw["owner_id"]
         fee = okx.get_currency_fee(currency=currency, chain=chain)
         chain = okx.get_currency_chain(currency=currency, chain=chain)
-        transaction = okx.make_withdrawal(
-            amount=amount, address=to_wallet, currency=currency, chain=chain, fee=fee
-        )
+        try:
+            transaction = okx.make_withdrawal(
+                amount=amount,
+                address=to_wallet,
+                currency=currency,
+                chain=chain,
+                fee=fee,
+            )
+            await create_transaction(
+                from_wallet="<internal>",
+                to_wallet=to_wallet,
+                tx=transaction["wdId"],
+                amount=amount,
+                currency=currency,
+                _type="OKX",
+                owner_id=owner_id,
+            )
+            await crud.withdraw.update(
+                db=db, db_obj={"id": withdraw["id"]}, obj_in={"status": "paid"}
+            )
 
-        await create_transaction(
-            from_wallet="<internal>",
-            to_wallet=to_wallet,
-            tx=transaction["wdId"],
-            amount=amount,
-            currency=currency,
-            _type="OKX",
-            owner_id=owner_id,
-        )
-        await crud.withdraw.update(
-            db=db, db_obj={"id": withdraw["id"]}, obj_in={"status": "paid"}
-        )
+        except ValueError as e:
+            print("Exception in outgoing transaction", e.args[0])
 
 
 if __name__ == "__main__":

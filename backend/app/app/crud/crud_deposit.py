@@ -70,12 +70,8 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
             else:
                 deposit_type = obj_in.type  # type: ignore
 
-            passphrase = generate_random_string_passphrase(12)
-            sub = okx.create_sub_account_api_key(
-                sub_account, sub_account + "Label", passphrase
-            )
             deposit_sum = okx.frac_to_int(obj_in.sum, obj_in.currency.lower())  # type: ignore
-            if "data" in sub and len(sub["data"]) > 0 and len(sub["data"][0]) > 0:
+            if owner and obj_in and sub_account and deposit_sum > 0:
                 obj_in = {
                     "owner_id": owner["id"],
                     "wallet": wallet,
@@ -88,9 +84,6 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                     "callback_response": "",
                     "sub_account": sub_account,
                     "sub_account_label": sub_account + "Label",
-                    "sub_account_api_key": sub["data"][0]["apiKey"],
-                    "sub_account_secret_key": sub["data"][0]["secretKey"],
-                    "sub_account_passphrase": passphrase,
                     "created": datetime.utcnow(),
                 }
 
