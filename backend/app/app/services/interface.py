@@ -21,6 +21,9 @@ class ExchangeInterface(ABC):
     def create_sub_account_api_key(self, sub_account, sub_account_label, passphrase):
         raise NotImplementedError
 
+    def get_sub_account_api_keys(self, sub_account):
+        raise NotImplementedError
+
     def transfer_money_to_main_account(
         self, ccy, amt, sub_account, from_account, to_account, type_transfer
     ):

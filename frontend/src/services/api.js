@@ -224,6 +224,18 @@ const getWithdraws = (q="", skip=0, limit=10) => {
 const getWthdraw = (id) => {
    return GET('/api/withdraws/' + id)
 }
+const getCallbacks = (q="", skip=0, limit=10) => {
+    let url = ""
+    if (q == "") {
+        url = '/api/callbacks/?skip=' + skip + '&limit=' + limit
+    } else {
+        url = '/api/callbacks/?skip=' + skip + '&limit=' + limit + '&q=' + q
+    }
+    return GET(url)
+}
+const getCallback = (id) => {
+   return GET('/api/callbacks/' + id)
+}
 const updateWallet = (id, from_wallet, to_wallet, tx, amount, currency, type) => {
       return PUT('/api/wallets/' + id, {
         "wallet": wallet,
@@ -256,6 +268,7 @@ export {
   createTransaction, getTransactions, getTransaction, updateTransaction, deleteTransaction,
   createWallet, getWallets, getWallet, updateWallet, deleteWallet,
   getWithdraws, getWthdraw,
+  getCallbacks, getCallback,
   getSetting, putSetting,
   getOTP, verifyOTP
   // INSERT2

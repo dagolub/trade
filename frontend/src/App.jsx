@@ -14,6 +14,8 @@ import Wallets from './pages/wallets/list'; // Import Wallets properly
 import WalletsView from './pages/wallets/view'; // Import WalletsNew properly
 import Withdraws from './pages/withdraws/list'; // Import Wallets properly
 import WithdrawsView from './pages/withdraws/view'; // Import WalletsNew properly
+import Callbacks from './pages/callbacks/list'; // Import Wallets properly
+import CallbacksView from './pages/callbacks/view'; // Import WalletsNew properly
 import Signin from './pages/Signin'; // Import Signin properly
 import './css/style.css';
 
@@ -46,6 +48,9 @@ function App() {
 
         <Route path="/withdraws/list" element={<Withdraws />} />
         <Route path="/withdraws/view/:id" element={<WithdrawsView />} />
+
+        <Route path="/callbacks/list" element={<Callbacks />} />
+        <Route path="/callbacks/view/:id" element={<CallbacksView />} />
 
         <Route path="/settings" element={<Settings />} />
         <Route path="/signin" element={<Signin />} />

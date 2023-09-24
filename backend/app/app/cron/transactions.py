@@ -31,6 +31,11 @@ async def create_transaction(
     )
 
 
+def delete_old_sub_account_api_keys(okx, sub_account):
+    api_keys = okx.get_sub_account_api_keys(sub_account)
+    print(api_keys)
+
+
 async def incoming_transaction():
     exchanger = Exchanger()
     okx = exchanger.get("OKX")
@@ -40,6 +45,7 @@ async def incoming_transaction():
 
         sub_account = _deposit["sub_account"]
         passphrase = generate_random_string_passphrase(12)
+        delete_old_sub_account_api_keys(okx=okx, sub_account=sub_account)
         sub_account_api_keys = okx.create_sub_account_api_key(
             sub_account,
             sub_account + "L" + generate_random_small(5),
@@ -67,7 +73,6 @@ async def incoming_transaction():
                     status = "overpayment"
 
                 if currency == wallet["currency"]:
-                    pass
                     await crud.deposit.update(
                         db=db, db_obj={"id": _deposit["id"]}, obj_in={"status": status}
                     )

@@ -77,6 +77,12 @@ class OKX:
             sub_account, sub_account_label, passphrase, ip, "withdraw"
         )
 
+    def get_sub_account_api_keys(self, sub_account):
+        broker = BrokerAPI(
+            self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
+        )
+        return broker.nd_select_apikey(subAcct=sub_account)
+
     def transfer_money_to_main_account(
         self,
         ccy=None,

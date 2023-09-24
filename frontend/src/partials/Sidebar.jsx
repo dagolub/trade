@@ -74,7 +74,11 @@ function Sidebar() {
                 <span className={span_class}>Transactions</span>
               </NavLink>
             </li>
-
+            <li className={li_class}>
+              <NavLink to="/callbacks/list" className={a_class}>
+                <span className={span_class}>Callbacks</span>
+              </NavLink>
+            </li>
           </ul>
         </div>
       </div>
