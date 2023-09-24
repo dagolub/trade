@@ -31,6 +31,9 @@ class OKX(ExchangeInterface, ABC):
     def get_sub_account_api_key(self, sub_account, api_key):
         return self.okx.get_sub_account_api_key(sub_account, api_key)
 
+    def delete_api_key(self, sub_account, api_key):
+        return self.okx.delete_api_key(sub_account=sub_account, api_key=api_key)
+
     def get_asset_currencies(self):
         return self.okx.get_asset_currencies()
 

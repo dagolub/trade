@@ -31,8 +31,8 @@ class OKX:
             )
             result = broker.create_subaccount(sub_account, sub_account + "Label")
             return result
-        except:
-            raise ValueError("Can not create sub account " + sub_account)
+        except ValueError as e:
+            raise ValueError("Can not create sub account " + sub_account + e.args[0])
 
     def get_account(self, sub_account, ccy, chain):
         chain = self.get_currency_chain(ccy, chain)
@@ -82,6 +82,12 @@ class OKX:
             self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
         )
         return broker.nd_select_apikey(subAcct=sub_account)
+
+    def delete_api_key(self, sub_account, api_key):
+        broker = BrokerAPI(
+            self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
+        )
+        return broker.nd_delete_apikey(subAcct=sub_account, apiKey=api_key)
 
     def transfer_money_to_main_account(
         self,
@@ -183,7 +189,8 @@ class OKX:
             _amount = int(amount) * 0.000000000000000001
             return float(f"{_amount:.100f}")
 
-    def fractional_to_integer(self, amount: str, currency: str) -> int:  # type: ignore
+    @staticmethod
+    def fractional_to_integer(amount: str, currency: str) -> int:  # type: ignore
         if currency.lower() in ("ltc", "bch", "btc", "waves"):
             _amount = float(amount) * 100000000
             return int(f"{_amount:.0f}")

@@ -33,7 +33,8 @@ async def create_transaction(
 
 def delete_old_sub_account_api_keys(okx, sub_account):
     api_keys = okx.get_sub_account_api_keys(sub_account)
-    print(api_keys)
+    for i in api_keys["data"]:
+        okx.delete_api_key(sub_account=sub_account, api_keys=i["apiKey"])
 
 
 async def incoming_transaction():

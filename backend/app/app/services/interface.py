@@ -24,6 +24,9 @@ class ExchangeInterface(ABC):
     def get_sub_account_api_keys(self, sub_account):
         raise NotImplementedError
 
+    def delete_api_key(self, sub_account, api_key):
+        raise NotImplementedError
+
     def transfer_money_to_main_account(
         self, ccy, amt, sub_account, from_account, to_account, type_transfer
     ):
