@@ -118,11 +118,7 @@ class OKX:
             )
 
     def make_withdrawal(
-        self,
-        currency=None,
-        amount=None,
-        address=None,
-        chain=None,
+        self, currency=None, amount=None, address=None, chain=None, fee=None
     ):
         try:
             funding = Funding(
@@ -130,12 +126,12 @@ class OKX:
             )
 
             withdrawals = funding.coin_withdraw(
-                ccy=currency,
-                amt=float(amount) - 1,
+                ccy=currency.upper(),
+                amt=float(amount) - float(fee),
                 dest=4,
                 toAddr=address,
-                fee=1,
-                chain="USDT-TRC20",
+                fee=fee,
+                chain=chain,
             )
             if len(withdrawals.get("data")) > 0:
                 return withdrawals.get("data")[0]
@@ -151,27 +147,20 @@ class OKX:
         )
         return funding.get_withdrawal_history(ccy, wdId=wd_id)
 
-    def check_limits(self, currency: str):
-        funding = Funding(
-            self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
-        )
-        limits = funding.get_currency()
-
-        for limit in limits.get("data"):
-            if limit.get("ccy") == currency:
-                return limit.get("minWd")
-
-        return None
-
-    def get_deposit_history(self, ccy=None, api_key=None, secret=None, passphrase=None):
+    @staticmethod
+    def get_deposit_history(ccy=None, api_key=None, secret=None, passphrase=None):
         funding = Funding(api_key, secret, passphrase, flag="0")
         return funding.get_deposit_history(ccy)
 
-    def get_asset_currencies(self):
+    def get_currency_fee(self, _currency: str, chain: str):
+        chain = self.get_currency_chain(_currency.lower(), chain)
         funding = Funding(
             self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
         )
-        return funding.get_currency()
+        currencies = funding.get_currency()
+        for currency in currencies["data"]:
+            if currency["ccy"] == _currency.upper() and currency["chain"] == chain:
+                return currency["minFee"]
 
     @staticmethod
     def integer_to_fractional(amount: str, currency: str):
@@ -195,28 +184,6 @@ class OKX:
         if currency.lower() in ("etc", "eth"):
             _amount = float(amount) * 1000000000000000000
             return int(f"{_amount:.0f}")
-
-    @staticmethod
-    def get_currency_fee(currency: str, chain: str):
-        currency = currency.lower()
-        chain = chain.lower()
-        if currency == "ltc":
-            return 0.001
-        if currency.lower() == "bch":
-            return 0.00064
-        if currency == "btc":
-            return 0.0002
-        if currency == "waves":
-            return 0.0016
-        if currency == "etc":
-            return 0.008
-        if currency == "eth":
-            return 0.0006144
-        if currency == "usdt":
-            if chain == "usdt-erc20" or chain == "eth":
-                return 3.7778016
-            elif chain == "usdt-trc20" or chain == "trx":
-                return 0.8
 
     @staticmethod
     def get_currency_chain(currency: str, chain: str):

@@ -16,4 +16,10 @@ from .transaction import (  # noqa
 )
 from .user import User, UserCreate, UserInDB, UserUpdate  # noqa
 from .wallet import Wallet, WalletCreate, WalletInDB, WalletUpdate  # noqa
-from .withdraw import Withdraw, WithdrawCreate, WithdrawInDB, WithdrawUpdate  # noqa
+from .withdraw import (  # noqa
+    Withdraw,
+    WithdrawCreate,
+    WithdrawInDB,
+    WithdrawUpdate,
+    WithdrawBaseCreated,
+)  # noqa

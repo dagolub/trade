@@ -55,6 +55,16 @@ function Sidebar() {
               </NavLink>
             </li>}
             <li className={li_class}>
+              <NavLink to="/deposits/list" className={a_class}>
+                <span className={span_class}>Deposits</span>
+              </NavLink>
+            </li>
+            <li className={li_class}>
+              <NavLink to="/withdraws/list" className={a_class}>
+                <span className={span_class}>Withdraws</span>
+              </NavLink>
+            </li>
+            <li className={li_class}>
               <NavLink to="/wallets/list" className={a_class}>
                 <span className={span_class}>Wallets</span>
               </NavLink>
@@ -64,11 +74,7 @@ function Sidebar() {
                 <span className={span_class}>Transactions</span>
               </NavLink>
             </li>
-            <li className={li_class}>
-              <NavLink to="/deposits/list" className={a_class}>
-                <span className={span_class}>Deposits</span>
-              </NavLink>
-            </li>
+
           </ul>
         </div>
       </div>

@@ -2,7 +2,7 @@ import asyncio
 from time import sleep
 import requests  # type: ignore
 from app import crud
-from app.api.api_v1.endpoints.deposits import _deposit
+from app.api.api_v1.endpoints.deposits import _deposit as deposit
 from app.db.session import database as db
 from app.services.exchanger import Exchanger
 from datetime import datetime
@@ -13,7 +13,7 @@ from app.crud.crud_deposit import (
 
 
 async def create_transaction(
-    from_wallet, to_wallet, tx, amount, currency, type, owner_id, deposit_id
+    from_wallet, to_wallet, tx, amount, currency, _type, owner_id, deposit_id
 ):
     await crud.transaction.create(
         db=db,
@@ -24,7 +24,7 @@ async def create_transaction(
             "tx": tx,
             "amount": amount,
             "currency": currency,
-            "type": type,
+            "type": _type,
             "deposit_id": deposit_id,
             "created": datetime.utcnow(),
         },
@@ -32,15 +32,13 @@ async def create_transaction(
 
 
 async def incoming_transaction():
-    global status
-    to_wallet = "TGuMUQ6y3Zc1kxdjE2A87zYYm94X8qmiJM"  # noqa
     exchanger = Exchanger()
     okx = exchanger.get("OKX")
     wallets = await crud.deposit.get_by_status(db=db, status="created")
     for wallet in wallets:
-        deposit = await crud.deposit.get_by_wallet(db=db, wallet=wallet["wallet"])
+        _deposit = await crud.deposit.get_by_wallet(db=db, wallet=wallet["wallet"])
 
-        sub_account = deposit["sub_account"]
+        sub_account = _deposit["sub_account"]
         passphrase = generate_random_string_passphrase(12)
         sub_account_api_keys = okx.create_sub_account_api_key(
             sub_account,
@@ -62,17 +60,16 @@ async def incoming_transaction():
                 txId = dh["txId"]
 
                 deposit_amount = okx.int_to_frac(wallet["sum"], wallet["currency"])
+                status = "paid"
                 if float(amount) < float(deposit_amount):
                     status = "partially"
                 elif float(amount) > float(deposit_amount):
                     status = "overpayment"
-                elif float(amount) == float(deposit_amount):
-                    status = "paid"
 
                 if currency == wallet["currency"]:
                     pass
                     await crud.deposit.update(
-                        db=db, db_obj={"id": deposit["id"]}, obj_in={"status": status}
+                        db=db, db_obj={"id": _deposit["id"]}, obj_in={"status": status}
                     )
                     okx.transfer_money_to_main_account(
                         ccy=currency,
@@ -86,9 +83,9 @@ async def incoming_transaction():
                         tx=txId,
                         amount=amount,
                         currency=currency,
-                        type="OKX",
-                        owner_id=deposit["owner_id"],
-                        deposit_id=deposit["id"],
+                        _type="OKX",
+                        owner_id=_deposit["owner_id"],
+                        deposit_id=_deposit["id"],
                     )
                     main_account = okx.transfer_money_to_main_account(
                         ccy=currency,
@@ -106,11 +103,11 @@ async def incoming_transaction():
                         tx=main_account["data"][0]["transId"],
                         amount=amount,
                         currency=currency,
-                        type="OKX",
-                        owner_id=deposit["owner_id"],
-                        deposit_id=deposit["id"],
+                        _type="OKX",
+                        owner_id=_deposit["owner_id"],
+                        deposit_id=_deposit["id"],
                     )
-                    user = await crud.user.get(db=db, entity_id=deposit["owner_id"])
+                    user = await crud.user.get(db=db, entity_id=_deposit["owner_id"])
                     if "bal" in user:
                         bal = user["bal"]
                     else:
@@ -158,7 +155,7 @@ async def send_callback():
         callback = wallet["callback"]
 
         if wallet["status"] == "paid":
-            response = requests.post(callback, json=_deposit(wallet))
+            response = requests.post(callback, json=deposit(wallet))
             callback_response = response.text
 
             _status = "in process"
@@ -179,6 +176,35 @@ async def send_callback():
                 obj_in={"callback_response": callback_response, "status": _status},
             )
 
+    withdraws = await crud.withdraw.get_by_status(db=db, status="paid")
+
+    for withdraw in withdraws:
+        if "callback" not in withdraw:
+            continue
+        callback = withdraw["callback"]
+
+        if withdraw["status"] == "paid":
+            response = requests.post(callback, json=deposit(withdraw))
+            callback_response = response.text
+
+            _status = "in process"
+            if response.status_code == 200:
+                _status = "completed"
+            await crud.callback.create(
+                db=db,
+                obj_in={
+                    "owner_id": withdraw["owner_id"],
+                    "callback": callback,
+                    "callback_response": callback_response,
+                    "created": datetime.now(),
+                },
+            )
+            await crud.withdraw.update(
+                db=db,
+                db_obj={"id": withdraw["id"]},
+                obj_in={"callback_response": callback_response, "status": _status},
+            )
+
 
 async def fill_transaction():
     exchanger = Exchanger()
@@ -196,7 +222,39 @@ async def fill_transaction():
             )
 
 
+async def outgoing_transaction():
+    exchanger = Exchanger()
+    okx = exchanger.get("OKX")
+
+    withdraws = await crud.withdraw.get_by_status(db=db, status="created")
+    for withdraw in withdraws:
+        currency = withdraw["currency"]
+        chain = withdraw["chain"]
+        amount = withdraw["sum"]
+        to_wallet = withdraw["to"]
+        owner_id = withdraw["owner_id"]
+        fee = okx.get_currency_fee(currency=currency, chain=chain)
+        chain = okx.get_currency_chain(currency=currency, chain=chain)
+        transaction = okx.make_withdrawal(
+            amount=amount, address=to_wallet, currency=currency, chain=chain, fee=fee
+        )
+
+        await create_transaction(
+            from_wallet="<internal>",
+            to_wallet=to_wallet,
+            tx=transaction["wdId"],
+            amount=amount,
+            currency=currency,
+            _type="OKX",
+            owner_id=owner_id,
+        )
+        await crud.withdraw.update(
+            db=db, db_obj={"id": withdraw["id"]}, obj_in={"status": "paid"}
+        )
+
+
 if __name__ == "__main__":
     asyncio.run(incoming_transaction())
+    asyncio.run(outgoing_transaction())
     asyncio.run(send_callback())
     asyncio.run(fill_transaction())

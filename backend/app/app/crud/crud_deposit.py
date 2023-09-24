@@ -45,13 +45,6 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
         else:
             return None
 
-    async def get_by_status(self, db, status):
-        result = []
-        async for wallet in db["deposits"].find({"status": status}):
-            wallet["id"] = str(wallet["_id"])
-            result.append(wallet)
-        return result
-
     async def create(  # type: ignore
         self, db: Session, obj_in: dict, owner=None
     ) -> Optional[ModelType]:

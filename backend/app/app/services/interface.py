@@ -26,10 +26,21 @@ class ExchangeInterface(ABC):
     ):
         raise NotImplementedError
 
-    def make_withdrawal(self, currency=None, amount=None, address=None):
+    def make_withdrawal(
+        self, amount=None, address=None, currency=None, chain=None, fee=None
+    ):
         raise NotImplementedError
 
     def get_withdrawal_history(self, ccy, wdId):
+        raise NotImplementedError
+
+    def get_deposit_history(self, ccy=None, api_key=None, secret=None, passphrase=None):
+        raise NotImplementedError
+
+    def get_currency_chain(self, currency, chain):
+        raise NotImplementedError
+
+    def get_currency_fee(self, _currency, chain):
         raise NotImplementedError
 
     @abstractmethod

@@ -5,9 +5,13 @@ from pydantic import BaseModel
 
 
 class WithdrawBase(BaseModel):
-    to: Optional[str] = None
-    sum: Optional[int] = None
+    to: str
+    sum: float
     created: Optional[datetime] = None
+    callback: Optional[str] = None
+    currency: str
+    chain: str
+    status: Optional[str] = None
 
 
 class WithdrawCreate(WithdrawBase):
@@ -31,3 +35,11 @@ class Withdraw(WithdrawInDBBase):
 
 class WithdrawInDB(WithdrawInDBBase):
     pass
+
+
+class WithdrawBaseCreated(BaseModel):
+    to: Optional[str] = None
+    sum: float = None
+    callback: Optional[str] = None
+    currency: str
+    chain: str

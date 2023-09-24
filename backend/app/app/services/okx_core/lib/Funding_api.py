@@ -61,7 +61,8 @@ class FundingAPI(Client):
             "fee": fee,
             "chain": chain,
         }
-        return self._request_with_params(POST, WITHDRAWAL_COIN, params)
+        result = self._request_with_params(POST, WITHDRAWAL_COIN, params)
+        return result
 
     # Get Deposit History
     def get_deposit_history(

@@ -8,8 +8,14 @@ router = APIRouter()
 
 
 @router.get("/count")
-async def count(db: Session = Depends(deps.get_db)) -> int:
-    return await crud.withdraw.count(db=db)
+async def count(
+    database: Session = Depends(deps.get_db),
+    q: str = "",
+    current_user: models.User = Depends(deps.get_current_active_user),
+) -> int:
+    _search = _get_search(q)
+    owner_id = False if current_user["is_superuser"] else current_user["id"]
+    return await crud.withdraw.count(db=database, owner_id=owner_id, search=_search)
 
 
 @router.get("/", response_model=List[schemas.Withdraw])
@@ -17,27 +23,33 @@ async def read_withdraws(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
+    q: str = "",
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Retrieve withdraw.
     """
-    withdraws = await crud.withdraw.get_multi(db, skip=skip, limit=limit)
+    _search = _get_search(q)
+    withdraws = await crud.withdraw.get_multi(
+        db, skip=skip, limit=limit, search=_search
+    )
     return withdraws
 
 
-@router.post("/", response_model=schemas.Withdraw)
+@router.post("/", response_model=schemas.WithdrawBaseCreated)
 async def create_withdraw(
     *,
     db: Session = Depends(deps.get_db),
-    withdraw_in: schemas.WithdrawCreate,
+    withdraw_in: schemas.WithdrawBaseCreated,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Create new withdraw.
     """
 
-    withdraw = await crud.withdraw.create(db=db, obj_in=withdraw_in)
+    withdraw = await crud.withdraw.create(
+        db=db, obj_in=withdraw_in, current_user=current_user
+    )
 
     return withdraw
 
@@ -73,3 +85,16 @@ async def delete_withdraw(
 
     withdraw = await crud.withdraw.remove(db=db, id=id)
     return withdraw
+
+
+def _get_search(q: str = ""):
+    search = {}
+    if q != "":
+        search = {
+            "$or": [
+                {"sum": {"$regex": str(q)}},
+                {"to": {"$regex": str(q)}},
+                {"status": {"$regex": str(q)}},
+            ]
+        }
+    return search

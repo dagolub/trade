@@ -41,6 +41,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self, db: Session, *, skip: int = 0, limit: int = 100, search=""
     ) -> List[ModelType]:
         result = []
+        if search == "":
+            search = {}
 
         async for document in db[self.model.__tablename__].find(search).sort("created", -1).skip(skip).limit(limit):  # type: ignore
             document["id"] = str(document["_id"])  # noqa
@@ -100,3 +102,10 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             return entity
         else:
             return None
+
+    async def get_by_status(self, db, status):
+        result = []
+        async for wallet in db[self.model.__tablename__].find({"status": status}):
+            wallet["id"] = str(wallet["_id"])
+            result.append(wallet)
+        return result

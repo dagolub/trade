@@ -12,6 +12,8 @@ import UsersEdit from './pages/users/edit'; // Import UsersEdit properly
 import UsersNew from './pages/users/new'; // Import UsersNew properly
 import Wallets from './pages/wallets/list'; // Import Wallets properly
 import WalletsView from './pages/wallets/view'; // Import WalletsNew properly
+import Withdraws from './pages/withdraws/list'; // Import Wallets properly
+import WithdrawsView from './pages/withdraws/view'; // Import WalletsNew properly
 import Signin from './pages/Signin'; // Import Signin properly
 import './css/style.css';
 
@@ -41,6 +43,9 @@ function App() {
 
         <Route path="/wallets/list" element={<Wallets />} />
         <Route path="/wallets/view/:id" element={<WalletsView />} />
+
+        <Route path="/withdraws/list" element={<Withdraws />} />
+        <Route path="/withdraws/view/:id" element={<WithdrawsView />} />
 
         <Route path="/settings" element={<Settings />} />
         <Route path="/signin" element={<Signin />} />

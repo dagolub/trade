@@ -1,20 +1,24 @@
 from abc import ABC
-
 from app.core.config import settings
 from app.services.interface import ExchangeInterface
 from app.services.okx_core.client import OKX as OKX_Client
 
 
 class OKX(ExchangeInterface, ABC):
-    def get_address(self, sub_account, currency, chain):
+    okx = ""
+
+    def __init__(self):
         try:
-            okx = OKX_Client(
+            self.okx = OKX_Client(
                 settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
             )
         except ValueError:
             raise ValueError("OKX not available")
-        sub_account_name = okx.create_sub_account(sub_account)
-        account = okx.get_account(
+        super().__init__()
+
+    def get_address(self, sub_account, currency, chain):
+        sub_account_name = self.okx.create_sub_account(sub_account)
+        account = self.okx.get_account(
             sub_account_name["data"][0]["subAcct"], currency, chain
         )
         if len(account.get("data")) == 0:
@@ -22,33 +26,30 @@ class OKX(ExchangeInterface, ABC):
         return account["data"][0]["addr"]
 
     def get_account_balance(self, ccy, api_key=None, secret_key=None, passphrase=None):
-        try:
-            okx = OKX_Client(
-                settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
-            )
-        except:  # noqa
-            raise ValueError("OKX not accessible")
-        return okx.get_account_balance(ccy, api_key, secret_key, passphrase)
+        return self.okx.get_account_balance(ccy, api_key, secret_key, passphrase)
 
     def get_sub_account_api_key(self, sub_account, api_key):
-        okx = OKX_Client(
-            settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
-        )
-        return okx.get_sub_account_api_key(sub_account, api_key)
+        return self.okx.get_sub_account_api_key(sub_account, api_key)
 
     def get_asset_currencies(self):
-        okx = OKX_Client(
-            settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
-        )
-        return okx.get_asset_currencies()
+        return self.okx.get_asset_currencies()
 
     def create_sub_account_api_key(self, sub_account, sub_account_label, passphrase):
-        okx = OKX_Client(
-            settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
-        )
-        return okx.create_sub_account_api_key(
+        return self.okx.create_sub_account_api_key(
             sub_account, sub_account_label, passphrase
         )
+
+    def get_deposit_history(self, ccy=None, api_key=None, secret=None, passphrase=None):
+        self.okx = OKX_Client(api_key, secret, passphrase)
+        return self.okx.get_deposit_history(
+            ccy, api_key=api_key, secret=secret, passphrase=passphrase
+        )
+
+    def get_currency_chain(self, currency, chain):
+        return self.okx.get_currency_chain(currency, chain).upper()
+
+    def get_currency_fee(self, currency, chain):
+        return self.okx.get_currency_fee(_currency=currency, chain=chain)
 
     def transfer_money_to_main_account(
         self,
@@ -59,39 +60,22 @@ class OKX(ExchangeInterface, ABC):
         to_account=None,
         type_transfer=None,
     ):
-        okx = OKX_Client(
-            settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
-        )
-        return okx.transfer_money_to_main_account(
+        return self.okx.transfer_money_to_main_account(
             ccy, amt, sub_account, from_account, to_account, type_transfer
         )
 
-    def get_deposit_history(self, ccy=None, api_key=None, secret=None, passphrase=None):
-        okx = OKX_Client(api_key, secret, passphrase)
-        return okx.get_deposit_history(
-            ccy, api_key=api_key, secret=secret, passphrase=passphrase
+    def make_withdrawal(
+        self, amount=None, address=None, currency=None, chain=None, fee=None
+    ):
+        return self.okx.make_withdrawal(
+            amount=amount, address=address, currency=currency, chain=chain, fee=fee
         )
-
-    def make_withdrawal(self, currency=None, amount=None, address=None):
-        okx = OKX_Client(
-            settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
-        )
-        return okx.make_withdrawal(currency, amount, address)
 
     def get_withdrawal_history(self, ccy, wdId):
-        okx = OKX_Client(
-            settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
-        )
-        return okx.get_withdrawal_history(ccy, wdId)
+        return self.okx.get_withdrawal_history(ccy, wdId)
 
     def frac_to_int(self, amount: str, currency: str) -> int:
-        okx = OKX_Client(
-            settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
-        )
-        return okx.fractional_to_integer(amount, currency)
+        return self.okx.fractional_to_integer(amount, currency)
 
     def int_to_frac(self, amount: str, currency: str) -> int:
-        okx = OKX_Client(
-            settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
-        )
-        return okx.integer_to_fractional(amount, currency)
+        return self.okx.integer_to_fractional(amount, currency)
