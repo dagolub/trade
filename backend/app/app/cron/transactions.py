@@ -42,6 +42,7 @@ async def incoming_transaction():
     okx = exchanger.get("OKX")
     wallets = await crud.deposit.get_by_status(db=db, status="created")
     for wallet in wallets:
+        print("Wallet", wallet)
         _deposit = await crud.deposit.get_by_wallet(db=db, wallet=wallet["wallet"])
 
         sub_account = _deposit["sub_account"]
@@ -55,12 +56,13 @@ async def incoming_transaction():
 
         api_key = sub_account_api_keys["data"][0]["apiKey"]
         secret_key = sub_account_api_keys["data"][0]["secretKey"]
-
+        print("API Keys", sub_account_api_keys)
         deposit_history = okx.get_deposit_history(
             ccy="", api_key=api_key, secret=secret_key, passphrase=passphrase
         )
 
         for dh in deposit_history["data"]:
+            print("DH", dh)
             if dh["to"] == wallet["wallet"]:
                 amount = dh["amt"]
                 currency = dh["ccy"]
@@ -74,6 +76,9 @@ async def incoming_transaction():
                     status = "overpayment"
 
                 if currency == wallet["currency"]:
+                    print("Amount", amount)
+                    print("Currency", currency)
+                    print("txId", txId)
                     await crud.deposit.update(
                         db=db, db_obj={"id": _deposit["id"]}, obj_in={"status": status}
                     )
