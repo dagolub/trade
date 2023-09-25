@@ -3,18 +3,6 @@ from .consts import *
 
 
 class BrokerAPI(Client):
-    # def __init__(
-    #     self, api_key, api_secret_key, passphrase, use_server_time=False, flag="1"
-    # ):
-    #     pass
-
-    #     print("BROKER API KEY", api_key)
-    #     print("BROKER SECRET", api_secret_key)
-    #     print("BROKER PASSPHRASE", passphrase)
-    #     Client.__init__(
-    #         self, api_key, api_secret_key, passphrase, use_server_time, flag
-    #     )
-
     def broker_info(self):
         params = {}
         return self._request_with_params(GET, BROKER_INFO, params)

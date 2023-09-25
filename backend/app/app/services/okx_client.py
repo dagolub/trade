@@ -1,5 +1,4 @@
 from abc import ABC
-from app.core.config import settings
 from app.services.interface import ExchangeInterface
 from app.services.okx_core.client import OKX as OKX_Client
 
@@ -8,12 +7,6 @@ class OKX(ExchangeInterface, ABC):
     okx = ""
 
     def __init__(self):
-        try:
-            self.okx = OKX_Client(
-                settings.OKX_API_KEY, settings.OKX_SECRET_KEY, settings.OKX_PASSPHRASE
-            )
-        except ValueError:
-            raise ValueError("OKX not available")
         super().__init__()
 
     def get_address(self, sub_account, currency, chain):

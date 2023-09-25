@@ -2,15 +2,15 @@ import json
 import requests  # type: ignore
 from . import consts as c
 from . import exceptions, utils
-
+from app.core.config import settings
 
 class Client(object):
     def __init__(
         self, api_key, api_secret_key, passphrase, use_server_time=False, flag="1"
     ):
-        self.API_KEY = api_key
-        self.API_SECRET_KEY = api_secret_key
-        self.PASSPHRASE = passphrase
+        self.API_KEY = settings.OKX_API_KEY
+        self.API_SECRET_KEY = settings.OKX_SECRET_KEY
+        self.PASSPHRASE = settings.OKX_PASSPHRASE
         self.use_server_time = use_server_time
         self.flag = flag
 
