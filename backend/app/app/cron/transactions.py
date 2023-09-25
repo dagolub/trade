@@ -35,6 +35,7 @@ def delete_old_sub_account_api_keys(okx, sub_account):
     api_keys = okx.get_sub_account_api_keys(sub_account)
     for i in api_keys["data"]:
         okx.delete_api_key(sub_account=sub_account, api_key=i["apiKey"])
+        sleep(1)
 
 
 async def incoming_transaction():  # noqa: 901
@@ -49,6 +50,7 @@ async def incoming_transaction():  # noqa: 901
         sub_account = _deposit["sub_account"]
         passphrase = generate_random_string_passphrase(12)
         delete_old_sub_account_api_keys(okx=okx, sub_account=sub_account)
+
         print("Before get key")
         try:
             sub_account_api_keys = okx.create_sub_account_api_key(
