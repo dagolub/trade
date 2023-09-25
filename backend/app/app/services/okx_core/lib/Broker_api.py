@@ -82,7 +82,7 @@ class BrokerAPI(Client):
         }
         return self._request_with_params(GET, REBATE_DAILY, params)
 
-    def nd_create_apikey(self, subAcct="", label="", passphrase="", ip="", perm=""):
+    def znd_create_apikey(self, subAcct="", label="", passphrase="", ip="", perm=""):
         params = {
             "subAcct": subAcct,
             "label": label,

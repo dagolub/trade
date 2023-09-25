@@ -37,7 +37,7 @@ def delete_old_sub_account_api_keys(okx, sub_account):
         okx.delete_api_key(sub_account=sub_account, api_key=i["apiKey"])
 
 
-async def incoming_transaction():
+async def incoming_transaction():  # noqa: 901
     exchanger = Exchanger()
     okx = exchanger.get("OKX")
     wallets = await crud.deposit.get_by_status(db=db, status="created")
@@ -49,11 +49,14 @@ async def incoming_transaction():
         passphrase = generate_random_string_passphrase(12)
         delete_old_sub_account_api_keys(okx=okx, sub_account=sub_account)
         print("Before get key")
-        sub_account_api_keys = okx.create_sub_account_api_key(
-            sub_account,
-            sub_account + "L" + generate_random_small(5),
-            passphrase=passphrase,
-        )
+        try:
+            sub_account_api_keys = okx.create_sub_account_api_key(
+                sub_account,
+                sub_account + "L" + generate_random_small(5),
+                passphrase=passphrase,
+            )
+        except ValueError as e:
+            print("Exception in get sub account" + e.args[0])
         print("SUB", sub_account_api_keys)
         if "data" not in sub_account_api_keys == 0:
             continue
@@ -86,41 +89,14 @@ async def incoming_transaction():
                     await crud.deposit.update(
                         db=db, db_obj={"id": _deposit["id"]}, obj_in={"status": status}
                     )
-                    okx.transfer_money_to_main_account(
-                        ccy=currency,
-                        amt=amount,
-                        sub_account=sub_account,
-                    )
-                    sleep(2)
-                    await create_transaction(
-                        from_wallet="<external>",
-                        to_wallet=wallet["wallet"],
-                        tx=txId,
-                        amount=amount,
+                    await create_corresponded_transactions(
+                        okx=okx,
                         currency=currency,
-                        _type="OKX",
-                        owner_id=_deposit["owner_id"],
-                        deposit_id=_deposit["id"],
-                    )
-                    main_account = okx.transfer_money_to_main_account(
-                        ccy=currency,
-                        amt=amount,
-                        from_account=18,  # trading account
-                        sub_account=sub_account,
-                        to_account=6,  # funding account
-                        type_transfer=0,
-                    )
-                    sleep(2)
-
-                    await create_transaction(
-                        from_wallet=wallet["wallet"],
-                        to_wallet="<internal>",
-                        tx=main_account["data"][0]["transId"],
                         amount=amount,
-                        currency=currency,
-                        _type="OKX",
-                        owner_id=_deposit["owner_id"],
-                        deposit_id=_deposit["id"],
+                        sub_account=sub_account,
+                        wallet=wallet,
+                        txId=txId,
+                        _deposit=_deposit,
                     )
                     user = await crud.user.get(db=db, entity_id=_deposit["owner_id"])
                     if "bal" in user:
@@ -159,6 +135,47 @@ async def incoming_transaction():
         #                          currency=sub_account_balance["data"][0]["ccy"],
         #                          type="OKX",
         #                          owner_id=deposit["owner_id"])
+
+
+async def create_corresponded_transactions(
+    okx, currency, amount, sub_account, wallet, txId, _deposit
+):
+    okx.transfer_money_to_main_account(
+        ccy=currency,
+        amt=amount,
+        sub_account=sub_account,
+    )
+    sleep(2)
+    await create_transaction(
+        from_wallet="<external>",
+        to_wallet=wallet["wallet"],
+        tx=txId,
+        amount=amount,
+        currency=currency,
+        _type="OKX",
+        owner_id=_deposit["owner_id"],
+        deposit_id=_deposit["id"],
+    )
+    main_account = okx.transfer_money_to_main_account(
+        ccy=currency,
+        amt=amount,
+        from_account=18,  # trading account
+        sub_account=sub_account,
+        to_account=6,  # funding account
+        type_transfer=0,
+    )
+    sleep(2)
+
+    await create_transaction(
+        from_wallet=wallet["wallet"],
+        to_wallet="<internal>",
+        tx=main_account["data"][0]["transId"],
+        amount=amount,
+        currency=currency,
+        _type="OKX",
+        owner_id=_deposit["owner_id"],
+        deposit_id=_deposit["id"],
+    )
 
 
 async def send_callback():
