@@ -42,6 +42,7 @@ async def incoming_transaction():  # noqa: 901
     okx = exchanger.get("OKX")
     wallets = await crud.deposit.get_by_status(db=db, status="created")
     for wallet in wallets:
+        print("")
         print("Wallet", wallet)
         _deposit = await crud.deposit.get_by_wallet(db=db, wallet=wallet["wallet"])
 
