@@ -35,9 +35,7 @@ class OKX:
 
     def get_deposit_history(self, ccy=None, api_key=None, secret=None, passphrase=None):
         self.okx = OKX_Client()
-        return self.okx.get_deposit_history(
-            ccy, api_key=api_key, secret=secret, passphrase=passphrase
-        )
+        return self.okx.get_deposit_history(ccy)
 
     def get_currency_chain(self, currency, chain):
         return self.okx.get_currency_chain(currency, chain).upper()
