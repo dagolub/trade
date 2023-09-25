@@ -17,9 +17,7 @@ def get_ip():
 class OKX:
     def create_sub_account(self, sub_account):
         try:
-            broker = BrokerAPI(
-                self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
-            )
+            broker = BrokerAPI(flag="0")
             result = broker.create_subaccount(sub_account, sub_account + "Label")
             return result
         except ValueError as e:
@@ -27,28 +25,12 @@ class OKX:
 
     def get_account(self, sub_account, ccy, chain):
         chain = self.get_currency_chain(ccy, chain)
-        account = BrokerAPI(
-            self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
-        )
+        account = BrokerAPI(flag="0")
         return account.subaccount_deposit_address(sub_account, ccy, chain, 1, 6)
 
     def get_account_balance(
         self, ccy=None, api_key=None, secret_key=None, passphrase=None
     ):
-        if api_key:
-            api_key = api_key
-        else:
-            api_key = self.main_api_key
-
-        if secret_key:
-            secret_key = secret_key
-        else:
-            secret_key = self.main_secret_key
-
-        if passphrase:
-            passphrase = passphrase
-        else:
-            passphrase = self.main_passphrase
 
         funding = Funding(api_key, secret_key, passphrase, flag="0")
         return funding.get_balances(ccy)
