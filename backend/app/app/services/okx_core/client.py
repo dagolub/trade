@@ -31,7 +31,6 @@ class OKX:
     def get_account_balance(
         self, ccy=None, api_key=None, secret_key=None, passphrase=None
     ):
-
         funding = Funding(api_key, secret_key, passphrase, flag="0")
         return funding.get_balances(ccy)
 
@@ -41,9 +40,6 @@ class OKX:
 
     def create_sub_account_api_key(self, sub_account, sub_account_label, passphrase):
         ip = "178.128.196.184,165.22.19.20"
-        print("BROKER API KEY", self.main_api_key)
-        print("BROKER SECRET", self.main_secret_key)
-        print("BROKER PASSPHRASE", self.main_passphrase)
         broker = BrokerAPI(flag="0")
 
         result = broker.nd_create_apikey(
@@ -84,7 +80,7 @@ class OKX:
         else:
             type_transfer = 2
         funding = Funding(
-            self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
+            flag="0"
         )
         if sub_account:
             return funding.funds_transfer(
@@ -105,7 +101,7 @@ class OKX:
     ):
         try:
             funding = Funding(
-                self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
+                 flag="0"
             )
 
             withdrawals = funding.coin_withdraw(
@@ -129,7 +125,7 @@ class OKX:
 
     def get_withdrawal_history(self, ccy: str, wd_id: str):
         funding = Funding(
-            self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
+             flag="0"
         )
         return funding.get_withdrawal_history(ccy, wdId=wd_id)
 
@@ -141,7 +137,7 @@ class OKX:
     def get_currency_fee(self, _currency: str, chain: str):
         chain = self.get_currency_chain(_currency.lower(), chain)
         funding = Funding(
-            self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
+             flag="0"
         )
         currencies = funding.get_currency()
         for currency in currencies["data"]:
