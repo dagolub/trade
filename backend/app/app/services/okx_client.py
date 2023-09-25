@@ -34,7 +34,7 @@ class OKX:
         return self.okx.get_sub_account_api_keys(sub_account)
 
     def get_deposit_history(self, ccy=None, api_key=None, secret=None, passphrase=None):
-        self.okx = OKX_Client(api_key, secret, passphrase)
+        self.okx = OKX_Client()
         return self.okx.get_deposit_history(
             ccy, api_key=api_key, secret=secret, passphrase=passphrase
         )

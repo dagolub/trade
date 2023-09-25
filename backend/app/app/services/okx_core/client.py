@@ -79,9 +79,7 @@ class OKX:
             type_transfer = type_transfer
         else:
             type_transfer = 2
-        funding = Funding(
-            flag="0"
-        )
+        funding = Funding(flag="0")
         if sub_account:
             return funding.funds_transfer(
                 ccy,
@@ -100,9 +98,7 @@ class OKX:
         self, currency=None, amount=None, address=None, chain=None, fee=None
     ):
         try:
-            funding = Funding(
-                 flag="0"
-            )
+            funding = Funding(flag="0")
 
             withdrawals = funding.coin_withdraw(
                 ccy=currency.upper(),
@@ -124,21 +120,17 @@ class OKX:
             raise ValueError("Failed to withdraw" + e.args[0])
 
     def get_withdrawal_history(self, ccy: str, wd_id: str):
-        funding = Funding(
-             flag="0"
-        )
+        funding = Funding(flag="0")
         return funding.get_withdrawal_history(ccy, wdId=wd_id)
 
     @staticmethod
-    def get_deposit_history(ccy=None, api_key=None, secret=None, passphrase=None):
-        funding = Funding(api_key, secret, passphrase, flag="0")
+    def get_deposit_history(ccy=None):
+        funding = Funding(flag="0")
         return funding.get_deposit_history(ccy)
 
     def get_currency_fee(self, _currency: str, chain: str):
         chain = self.get_currency_chain(_currency.lower(), chain)
-        funding = Funding(
-             flag="0"
-        )
+        funding = Funding(flag="0")
         currencies = funding.get_currency()
         for currency in currencies["data"]:
             if currency["ccy"] == _currency.upper() and currency["chain"] == chain:
