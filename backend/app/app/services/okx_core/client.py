@@ -20,9 +20,9 @@ class OKX:
     main_passphrase = ""
 
     def __init__(self, main_api_key, main_secret_key, main_passphrase):
-        print("INIT API KEY", self.main_api_key)
-        print("INIT SECRET", self.main_secret_key)
-        print("PINIT PASSPHRASE", self.main_passphrase)
+        print("INIT API KEY", main_api_key)
+        print("INIT SECRET", main_secret_key)
+        print("PINIT PASSPHRASE", main_passphrase)
         self.main_api_key = main_api_key
         self.main_secret_key = main_secret_key
         self.main_passphrase = main_passphrase
