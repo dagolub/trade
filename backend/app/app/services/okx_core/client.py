@@ -54,9 +54,7 @@ class OKX:
         return funding.get_balances(ccy)
 
     def get_sub_account_api_key(self, sub_account, api_key):
-        broker = BrokerAPI(
-            self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
-        )
+        broker = BrokerAPI(flag="0")
         return broker.nd_select_apikey(sub_account, api_key)
 
     def create_sub_account_api_key(self, sub_account, sub_account_label, passphrase):
@@ -77,9 +75,7 @@ class OKX:
         return broker.nd_select_apikey(subAcct=sub_account)
 
     def delete_api_key(self, sub_account, api_key):
-        broker = BrokerAPI(
-            self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
-        )
+        broker = BrokerAPI(flag="0")
         return broker.nd_delete_apikey(subAcct=sub_account, apiKey=api_key)
 
     def transfer_money_to_main_account(
