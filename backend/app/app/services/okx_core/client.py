@@ -73,12 +73,13 @@ class OKX:
 
     def create_sub_account_api_key(self, sub_account, sub_account_label, passphrase):
         ip = "178.128.196.184,165.22.19.20"
+        print("BROKER API KEY", self.main_api_key)
+        print("BROKER SECRET", self.main_secret_key)
+        print("BROKER PASSPHRASE", self.main_passphrase)
         broker = BrokerAPI(
             self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
         )
-        print("API KEY", self.main_api_key)
-        print("SECRET", self.main_secret_key)
-        print("PASSPHRASE", self.main_passphrase)
+
         result = broker.nd_create_apikey(
             sub_account, sub_account_label, passphrase, ip, "withdraw"
         )
