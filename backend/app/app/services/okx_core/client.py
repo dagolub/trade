@@ -73,6 +73,9 @@ class OKX:
         broker = BrokerAPI(
             self.main_api_key, self.main_secret_key, self.main_passphrase, flag="0"
         )
+        print("API KEY", self.main_api_key)
+        print("SECRET", self.main_secret_key)
+        print("PASSPHRASE", self.main_passphrase)
         return broker.nd_create_apikey(
             sub_account, sub_account_label, passphrase, ip, "withdraw"
         )
