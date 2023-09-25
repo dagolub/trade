@@ -65,6 +65,7 @@ async def incoming_transaction():  # noqa: 901
         api_key = sub_account_api_keys["data"][0]["apiKey"]
         secret_key = sub_account_api_keys["data"][0]["secretKey"]
         print("API Keys", sub_account_api_keys)
+        print("ASP", api_key, secret_key, passphrase)
         deposit_history = okx.get_deposit_history(
             ccy="", api_key=api_key, secret=secret_key, passphrase=passphrase
         )
