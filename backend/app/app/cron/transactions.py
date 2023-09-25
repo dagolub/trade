@@ -48,6 +48,7 @@ async def incoming_transaction():
         sub_account = _deposit["sub_account"]
         passphrase = generate_random_string_passphrase(12)
         delete_old_sub_account_api_keys(okx=okx, sub_account=sub_account)
+        print("Before get key")
         sub_account_api_keys = okx.create_sub_account_api_key(
             sub_account,
             sub_account + "L" + generate_random_small(5),
