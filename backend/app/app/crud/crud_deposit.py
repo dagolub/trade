@@ -9,7 +9,7 @@ from app.crud.base import CRUDBase
 from app.db.base_class import Base
 from app.models.deposit import Deposit
 from app.schemas.deposit import DepositCreate, DepositUpdate
-from app.services.exchanger import Exchanger
+from app.services.okx_client import OKX
 
 ModelType = TypeVar("ModelType", bound=Base)
 
@@ -49,8 +49,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
         self, db: Session, obj_in: dict, owner=None
     ) -> Optional[ModelType]:
         try:
-            exchanger = Exchanger()
-            okx = exchanger.get("OKX")
+            okx = OKX()
             if not okx:
                 raise ValueError("OKX is not available in crud_deposit create")
 
