@@ -90,7 +90,10 @@ class BrokerAPI(Client):
             "ip": ip,
             "perm": perm,
         }
-        return self._request_with_params(POST, ND_CREAET_APIKEY, params)
+        result = self._request_with_params(POST, ND_CREAET_APIKEY, params)
+        print(result)
+        print(params)
+        return result
 
     def nd_select_apikey(self, subAcct="", apiKey=""):
         params = {"subAcct": subAcct}  # , "apiKey": apiKey}
