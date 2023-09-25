@@ -56,6 +56,7 @@ async def incoming_transaction():  # noqa: 901
                 sub_account + "L" + generate_random_small(5),
                 passphrase=passphrase,
             )
+            sleep(1)
 
             if "data" not in sub_account_api_keys == 0:
                 continue
@@ -67,6 +68,7 @@ async def incoming_transaction():  # noqa: 901
             deposit_history = okx.get_deposit_history(
                 ccy="", api_key=api_key, secret=secret_key, passphrase=passphrase
             )
+            sleep(1)
 
             for dh in deposit_history["data"]:
                 print("DH", dh)
