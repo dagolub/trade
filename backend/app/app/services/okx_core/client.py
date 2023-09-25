@@ -31,7 +31,7 @@ class OKX:
     def get_account_balance(
         self, ccy=None, api_key=None, secret_key=None, passphrase=None
     ):
-        funding = Funding(api_key, secret_key, passphrase, flag="0")
+        funding = Funding(flag="0")
         return funding.get_balances(ccy)
 
     def get_sub_account_api_key(self, sub_account, api_key):

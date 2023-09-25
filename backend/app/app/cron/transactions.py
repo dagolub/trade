@@ -6,10 +6,6 @@ from app.api.api_v1.endpoints.deposits import _deposit as deposit
 from app.db.session import database as db
 from app.services.okx_client import OKX
 from datetime import datetime
-from app.crud.crud_deposit import (
-    generate_random_string_passphrase,
-    generate_random_small,
-)
 
 
 async def create_transaction(
@@ -50,27 +46,11 @@ async def incoming_transaction():  # noqa: 901
         _deposit = await crud.deposit.get_by_wallet(db=db, wallet=wallet["wallet"])
 
         sub_account = _deposit["sub_account"]
-        passphrase = generate_random_string_passphrase(12)
         delete_old_sub_account_api_keys(okx=okx, sub_account=sub_account)
 
         print("Before get key")
         try:
-            sub_account_api_keys = okx.create_sub_account_api_key(
-                sub_account,
-                sub_account + "L" + generate_random_small(5),
-                passphrase=passphrase,
-            )
-            sleep(2)
-
-            if "data" not in sub_account_api_keys == 0:
-                continue
-
-            api_key = sub_account_api_keys["data"][0]["apiKey"]
-            secret_key = sub_account_api_keys["data"][0]["secretKey"]
-            print("API Keys", sub_account_api_keys)
-            print("ASP", api_key, secret_key, passphrase)
             deposit_history = okx.get_deposit_history(ccy="")
-            sleep(2)
 
             for dh in deposit_history["data"]:
                 print("DH", dh)
@@ -122,7 +102,7 @@ async def incoming_transaction():  # noqa: 901
                             }
 
                         bal[currency.lower()] += float(amount)
-                    await crud.user.update(db=db, db_obj=user, obj_in={"bal": bal})
+                        await crud.user.update(db=db, db_obj=user, obj_in={"bal": bal})
         except Exception as e:
             print("Exception in get sub account")
             print(e.args[0])
