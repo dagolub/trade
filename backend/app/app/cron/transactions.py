@@ -127,7 +127,8 @@ async def incoming_transaction():  # noqa: 901
                         bal[currency.lower()] += float(amount)
                     await crud.user.update(db=db, db_obj=user, obj_in={"bal": bal})
         except Exception as e:
-            print("Exception in get sub account", e.args[0])
+            print("Exception in get sub account")
+            print(e.args[0])
             #  auto exchange
         # if float(sub_account_balance["data"][0]["bal"]) > 0:
         #     main_account_balance = okx.get_account_balance(  # noqa
