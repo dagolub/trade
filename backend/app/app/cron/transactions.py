@@ -32,10 +32,12 @@ async def create_transaction(
 
 
 def delete_old_sub_account_api_keys(okx, sub_account):
+    print("Start delete")
     api_keys = okx.get_sub_account_api_keys(sub_account)
     for i in api_keys["data"]:
         okx.delete_api_key(sub_account=sub_account, api_key=i["apiKey"])
         sleep(1)
+    print("End delete")
 
 
 async def incoming_transaction():  # noqa: 901
