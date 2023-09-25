@@ -42,7 +42,7 @@ class Client(object):
         if method == c.GET:
             response = requests.get(url, headers=header)
         elif method == c.POST:
-            response = requests.zost(url, data=body, headers=header)
+            response = requests.post(url, data=body, headers=header)
 
         # exception handle
         # print(response.headers)
