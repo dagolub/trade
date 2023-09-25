@@ -1,13 +1,11 @@
-from abc import ABC
-from app.services.interface import ExchangeInterface
 from app.services.okx_core.client import OKX as OKX_Client
 
 
-class OKX(ExchangeInterface, ABC):
+class OKX:
     okx = ""
 
     def __init__(self):
-        super().__init__()
+        self.okx = OKX_Client()
 
     def get_address(self, sub_account, currency, chain):
         sub_account_name = self.okx.create_sub_account(sub_account)

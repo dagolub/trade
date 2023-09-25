@@ -6,9 +6,7 @@ from app.core.config import settings
 
 
 class Client(object):
-    def __init__(
-        self, api_key, api_secret_key, passphrase, use_server_time=False, flag="1"
-    ):
+    def __init__(self, use_server_time=False, flag="1"):
         self.API_KEY = settings.OKX_API_KEY
         self.API_SECRET_KEY = settings.OKX_SECRET_KEY
         self.PASSPHRASE = settings.OKX_PASSPHRASE

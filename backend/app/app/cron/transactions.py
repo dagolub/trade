@@ -4,7 +4,7 @@ import requests  # type: ignore
 from app import crud
 from app.api.api_v1.endpoints.deposits import _deposit as deposit
 from app.db.session import database as db
-from app.services.exchanger import Exchanger
+from app.services.okx_client import OKX
 from datetime import datetime
 from app.crud.crud_deposit import (
     generate_random_string_passphrase,
@@ -42,8 +42,7 @@ def delete_old_sub_account_api_keys(okx, sub_account):
 
 
 async def incoming_transaction():  # noqa: 901
-    exchanger = Exchanger()
-    okx = exchanger.get("OKX")
+    okx = OKX()
     wallets = await crud.deposit.get_by_status(db=db, status="created")
     for wallet in wallets:
         print("")
@@ -253,9 +252,7 @@ async def send_callback():
 
 
 async def fill_transaction():
-    exchanger = Exchanger()
-    okx = exchanger.get("OKX")
-
+    okx = OKX()
     transactions = await crud.transaction.get_not_filled(mongo_db=db)
     for trans in transactions:
         currency = trans["currency"]
@@ -269,8 +266,7 @@ async def fill_transaction():
 
 
 async def outgoing_transaction():
-    exchanger = Exchanger()
-    okx = exchanger.get("OKX")
+    okx = OKX()
 
     withdraws = await crud.withdraw.get_by_status(db=db, status="created")
     for withdraw in withdraws:
