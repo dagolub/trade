@@ -55,7 +55,7 @@ async def incoming_transaction():  # noqa: 901
                 sub_account + "L" + generate_random_small(5),
                 passphrase=passphrase,
             )
-        except ValueError as e:
+        except Exception as e:
             print("Exception in get sub account" + e.args[0])
         print("SUB", sub_account_api_keys)
         if "data" not in sub_account_api_keys == 0:
