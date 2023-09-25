@@ -83,7 +83,6 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                     "callback": obj_in.callback,  # type: ignore
                     "callback_response": "",
                     "sub_account": sub_account,
-                    "sub_account_label": sub_account + "Label",
                     "created": datetime.utcnow(),
                 }
 
