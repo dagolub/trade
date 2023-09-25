@@ -56,68 +56,72 @@ async def incoming_transaction():  # noqa: 901
                 sub_account + "L" + generate_random_small(5),
                 passphrase=passphrase,
             )
+
+            if "data" not in sub_account_api_keys == 0:
+                continue
+
+            api_key = sub_account_api_keys["data"][0]["apiKey"]
+            secret_key = sub_account_api_keys["data"][0]["secretKey"]
+            print("API Keys", sub_account_api_keys)
+            print("ASP", api_key, secret_key, passphrase)
+            deposit_history = okx.get_deposit_history(
+                ccy="", api_key=api_key, secret=secret_key, passphrase=passphrase
+            )
+
+            for dh in deposit_history["data"]:
+                print("DH", dh)
+                if dh["to"] == wallet["wallet"]:
+                    amount = dh["amt"]
+                    currency = dh["ccy"]
+                    txId = dh["txId"]
+
+                    deposit_amount = okx.int_to_frac(wallet["sum"], wallet["currency"])
+                    status = "paid"
+                    if float(amount) < float(deposit_amount):
+                        status = "partially"
+                    elif float(amount) > float(deposit_amount):
+                        status = "overpayment"
+
+                    if currency == wallet["currency"]:
+                        print("Amount", amount)
+                        print("Currency", currency)
+                        print("txId", txId)
+                        await crud.deposit.update(
+                            db=db,
+                            db_obj={"id": _deposit["id"]},
+                            obj_in={"status": status},
+                        )
+                        await create_corresponded_transactions(
+                            okx=okx,
+                            currency=currency,
+                            amount=amount,
+                            sub_account=sub_account,
+                            wallet=wallet,
+                            txId=txId,
+                            _deposit=_deposit,
+                        )
+                        user = await crud.user.get(
+                            db=db, entity_id=_deposit["owner_id"]
+                        )
+                        if "bal" in user:
+                            bal = user["bal"]
+                        else:
+                            bal = {}
+                        if "bal" not in user or not bal:
+                            bal = {
+                                "btc": 0,
+                                "ltc": 0,
+                                "bch": 0,
+                                "usdt": 0,
+                                "etc": 0,
+                                "eth": 0,
+                            }
+
+                        bal[currency.lower()] += float(amount)
+                    await crud.user.update(db=db, db_obj=user, obj_in={"bal": bal})
         except Exception as e:
             print("Exception in get sub account", e.args[0])
-        print("SUB", sub_account_api_keys)
-        if "data" not in sub_account_api_keys == 0:
-            continue
-
-        api_key = sub_account_api_keys["data"][0]["apiKey"]
-        secret_key = sub_account_api_keys["data"][0]["secretKey"]
-        print("API Keys", sub_account_api_keys)
-        print("ASP", api_key, secret_key, passphrase)
-        deposit_history = okx.get_deposit_history(
-            ccy="", api_key=api_key, secret=secret_key, passphrase=passphrase
-        )
-
-        for dh in deposit_history["data"]:
-            print("DH", dh)
-            if dh["to"] == wallet["wallet"]:
-                amount = dh["amt"]
-                currency = dh["ccy"]
-                txId = dh["txId"]
-
-                deposit_amount = okx.int_to_frac(wallet["sum"], wallet["currency"])
-                status = "paid"
-                if float(amount) < float(deposit_amount):
-                    status = "partially"
-                elif float(amount) > float(deposit_amount):
-                    status = "overpayment"
-
-                if currency == wallet["currency"]:
-                    print("Amount", amount)
-                    print("Currency", currency)
-                    print("txId", txId)
-                    await crud.deposit.update(
-                        db=db, db_obj={"id": _deposit["id"]}, obj_in={"status": status}
-                    )
-                    await create_corresponded_transactions(
-                        okx=okx,
-                        currency=currency,
-                        amount=amount,
-                        sub_account=sub_account,
-                        wallet=wallet,
-                        txId=txId,
-                        _deposit=_deposit,
-                    )
-                    user = await crud.user.get(db=db, entity_id=_deposit["owner_id"])
-                    if "bal" in user:
-                        bal = user["bal"]
-                    else:
-                        bal = {}
-                    if "bal" not in user or not bal:
-                        bal = {
-                            "btc": 0,
-                            "ltc": 0,
-                            "bch": 0,
-                            "usdt": 0,
-                            "etc": 0,
-                            "eth": 0,
-                        }
-
-                    bal[currency.lower()] += float(amount)
-                    await crud.user.update(db=db, db_obj=user, obj_in={"bal": bal})
-                    #  auto exchange
+            #  auto exchange
         # if float(sub_account_balance["data"][0]["bal"]) > 0:
         #     main_account_balance = okx.get_account_balance(  # noqa
         #         ccy=sub_account_balance["data"][0]["ccy"]
