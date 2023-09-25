@@ -53,7 +53,7 @@ async def incoming_transaction():
             sub_account + "L" + generate_random_small(5),
             passphrase=passphrase,
         )
-        if len(sub_account_api_keys["data"]) == 0:
+        if "data" not in sub_account_api_keys == 0:
             continue
 
         api_key = sub_account_api_keys["data"][0]["apiKey"]
