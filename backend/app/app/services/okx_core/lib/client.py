@@ -32,9 +32,9 @@ class Client(object):
             utils.pre_hash(timestamp, method, request_path, str(body)),
             self.API_SECRET_KEY,
         )
-        header = utils.get_header(
-            self.API_KEY, sign, timestamp, self.PASSPHRASE, self.flag
-        )
+        # header = utils.get_header(
+        #     self.API_KEY, sign, timestamp, self.PASSPHRASE, self.flag
+        # )
 
         # send request
         response = None
