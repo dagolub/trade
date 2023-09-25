@@ -4,6 +4,7 @@ from . import consts as c
 from . import exceptions, utils
 from app.core.config import settings
 
+
 class Client(object):
     def __init__(
         self, api_key, api_secret_key, passphrase, use_server_time=False, flag="1"
