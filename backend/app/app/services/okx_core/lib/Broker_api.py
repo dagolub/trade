@@ -93,9 +93,7 @@ class BrokerAPI(Client):
         print("Params", params)
         result = self._request_with_params(POST, ND_CREAET_APIKEY, params)
         print("Result", result)
-        print("API KEY", self.main_api_key)
-        print("SECRET", self.main_secret_key)
-        print("PASSPHRASE", self.main_passphrase)
+
         return result
 
     def nd_select_apikey(self, subAcct="", apiKey=""):

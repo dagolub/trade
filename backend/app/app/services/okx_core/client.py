@@ -76,9 +76,13 @@ class OKX:
         print("API KEY", self.main_api_key)
         print("SECRET", self.main_secret_key)
         print("PASSPHRASE", self.main_passphrase)
-        return broker.nd_create_apikey(
+        result = broker.nd_create_apikey(
             sub_account, sub_account_label, passphrase, ip, "withdraw"
         )
+        print("API KEY", self.main_api_key)
+        print("SECRET", self.main_secret_key)
+        print("PASSPHRASE", self.main_passphrase)
+        return result
 
     def get_sub_account_api_keys(self, sub_account):
         broker = BrokerAPI(
