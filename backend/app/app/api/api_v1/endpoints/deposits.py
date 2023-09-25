@@ -3,12 +3,12 @@ from typing import Any, List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
-
+from app.services.okx_client import OKX
 from app import crud, models, schemas
 from app.api import deps
 from app.cron.callback import get_callback
 from app.db.session import database as db
-from app.services.exchanger import Exchanger
+
 
 router = APIRouter()
 
@@ -32,11 +32,6 @@ async def read_deposits(
     q: str = "",
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    exchanger = Exchanger()
-    okx = exchanger.get("OKX")
-    if not okx:
-        raise ValueError("Exchanger 'OKX' is not available.")
-
     search = _get_search(q)
     if current_user["is_superuser"]:
         deposits = await crud.deposit.get_multi(
@@ -164,8 +159,7 @@ async def callback(entity_id: str):
 
 
 def _deposit(deposit):
-    exchanger = Exchanger()
-    okx = exchanger.get("OKX")
+    okx = OKX()
     if not okx:
         raise ValueError("Exchanger 'OKX' is not available in parse deposit")
     result = {}
