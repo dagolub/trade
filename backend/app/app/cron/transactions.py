@@ -269,6 +269,7 @@ async def outgoing_transaction():
 
         except ValueError as e:
             print("Exception in outgoing transaction", e.args[0])
+            return
 
 
 if __name__ == "__main__":
