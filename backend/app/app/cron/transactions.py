@@ -54,7 +54,18 @@ async def incoming_transaction():  # noqa: 901
         print("Before get key")
         try:
             print("Get deposit history")
-            deposit_history = okx.get_deposit_history(ccy="")
+            sleep(1)
+            print("Sub account", sub_account)
+            sub_account_api_key = okx.create_sub_account_api_key(
+                sub_account=sub_account
+            )
+            print("Sub account api key", sub_account_api_key)
+            api_key = sub_account_api_key["data"][0]["apiKey"]
+            secret = sub_account_api_key["data"][0]["secretKey"]
+            passphrase = sub_account_api_key["data"][0]["passphrase"]
+            deposit_history = okx.get_deposit_history(
+                ccy="", api_key=api_key, secret=secret, passphrase=passphrase
+            )
             print("Deposit history", deposit_history)
             sleep(1)
             for dh in deposit_history["data"]:
