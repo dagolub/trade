@@ -11,12 +11,18 @@ class OKX:
     def get_address(self, sub_account, currency, chain):
         chain = self.get_currency_chain(currency, chain)
 
-        account = BrokerAPI(flag="0")
-        account = account.subaccount_deposit_address(sub_account, currency, chain, 1, 6)
+        broker = BrokerAPI(flag="0")
+        try:
+            broker.create_subaccount(sub_account, sub_account + "Label")
+            account = broker.subaccount_deposit_address(
+                sub_account, currency, chain, 1, 6
+            )
 
-        if len(account.get("data")) == 0:
-            return "Cant create address"
-        return account["data"][0]["addr"]
+            if len(account.get("data")) == 0:
+                return "Cant create address"
+            return account["data"][0]["addr"]
+        except ValueError as e:
+            raise ValueError("Can not create sub account " + sub_account + e.args[0])
 
     def get_account_balance(self, ccy, api_key=None, secret_key=None, passphrase=None):
         return self.okx.get_account_balance(ccy, api_key, secret_key, passphrase)

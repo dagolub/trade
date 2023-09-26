@@ -4,14 +4,6 @@ from app.services.okx_core.lib.Funding_api import FundingAPI as Funding
 
 
 class OKX:
-    def create_sub_account(self, sub_account):
-        try:
-            broker = BrokerAPI(flag="0")
-            result = broker.create_subaccount(sub_account, sub_account + "Label")
-            return result
-        except ValueError as e:
-            raise ValueError("Can not create sub account " + sub_account + e.args[0])
-
     def get_account(self, sub_account, ccy, chain):
         chain = self.get_currency_chain(ccy, chain)
         account = BrokerAPI(flag="0")
