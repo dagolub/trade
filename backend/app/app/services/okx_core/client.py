@@ -15,20 +15,6 @@ class OKX:
         funding = Funding(flag="0")
         return funding.get_balances(ccy)
 
-    def get_sub_account_api_key(self, sub_account, api_key):
-        broker = BrokerAPI(flag="0")
-        return broker.nd_select_apikey(sub_account, api_key)
-
-    def create_sub_account_api_key(self, sub_account, sub_account_label, passphrase):
-        ip = "178.128.196.184,165.22.19.20"
-        broker = BrokerAPI(flag="0")
-
-        result = broker.nd_create_apikey(
-            sub_account, sub_account_label, passphrase, ip, "withdraw"
-        )
-
-        return result
-
     def transfer_money_to_main_account(
         self,
         ccy=None,

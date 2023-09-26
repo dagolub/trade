@@ -6,14 +6,20 @@ from app.core.config import settings
 
 
 class Client(object):
-    def __init__(self, use_server_time=False, flag="1"):
-        print("CLINET API_KEY", settings.OKX_API_KEY)
-        print("CLINET API_SECRET_KEY", settings.OKX_SECRET_KEY)
-        print("CLINET PASSPHRASE", settings.OKX_PASSPHRASE)
-        self.API_KEY = settings.OKX_API_KEY
-        self.API_SECRET_KEY = settings.OKX_SECRET_KEY
-        self.PASSPHRASE = settings.OKX_PASSPHRASE
-        self.use_server_time = use_server_time
+    def __init__(self, api_key=None, secret=None, passphrase=None, flag="1"):
+        if api_key is None:
+            self.API_KEY = settings.OKX_API_KEY
+        else:
+            self.API_KEY = api_key
+        if secret is None:
+            self.API_SECRET_KEY = settings.OKX_SECRET_KEY
+        else:
+            self.API_SECRET_KEY = secret
+        if passphrase is None:
+            self.PASSPHRASE = settings.OKX_PASSPHRASE
+        else:
+            self.PASSPHRASE = passphrase
+        self.use_server_time = False
         self.flag = flag
 
     def _request(self, method, request_path, params):

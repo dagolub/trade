@@ -1,5 +1,7 @@
 from app.services.okx_core.client import OKX as OKX_Client
 from app.services.okx_core.lib.Broker_api import BrokerAPI
+from app.services.okx_core.lib.Funding_api import FundingAPI
+from app.core.config import settings
 
 
 class OKX:
@@ -24,30 +26,40 @@ class OKX:
         except ValueError as e:
             raise ValueError("Can not create sub account " + sub_account + e.args[0])
 
+    @staticmethod
+    def get_deposit_history(ccy=None, api_key=None, secret=None, passphrase=None):
+        funding = FundingAPI(
+            flag="0", api_key=api_key, secret=secret, passphrase=passphrase
+        )
+        return funding.get_deposit_history(ccy)
+
     def get_account_balance(self, ccy, api_key=None, secret_key=None, passphrase=None):
         return self.okx.get_account_balance(ccy, api_key, secret_key, passphrase)
 
-    def get_sub_account_api_key(self, sub_account, api_key):
-        return self.okx.get_sub_account_api_key(sub_account, api_key)
+    @staticmethod
+    def get_sub_account_api_key(sub_account):
+        broker = BrokerAPI(flag="0")
+        return broker.nd_select_apikey(sub_account)
 
     @staticmethod
     def delete_api_key(sub_account, api_key):
         broker = BrokerAPI(flag="0")
         return broker.nd_delete_apikey(subAcct=sub_account, apiKey=api_key)
 
-    def create_sub_account_api_key(self, sub_account, sub_account_label, passphrase):
-        return self.okx.create_sub_account_api_key(
-            sub_account, sub_account_label, passphrase
+    @staticmethod
+    def create_sub_account_api_key(sub_account):
+        ip = "178.128.196.184,165.22.19.20"
+        broker = BrokerAPI(flag="0")
+
+        sub_account_label = sub_account + "Label"
+        return broker.nd_create_apikey(
+            sub_account, sub_account_label, settings.OKX_PASSPHRASE, ip, "withdraw"
         )
 
     @staticmethod
     def get_sub_account_api_keys(sub_account):
         broker = BrokerAPI(flag="0")
         return broker.nd_select_apikey(subAcct=sub_account)
-
-    def get_deposit_history(self, ccy=None, api_key=None, secret=None, passphrase=None):
-        self.okx = OKX_Client()
-        return self.okx.get_deposit_history(ccy)
 
     def get_currency_fee(self, currency, chain):
         return self.okx.get_currency_fee(_currency=currency, chain=chain)

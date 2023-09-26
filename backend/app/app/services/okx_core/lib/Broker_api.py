@@ -89,7 +89,7 @@ class BrokerAPI(Client):
 
         return result
 
-    def nd_select_apikey(self, subAcct="", apiKey=""):
+    def nd_select_apikey(self, subAcct=""):
         params = {"subAcct": subAcct}  # , "apiKey": apiKey}
         return self._request_with_params(GET, ND_SELECT_APIKEY, params)
 
