@@ -1,4 +1,5 @@
 from app.services.okx_core.client import OKX as OKX_Client
+from app.services.okx_core.lib.Broker_api import BrokerAPI
 
 
 class OKX:
@@ -8,10 +9,11 @@ class OKX:
         self.okx = OKX_Client()
 
     def get_address(self, sub_account, currency, chain):
-        sub_account_name = self.okx.create_sub_account(sub_account)
-        account = self.okx.get_account(
-            sub_account_name["data"][0]["subAcct"], currency, chain
-        )
+        chain = self.get_currency_chain(currency, chain)
+
+        account = BrokerAPI(flag="0")
+        account = account.subaccount_deposit_address(sub_account, currency, chain, 1, 6)
+
         if len(account.get("data")) == 0:
             return "Cant create address"
         return account["data"][0]["addr"]
@@ -36,9 +38,6 @@ class OKX:
     def get_deposit_history(self, ccy=None, api_key=None, secret=None, passphrase=None):
         self.okx = OKX_Client()
         return self.okx.get_deposit_history(ccy)
-
-    def get_currency_chain(self, currency, chain):
-        return self.okx.get_currency_chain(currency, chain).upper()
 
     def get_currency_fee(self, currency, chain):
         return self.okx.get_currency_fee(_currency=currency, chain=chain)
@@ -71,3 +70,49 @@ class OKX:
 
     def int_to_frac(self, amount: str, currency: str) -> int:
         return self.okx.integer_to_fractional(amount, currency)
+
+    @staticmethod
+    def integer_to_fractional(amount: str, currency: str):
+        if currency.lower() in ("ltc", "bch", "btc", "waves"):
+            _amount = int(amount) * 0.00000001
+            return float(f"{_amount:.100f}")
+        if currency.lower() == "usdt":
+            _amount = int(amount) * 0.000001
+            return float(f"{_amount:.100f}")
+        if currency.lower() in ("eth", "etc"):
+            _amount = int(amount) * 0.000000000000000001
+            return float(f"{_amount:.100f}")
+
+    @staticmethod
+    def fractional_to_integer(amount: str, currency: str) -> int:  # type: ignore
+        if currency.lower() in ("ltc", "bch", "btc", "waves"):
+            _amount = float(amount) * 100000000
+            return int(f"{_amount:.0f}")
+        if currency.lower() == "usdt":
+            _amount = float(amount) * 1000000
+            return int(f"{_amount:.0f}")
+        if currency.lower() in ("etc", "eth"):
+            _amount = float(amount) * 1000000000000000000
+            return int(f"{_amount:.0f}")
+
+    @staticmethod
+    def get_currency_chain(currency: str, chain: str):
+        currency = currency.lower()
+        chain = chain.lower()
+        if currency == "ltc":
+            return "LTC-Litecoin"
+        if currency == "bch":
+            return "BCH-BitcoinCash"
+        if currency == "btc":
+            return "BTC-Bitcoin"
+        if currency == "usdt":
+            if chain == "eth":
+                return "USDT-ERC20"
+            elif chain == "trx":
+                return "USDT-TRC20"
+            elif chain == "plg":
+                return "USDT-Polygon"
+        if currency == "etc":
+            return "ETC-Ethereum Classic"
+        if currency == "eth":
+            return "ETH-ERC20"

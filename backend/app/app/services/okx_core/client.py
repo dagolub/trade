@@ -3,17 +3,6 @@ from app.services.okx_core.lib.Broker_api import BrokerAPI
 from app.services.okx_core.lib.Funding_api import FundingAPI as Funding
 
 
-def get_ip():
-    response = requests.get("https://ipinfo.io/json", verify=True)
-
-    if response.status_code != 200:
-        raise ValueError(
-            "Status:" + str(response.status_code) + "Problem with the request. Exiting."
-        )
-
-    return response.json().get("ip")
-
-
 class OKX:
     def create_sub_account(self, sub_account):
         try:

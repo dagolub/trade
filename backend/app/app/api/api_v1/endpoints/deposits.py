@@ -94,9 +94,11 @@ async def read_deposit(
     """
     Get a deposit.
     """
-    deposit = _deposit(await crud.deposit.get(db=db, entity_id=entity_id))
-    if not deposit:
+    deposit = await crud.deposit.get(db=db, entity_id=entity_id)
+    if not _deposit:
         raise HTTPException(status_code=400, detail="Deposit doesn't exists")
+    deposit = _deposit(deposit)
+
     return deposit
 
 
