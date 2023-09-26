@@ -24,16 +24,20 @@ class OKX:
     def get_sub_account_api_key(self, sub_account, api_key):
         return self.okx.get_sub_account_api_key(sub_account, api_key)
 
-    def delete_api_key(self, sub_account, api_key):
-        return self.okx.delete_api_key(sub_account=sub_account, api_key=api_key)
+    @staticmethod
+    def delete_api_key(sub_account, api_key):
+        broker = BrokerAPI(flag="0")
+        return broker.nd_delete_apikey(subAcct=sub_account, apiKey=api_key)
 
     def create_sub_account_api_key(self, sub_account, sub_account_label, passphrase):
         return self.okx.create_sub_account_api_key(
             sub_account, sub_account_label, passphrase
         )
 
-    def get_sub_account_api_keys(self, sub_account):
-        return self.okx.get_sub_account_api_keys(sub_account)
+    @staticmethod
+    def get_sub_account_api_keys(sub_account):
+        broker = BrokerAPI(flag="0")
+        return broker.nd_select_apikey(subAcct=sub_account)
 
     def get_deposit_history(self, ccy=None, api_key=None, secret=None, passphrase=None):
         self.okx = OKX_Client()

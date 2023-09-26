@@ -27,26 +27,28 @@ async def create_transaction(
     )
 
 
-def delete_old_sub_account_api_keys(okx, sub_account):
+def delete_old_sub_account_api_keys(sub_account):
     print("Start delete")
+    okx = OKX()
     api_keys = okx.get_sub_account_api_keys(sub_account)
-    sleep(1)
     for i in api_keys["data"]:
         okx.delete_api_key(sub_account=sub_account, api_key=i["apiKey"])
-        sleep(2)
     print("End delete")
 
 
 async def incoming_transaction():  # noqa: 901
+    print("Before OKX")
     okx = OKX()
+    print("After OKX")
     wallets = await crud.deposit.get_by_status(db=db, status="created")
+    print("Wallets", wallets)
     for wallet in wallets:
         print("")
         print("Wallet", wallet)
         _deposit = await crud.deposit.get_by_wallet(db=db, wallet=wallet["wallet"])
 
         sub_account = _deposit["sub_account"]
-        delete_old_sub_account_api_keys(okx=okx, sub_account=sub_account)
+        delete_old_sub_account_api_keys(sub_account=sub_account)
 
         print("Before get key")
         try:
@@ -59,7 +61,9 @@ async def incoming_transaction():  # noqa: 901
                     currency = dh["ccy"]
                     txId = dh["txId"]
 
-                    deposit_amount = okx.int_to_frac(wallet["sum"], wallet["currency"])
+                    deposit_amount = okx.integer_to_fractional(
+                        wallet["sum"], wallet["currency"]
+                    )
                     status = "paid"
                     if float(amount) < float(deposit_amount):
                         status = "partially"

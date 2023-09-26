@@ -37,14 +37,6 @@ class OKX:
 
         return result
 
-    def get_sub_account_api_keys(self, sub_account):
-        broker = BrokerAPI(flag="0")
-        return broker.nd_select_apikey(subAcct=sub_account)
-
-    def delete_api_key(self, sub_account, api_key):
-        broker = BrokerAPI(flag="0")
-        return broker.nd_delete_apikey(subAcct=sub_account, apiKey=api_key)
-
     def transfer_money_to_main_account(
         self,
         ccy=None,
