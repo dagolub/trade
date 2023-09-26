@@ -53,6 +53,7 @@ async def incoming_transaction():  # noqa: 901
 
         print("Before get key")
         try:
+            print("Get deposit history")
             deposit_history = okx.get_deposit_history(ccy="")
             sleep(1)
             for dh in deposit_history["data"]:
