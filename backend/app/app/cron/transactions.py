@@ -4,7 +4,7 @@ import requests  # type: ignore
 from app import crud
 from app.api.api_v1.endpoints.deposits import _deposit as deposit
 from app.db.session import database as db
-from app.services.okx_client import OKX
+from app.services.client import OKX
 from datetime import datetime
 
 
@@ -66,7 +66,6 @@ async def incoming_transaction():  # noqa: 901
             deposit_history = okx.get_deposit_history(
                 ccy="", api_key=api_key, secret=secret, passphrase=passphrase
             )
-            print("Deposit history", deposit_history)
             sleep(1)
             for dh in deposit_history["data"]:
                 print("DH", dh)
@@ -121,6 +120,8 @@ async def incoming_transaction():  # noqa: 901
 
                         bal[currency.lower()] += float(amount)
                         await crud.user.update(db=db, db_obj=user, obj_in={"bal": bal})
+                else:
+                    print("No wallets to update")
         except Exception as e:
             print("Exception in get sub account")
             print(e.args[0])
@@ -271,8 +272,9 @@ async def outgoing_transaction():
         amount = withdraw["sum"]
         to_wallet = withdraw["to"]
         owner_id = withdraw["owner_id"]
-        fee = okx.get_currency_fee(currency=currency, chain=chain)
+        fee = okx.get_currency_fee(_currency=currency, chain=chain)
         chain = okx.get_currency_chain(currency=currency, chain=chain)
+        print("Withdraw", currency, chain, amount, to_wallet, fee, chain)
         try:
             transaction = okx.make_withdrawal(
                 amount=amount,
@@ -296,11 +298,11 @@ async def outgoing_transaction():
 
         except ValueError as e:
             print("Exception in outgoing transaction", e.args[0])
-            return
+    return
 
 
 if __name__ == "__main__":
     asyncio.run(incoming_transaction())
-    # asyncio.run(outgoing_transaction())
+    asyncio.run(outgoing_transaction())
     asyncio.run(send_callback())
     asyncio.run(fill_transaction())

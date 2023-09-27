@@ -9,7 +9,7 @@ from app.crud.base import CRUDBase
 from app.db.base_class import Base
 from app.models.deposit import Deposit
 from app.schemas.deposit import DepositCreate, DepositUpdate
-from app.services.okx_client import OKX
+from app.services.client import OKX
 
 ModelType = TypeVar("ModelType", bound=Base)
 

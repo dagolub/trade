@@ -2,15 +2,9 @@ import React from "react"
 import dayjs from "dayjs"
 
 function WalletTableItem(props) {
-    const [fill, setFill] =  React.useState("light")
-
-    React.useEffect(()=>{
-        if ( document.documentElement.style.colorScheme == "light") {
-            setFill("#000000")
-        } else {
-            setFill("#FFFFFF")
-        }
-    })
+    const viewHandler = (id) => {
+        window.location.href = "/wallets/view/" + id
+    }
     return (
         <tr id={"tr" + props.id}>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px td" + props.id}>
@@ -32,9 +26,8 @@ function WalletTableItem(props) {
                 <div className="font-medium text-slate-800 dark:text-slate-100">{dayjs(props.created).format("HH:mm DD MMM YY")}</div>
             </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px td" + props.id}>
-                <div className="space-x-1">
-                    <a href={"/wallets/view/" + props.id}>
-                        <button
+                <div className="space-x-1" style={{"display": "flex"}}>
+                        <button onClick={() => viewHandler(props.id)}
                             className="text-slate-400 hover:text-slate-500 dark:text-slate-500 dark:hover:text-slate-400 rounded-full">
                             <svg fill="#64748b" height="20px" width="20px" viewBox="0 0 80.794 80.794">
                             <g>
@@ -50,7 +43,6 @@ function WalletTableItem(props) {
                             </g>
                             </svg>
                         </button>
-                    </a>
                 </div>
             </td>
         </tr>

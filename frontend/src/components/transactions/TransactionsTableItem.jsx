@@ -2,15 +2,9 @@ import React from 'react';
 import dayjs from "dayjs"; // Make sure to provide the correct path to your deleteRow utility
 
 function TransactionTableItem(props) {
-    const [fill, setFill] = React.useState("light")
-
-    React.useEffect(() => {
-        if (document.documentElement.style.colorScheme == "light") {
-            setFill("#000000")
-        } else {
-            setFill("#FFFFFF")
-        }
-    })
+    const viewHandler = (id) => {
+        window.location.href = "/transactions/view/" + id
+    }
     const handlerCopy = (item) => {
         alert(item)
     }
@@ -34,7 +28,7 @@ function TransactionTableItem(props) {
             </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
                 <div
-                    className="font-medium text-slate-800 dark:text-slate-100">{props.tx.length > 10 ? props.tx.substring(0, 10) + " ... " + props.tx.substring(props.tx.length - 10) : props.tx}
+                    className="font-medium text-slate-800 dark:text-slate-100">{props.tx.length > 9 ? props.tx.substring(0, 5) + " ... " + props.tx.substring(props.tx.length - 5) : props.tx}
                     <svg fill="#64748b" style={{"display": "inline-block", "margin-left": "5px", "cursor": "pointer"}} height="20px" width="20px" viewBox="0 0 330 330" onClick={()=>handlerCopy(props.tx)}>
                             <g>
                                 <path d="M35,270h45v45c0,8.284,6.716,15,15,15h200c8.284,0,15-6.716,15-15V75c0-8.284-6.716-15-15-15h-45V15
@@ -62,9 +56,8 @@ function TransactionTableItem(props) {
                     className="font-medium text-slate-800 dark:text-slate-100">{dayjs(props.created).format("HH:mm DD MMM YY")}</div>
             </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px td" + props.id}>
-                <div className="space-x-1">
-                    <a href={"/transactions/view/" + props.id}>
-                        <button
+                <div className="space-x-1" style={{"display": "flex"}}>
+                        <button onClick={() => viewHandler(props.id)}
                             className="text-slate-400 hover:text-slate-500 dark:text-slate-500 dark:hover:text-slate-400 rounded-full">
                             <svg fill="#64748b" height="20px" width="20px" viewBox="0 0 80.794 80.794">
                                 <g>
@@ -80,7 +73,6 @@ function TransactionTableItem(props) {
                                 </g>
                             </svg>
                         </button>
-                    </a>
                 </div>
             </td>
         </tr>

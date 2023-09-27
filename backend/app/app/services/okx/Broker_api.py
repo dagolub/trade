@@ -83,9 +83,8 @@ class BrokerAPI(Client):
             "ip": ip,
             "perm": perm,
         }
-        print("Params", params)
+
         result = self._request_with_params(POST, ND_CREAET_APIKEY, params)
-        print("Result", result)
 
         return result
 

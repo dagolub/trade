@@ -3,13 +3,6 @@ from .consts import *
 
 
 class SubAccountAPI(Client):
-    def __init__(
-        self, api_key, api_secret_key, passphrase, use_server_time=False, flag="1"
-    ):
-        Client.__init__(
-            self, api_key, api_secret_key, passphrase, use_server_time, flag
-        )
-
     def balances(self, subAcct):
         params = {"subAcct": subAcct}
         return self._request_with_params(GET, BALANCE, params)

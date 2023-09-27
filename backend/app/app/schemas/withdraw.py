@@ -1,6 +1,5 @@
 from typing import Optional
 from datetime import datetime
-from bson.objectid import ObjectId
 from pydantic import BaseModel
 
 
@@ -23,7 +22,8 @@ class WithdrawUpdate(WithdrawBase):
 
 
 class WithdrawInDBBase(WithdrawBase):
-    _id: ObjectId
+    id: str
+    _id: str
 
     class Config:
         orm_mode = True

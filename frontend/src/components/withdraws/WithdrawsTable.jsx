@@ -80,6 +80,8 @@ function WalletTable({
 
                       sum={entity.sum}
                       to={entity.to}
+                      currency={entity.currency}
+                      chain={entity.chain}
                       status={entity.status}
                       created={entity.created}
 

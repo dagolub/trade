@@ -3,7 +3,7 @@ from typing import Any, List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
-from app.services.okx_client import OKX
+from app.services.client import OKX
 from app import crud, models, schemas
 from app.api import deps
 from app.cron.callback import get_callback
@@ -171,7 +171,9 @@ def _deposit(deposit):
     result.setdefault("status", deposit["status"])
     result.setdefault("callback", deposit["callback"])
     result.setdefault("callback_response", deposit["callback_response"])
-    result.setdefault("sum", okx.int_to_frac(deposit["sum"], deposit["currency"]))
+    result.setdefault(
+        "sum", okx.integer_to_fractional(deposit["sum"], deposit["currency"])
+    )
     result.setdefault("currency", deposit["currency"])
     result.setdefault("chain", deposit["chain"])
     result.setdefault("created", str(deposit["created"]))

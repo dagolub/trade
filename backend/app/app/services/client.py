@@ -1,24 +1,78 @@
-import requests  # type: ignore
-from app.services.okx_core.lib.Broker_api import BrokerAPI
-from app.services.okx_core.lib.Funding_api import FundingAPI as Funding
+from app.services.okx.Broker_api import BrokerAPI
+from app.services.okx.Funding_api import FundingAPI
+from app.services.okx.subAccount_api import SubAccountAPI
+from app.core.config import settings
+import string
+import random
+
+
+def generate_random_small(length):
+    letters = string.ascii_lowercase
+    return "".join(random.choice(letters) for i in range(length))
 
 
 class OKX:
-    def get_account(self, sub_account, ccy, chain):
-        chain = self.get_currency_chain(ccy, chain)
-        account = BrokerAPI(flag="0")
-        return account.subaccount_deposit_address(sub_account, ccy, chain, 1, 6)
+    funding = ""
+    broker = ""
 
-    def get_account_balance(
-        self, ccy=None, api_key=None, secret_key=None, passphrase=None
-    ):
-        funding = Funding(flag="0")
-        return funding.get_balances(ccy)
+    def __init__(self):
+        self.funding = FundingAPI(flag="0")
+        self.broker = BrokerAPI(flag="0")
+
+    def get_address(self, sub_account, currency, chain):
+        chain = self.get_currency_chain(currency, chain)
+
+        try:
+            self.broker.create_subaccount(sub_account, sub_account + "Label")
+            account = self.broker.subaccount_deposit_address(
+                sub_account, currency, chain, 1, 6
+            )
+
+            if len(account.get("data")) == 0:
+                return "Cant create address"
+            return account["data"][0]["addr"]
+        except ValueError as e:
+            raise ValueError("Can not create sub account " + sub_account + e.args[0])
+
+    @staticmethod
+    def get_deposit_history(ccy=None, api_key=None, secret=None, passphrase=None):
+        funding = FundingAPI(
+            flag="0", api_key=api_key, secret=secret, passphrase=passphrase
+        )
+        return funding.get_deposit_history(ccy)
+
+    @staticmethod
+    def get_sub_account_balance(sub_account, currency=None):
+        account = SubAccountAPI(flag="0")
+        if currency is None:
+            currency = ""
+        return account.asset_balances(subAcct=sub_account, ccy=currency)
+
+    def create_sub_account_api_key(self, sub_account):
+        ip = "178.128.196.184,165.22.19.20"
+
+        sub_account_label = sub_account + generate_random_small(6)
+        return self.broker.nd_create_apikey(
+            sub_account, sub_account_label, settings.OKX_PASSPHRASE, ip, "withdraw"
+        )
+
+    def get_sub_account_api_keys(self, sub_account):
+        return self.broker.nd_select_apikey(subAcct=sub_account)
+
+    def delete_api_key(self, sub_account, api_key):
+        return self.broker.nd_delete_apikey(subAcct=sub_account, apiKey=api_key)
+
+    def get_currency_fee(self, _currency, chain):
+        chain = self.get_currency_chain(_currency.lower(), chain)
+        currencies = self.funding.get_currency()
+        for currency in currencies["data"]:
+            if currency["ccy"] == _currency.upper() and currency["chain"] == chain:
+                return currency["minFee"]
 
     def transfer_money_to_main_account(
         self,
-        ccy=None,
-        amt=None,
+        ccy,
+        amt,
         sub_account=None,
         from_account=None,
         to_account=None,
@@ -38,9 +92,9 @@ class OKX:
             type_transfer = type_transfer
         else:
             type_transfer = 2
-        funding = Funding(flag="0")
+
         if sub_account:
-            return funding.funds_transfer(
+            return self.funding.funds_transfer(
                 ccy,
                 amt,
                 from_account,
@@ -49,17 +103,15 @@ class OKX:
                 type=type_transfer,
             )
         else:
-            return funding.funds_transfer(
+            return self.funding.funds_transfer(
                 ccy, amt, from_account, to_account, type=type_transfer
             )
 
     def make_withdrawal(
-        self, currency=None, amount=None, address=None, chain=None, fee=None
+        self, amount=None, address=None, currency=None, chain=None, fee=None
     ):
         try:
-            funding = Funding(flag="0")
-
-            withdrawals = funding.coin_withdraw(
+            withdrawals = self.funding.coin_withdraw(
                 ccy=currency.upper(),
                 amt=float(amount) - float(fee),
                 dest=4,
@@ -78,22 +130,8 @@ class OKX:
         except Exception as e:
             raise ValueError("Failed to withdraw" + e.args[0])
 
-    def get_withdrawal_history(self, ccy: str, wd_id: str):
-        funding = Funding(flag="0")
-        return funding.get_withdrawal_history(ccy, wdId=wd_id)
-
-    @staticmethod
-    def get_deposit_history(ccy=None):
-        funding = Funding(flag="0")
-        return funding.get_deposit_history(ccy)
-
-    def get_currency_fee(self, _currency: str, chain: str):
-        chain = self.get_currency_chain(_currency.lower(), chain)
-        funding = Funding(flag="0")
-        currencies = funding.get_currency()
-        for currency in currencies["data"]:
-            if currency["ccy"] == _currency.upper() and currency["chain"] == chain:
-                return currency["minFee"]
+    def get_withdrawal_history(self, ccy, wdId):
+        return self.funding.get_withdrawal_history(ccy, wdId=wdId)
 
     @staticmethod
     def integer_to_fractional(amount: str, currency: str):
@@ -103,7 +141,7 @@ class OKX:
         if currency.lower() == "usdt":
             _amount = int(amount) * 0.000001
             return float(f"{_amount:.100f}")
-        if currency.lower() in ("eth", "etc"):
+        if currency.lower() in ("eth", "etc", "plg"):
             _amount = int(amount) * 0.000000000000000001
             return float(f"{_amount:.100f}")
 
@@ -115,7 +153,7 @@ class OKX:
         if currency.lower() == "usdt":
             _amount = float(amount) * 1000000
             return int(f"{_amount:.0f}")
-        if currency.lower() in ("etc", "eth"):
+        if currency.lower() in ("etc", "eth", "plg"):
             _amount = float(amount) * 1000000000000000000
             return int(f"{_amount:.0f}")
 

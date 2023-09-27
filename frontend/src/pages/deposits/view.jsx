@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { getDeposit } from '../../services/api';
 import Header from '../../partials/Header';
-import Sidebar from '../../partials/Sidebar';
-import Form from '../../components/deposits/form'; // Make sure to import your Form component
+import Sidebar from '../../partials/Sidebar';// Make sure to import your Form component
 import { useParams } from 'react-router-dom';
-function DepositEdit() {
+function DepositView() {
   const { id } = useParams();
 
   const [wallet, setWallet] = useState("");
@@ -34,16 +33,15 @@ function DepositEdit() {
         <Header />
         <main className="grow">
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
-            <Form
-              wallet={wallet}
-              type={type}
-              sum={sum}
-              currency={currency}
-              status={status}
-              callback={callback}
-              callback_response={callback_response}
-              id={id}
-            />
+            <h1 className="text-3xl text-slate-800 dark:text-slate-100 font-bold mb-6">View Deposit</h1>
+            id: {id}
+            Wallet: {wallet}<br />
+            Type: {type}<br />
+            Sum: {sum}<br />
+            Currency: {currency}<br />
+            Status: {status}<br />
+            Callback: {callback}<br />
+            Callback Response: {callback_response}
           </div>
         </main>
       </div>
@@ -51,4 +49,4 @@ function DepositEdit() {
   );
 }
 
-export default DepositEdit;
+export default DepositView;

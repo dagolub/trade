@@ -77,13 +77,13 @@ async def delete_withdraw(
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
-    Delete an withdraw.
+    Delete withdraw.
     """
-    withdraw = await crud.withdraw.get(db=db, id=id)
+    withdraw = await crud.withdraw.get(db=db, entity_id=id)
     if not withdraw:
         raise HTTPException(status_code=404, detail="Withdraw doesn't exists")
 
-    withdraw = await crud.withdraw.remove(db=db, id=id)
+    withdraw = await crud.withdraw.remove(db=db, entity_id=id)
     return withdraw
 
 

@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Dashboard from './pages/dashboard'; // Import Dashboard properly
 import Deposits from './pages/deposits/list'; // Import Deposits properly
-import DepositsEdit from './pages/deposits/edit'; // Import DepositsEdit properly
-import DepositsNew from './pages/deposits/new'; // Import DepositsNew properly
+import DepositsView from './pages/deposits/view'; // Import DepositsEdit properly
+
 import Settings from './pages/settings'; // Import Settings properly
 import Transactions from './pages/transactions/list'; // Import Transactions properly
 import TransactionsView from './pages/transactions/view'; // Import TransactionsNew properly
@@ -37,8 +37,8 @@ function App() {
         <Route path="/users/edit/:id" element={<UsersEdit />} />
 
         <Route path="/deposits/list" element={<Deposits />} />
-        <Route path="/deposits/new" element={<DepositsNew />} />
-        <Route path="/deposits/edit/:id" element={<DepositsEdit />} />
+        <Route path="/deposits/view/:id" element={<DepositsView />} />
+
 
         <Route path="/transactions/list" element={<Transactions />} />
         <Route path="/transactions/view/:id" element={<TransactionsView />} />
