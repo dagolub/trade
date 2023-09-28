@@ -39,7 +39,7 @@ function DepositView() {
         <main className="grow">
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             <h1 className="text-3xl text-slate-800 dark:text-slate-100 font-bold mb-6">View Deposit</h1>
-            id: {id}
+            id: {id}<br />
             Wallet: {wallet}<br />
             Type: {type}<br />
             Sum: {sum}<br />

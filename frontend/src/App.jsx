@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Dashboard from './pages/dashboard'; // Import Dashboard properly
 import Deposits from './pages/deposits/list'; // Import Deposits properly
+import DepositsNew from './pages/deposits/new'; // Import Deposits properly
 import DepositsView from './pages/deposits/view'; // Import DepositsEdit properly
 
 import Settings from './pages/settings'; // Import Settings properly
@@ -37,10 +38,11 @@ function App() {
         <Route path="/users/edit/:id" element={<UsersEdit />} />
 
         <Route path="/deposits/list" element={<Deposits />} />
+        <Route path="/deposits/new" element={<DepositsNew />} />
         <Route path="/deposits/view/:id" element={<DepositsView />} />
 
 
-        <Route path="/transactions/list" element={<Transactions />} />
+        <Route path="/transactions/list" element={<Transactions />} />ew
         <Route path="/transactions/view/:id" element={<TransactionsView />} />
 
         <Route path="/wallets/list" element={<Wallets />} />
