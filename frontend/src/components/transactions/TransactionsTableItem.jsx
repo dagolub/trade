@@ -24,7 +24,7 @@ function TransactionTableItem(props) {
                 <div className="font-medium text-slate-800 dark:text-slate-100">{props.from_wallet}</div>
             </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
-                <div className="font-medium text-slate-800 dark:text-slate-100">{props.to_wallet.length > 9 ? props.to_wallet.substring(0, 3) + " ... " + props.to_wallet.substring(props.tx.length - 3) : props.to_wallet}</div>
+                <div className="font-medium text-slate-800 dark:text-slate-100">{props.to_wallet.length > 12 ? props.to_wallet.substring(0, 5) + " ... " + props.to_wallet.substring(props.to_wallet.length - 5) : props.to_wallet}</div>
             </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
                 <div
