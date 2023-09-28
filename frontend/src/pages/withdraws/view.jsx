@@ -10,6 +10,8 @@ function WithdaraView() {
   const [currency, setCurrency] = useState('');
   const [chain, setChain] = useState('');
   const [status, setStatus] = useState('');
+  const [callback, setCallback] = useState('');
+  const [callback_response, setCallbackResponse] = useState('');
   const [created, setCreated] = useState('');
 
   useEffect(() => {
@@ -20,6 +22,8 @@ function WithdaraView() {
         setCurrency(data.currency);     // Use lowercase variable names here
         setChain(data.chain);     // Use lowercase variable names here
         setStatus(data.status);     // Use lowercase variable names here
+        setCallback(data.callback);     // Use lowercase variable names here
+        setCallbackResponse(data.callback_response);     // Use lowercase variable names here
         setCreated(data.created);     // Use lowercase variable names here
       })
       .catch((error) => {
@@ -39,6 +43,8 @@ function WithdaraView() {
               To: {to}<br />
               Currency: {currency}<br />
               Chain: {chain}<br />
+              Callback: {callback}<br />
+              Callback Response: {callback_response}<br />
               Status: {status}<br />
               Created: {dayjs(created).format("HH:mm:ss DD MMM YY")}
           </div>
