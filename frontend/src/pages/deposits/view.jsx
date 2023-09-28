@@ -3,6 +3,7 @@ import { getDeposit } from '../../services/api';
 import Header from '../../partials/Header';
 import Sidebar from '../../partials/Sidebar';// Make sure to import your Form component
 import { useParams } from 'react-router-dom';
+import dayjs from "dayjs";
 function DepositView() {
   const { id } = useParams();
 
@@ -10,9 +11,11 @@ function DepositView() {
   const [type, setType] = useState("");
   const [sum, setSum] = useState("");
   const [currency, setCurrency] = useState("");
-  const [status, setStatus] = useState("");
+
   const [callback, setCallback] = useState("");
   const [callback_response, setCallbackResponse] = useState("");
+  const [created, setCreated] = useState("");
+  const [status, setStatus] = useState("");
 
   useEffect(() => {
     getDeposit(id).then((data) => {
@@ -20,9 +23,10 @@ function DepositView() {
       setType(data.type);
       setSum(data.sum);
       setCurrency(data.currency);
-      setStatus(data.status);
       setCallback(data.callback);
       setCallbackResponse(data.callback_response);
+      setStatus(data.status);
+      setCreated(data.created)
     });
   }, [id]);
 
@@ -39,9 +43,10 @@ function DepositView() {
             Type: {type}<br />
             Sum: {sum}<br />
             Currency: {currency}<br />
-            Status: {status}<br />
             Callback: {callback}<br />
             Callback Response: {callback_response}
+            Status: {status}<br />
+            Created: {dayjs(created).format("HH:mm:ss DD MMM YY")}
           </div>
         </main>
       </div>
