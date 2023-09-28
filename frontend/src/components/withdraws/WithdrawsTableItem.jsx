@@ -36,6 +36,12 @@ function WalletTableItem(props) {
                 <div className="font-medium text-slate-800 dark:text-slate-100">{props.to}</div>
             </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
+                <div className="font-medium text-slate-800 dark:text-slate-100">{props.currency}</div>
+            </td>
+            <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
+                <div className="font-medium text-slate-800 dark:text-slate-100">{props.chain}</div>
+            </td>
+            <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
                 <div className="font-medium text-slate-800 dark:text-slate-100">{props.status}</div>
             </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
