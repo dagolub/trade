@@ -11,7 +11,7 @@ function DepositView() {
   const [type, setType] = useState("");
   const [sum, setSum] = useState("");
   const [currency, setCurrency] = useState("");
-
+  const [chain, setChain] = useState("");
   const [callback, setCallback] = useState("");
   const [callback_response, setCallbackResponse] = useState("");
   const [created, setCreated] = useState("");
@@ -23,6 +23,7 @@ function DepositView() {
       setType(data.type);
       setSum(data.sum);
       setCurrency(data.currency);
+      setChain(data.chain);
       setCallback(data.callback);
       setCallbackResponse(data.callback_response);
       setStatus(data.status);
@@ -43,8 +44,9 @@ function DepositView() {
             Type: {type}<br />
             Sum: {sum}<br />
             Currency: {currency}<br />
+            Chain: {chain}<br />
             Callback: {callback}<br />
-            Callback Response: {callback_response}
+            Callback Response: {callback_response}<br />
             Status: {status}<br />
             Created: {dayjs(created).format("HH:mm:ss DD MMM YY")}
           </div>
