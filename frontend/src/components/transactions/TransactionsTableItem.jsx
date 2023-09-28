@@ -21,15 +21,18 @@ function TransactionTableItem(props) {
             </td>
 
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
-                <div className="font-medium text-slate-800 dark:text-slate-100">{props.from_wallet}</div>
+                <div className="font-medium text-slate-800 dark:text-slate-100">{props.from_wallet.length > 12 ? props.from_wallet.substring(0, 5) + " ... " + props.from_wallet.substring(props.from_wallet.length - 5) : props.from_wallet}</div>
             </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
                 <div className="font-medium text-slate-800 dark:text-slate-100">{props.to_wallet.length > 12 ? props.to_wallet.substring(0, 5) + " ... " + props.to_wallet.substring(props.to_wallet.length - 5) : props.to_wallet}</div>
+
             </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
-                <div
+                { props.tx.length > 12 && <div
                     className="font-medium text-slate-800 dark:text-slate-100">{props.tx.length > 9 ? props.tx.substring(0, 5) + " ... " + props.tx.substring(props.tx.length - 5) : props.tx}
-                    <svg fill="#64748b" style={{"display": "inline-block", "margin-left": "5px", "cursor": "pointer"}} height="20px" width="20px" viewBox="0 0 330 330" onClick={()=>handlerCopy(props.tx)}>
+                </div>}
+                { props.tx.length > 12 &&
+                <svg fill="#64748b" style={{"display": "inline-block", "margin-left": "5px", "cursor": "pointer"}} height="20px" width="20px" viewBox="0 0 330 330" onClick={()=>handlerCopy(props.tx)}>
                             <g>
                                 <path d="M35,270h45v45c0,8.284,6.716,15,15,15h200c8.284,0,15-6.716,15-15V75c0-8.284-6.716-15-15-15h-45V15
                                     c0-8.284-6.716-15-15-15H35c-8.284,0-15,6.716-15,15v240C20,263.284,26.716,270,35,270z M280,300H110V90h170V300z M50,30h170v30H95
@@ -39,8 +42,7 @@ function TransactionTableItem(props) {
                                 <path d="M235,240h-80c-8.284,0-15,6.716-15,15c0,8.284,6.716,15,15,15h80c8.284,0,15-6.716,15-15C250,246.716,243.284,240,235,240z
                                     "/>
                             </g>
-                </svg>
-                </div>
+                </svg>}
             </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
                 <div className="font-medium text-slate-800 dark:text-slate-100">{props.amount}</div>
