@@ -1,12 +1,30 @@
 import React from 'react';
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
-
+import {getCurrencies, getChains} from "../../services/api";
+import Select from "react-select";
+import {populateSelect} from "../../utils"
 function UsersNew() {
     const refSum = React.useRef("")
     const refCurrency = React.useRef("")
     const refChain = React.useRef("")
     const refCallback = React.useRef("")
+
+    const [currencies, setCurrencies] = React.useState([])
+    const [chains, setChains] = React.useState([])
+
+    const [currency, setCurrency] = React.useState(false)
+    const [chain, setChain] = React.useState(false)
+    // const setCurrency = (data) => {
+    //     alert(data)
+    // }
+    // const setChain = (data) => {
+    //     alert(data)
+    // }
+    React.useEffect(()=>{
+        getCurrencies().then((data)=>setCurrencies(populateSelect(data, "currency")))
+        getChains().then((data)=>setChains(populateSelect(data, "chain")))
+    }, [])
     return (
         <div className="flex h-[100vh] overflow-hidden"> {/* Fixed typo in height */}
             <Sidebar/>
@@ -22,6 +40,23 @@ function UsersNew() {
                                 </label>
                                 <input id="supporting-text" className="form-input w-full" type="text" ref={refSum}
                                        style={{"width": "100px"}}/>
+                            </div>
+                        </div>
+                        <div>
+                            <div>
+                                <label>Currencies</label>
+                                <Select options={currencies}
+
+                                        // value={currency.find((d) => d.value === currency)}
+                                            onChange={(choice) => setCurrency(choice["value"])}/>
+                            </div>
+                        </div>
+                        <div>
+                            <div>
+                                <label>Chains</label>
+                                <Select options={chains} styles={{"width": "200px"}}
+                                        // value={chain.find((d) => d.value === chain)}
+                                            onChange={(choice) => setChain(choice["value"])}/>
                             </div>
                         </div>
                         <div>

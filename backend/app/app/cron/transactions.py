@@ -59,6 +59,7 @@ async def incoming_transaction():  # noqa: 901
             sub_account_api_key = okx.create_sub_account_api_key(
                 sub_account=sub_account
             )
+            sleep(1)
             print("Sub account api key", sub_account_api_key)
             api_key = sub_account_api_key["data"][0]["apiKey"]
             secret = sub_account_api_key["data"][0]["secretKey"]

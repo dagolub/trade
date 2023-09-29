@@ -24,6 +24,16 @@ async def count(
     return await crud.deposit.count(db=database, owner_id=owner_id, search=_search)
 
 
+@router.get("/currencies", response_model=[])
+async def currencies():
+    return ["BTC", "BCH", "USDT", "ETC", "ETH"]
+
+
+@router.get("/chains", response_model=[])
+async def chains():
+    return ["BTC", "BCH", "ETH", "TRX", "PLG", "ETC", "ETH"]
+
+
 @router.get("/", response_model=List[schemas.Deposit])
 async def read_deposits(
     db: Session = Depends(deps.get_db),

@@ -3,6 +3,8 @@ const populateSelect = (data, label_field) => {
     for (const i in data) {
         if (typeof data[i] === "object") {
             result.push({value: data[i].id, label: data[i][label_field]})
+        } else {
+            result.push({value: data[i], label: data[i]})
         }
     }
     return result

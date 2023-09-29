@@ -228,6 +228,12 @@ const deleteWithdraw = (id) => {
    return DELETE('/api/withdraws/' + id)
 }
 
+const getCurrencies = () => {
+    return GET("/api/deposits/currencies")
+}
+const getChains = () => {
+    return GET("/api/deposits/chains")
+}
 const getCallbacks = (q="", skip=0, limit=10) => {
     let url = ""
     if (q == "") {
@@ -268,7 +274,7 @@ export {
   getPagination,
   GET, POST, PUT, DELETE,
   getUserMe, createUser, getUsers, getUser, updateUser, deleteUser, createAvatar,
-  createDeposit, getDeposits, getDeposit, updateDeposit, deleteDeposit, callbackDeposit,
+  createDeposit, getDeposits, getDeposit, updateDeposit, deleteDeposit, callbackDeposit, getCurrencies, getChains,
   createTransaction, getTransactions, getTransaction, updateTransaction, deleteTransaction,
   createWallet, getWallets, getWallet, updateWallet, deleteWallet,
   getWithdraws, getWithdraw, deleteWithdraw,
