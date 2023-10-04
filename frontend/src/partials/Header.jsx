@@ -11,6 +11,9 @@ function Header() {
 
   useEffect(() => {
       getUserMe().then(data => {
+        if (data.hasOwnProperty('response')  && data.response.status === 403 ) {
+          window.location.href = "/signin"
+        }
         if(data)
         {
           setFullName(data["full_name"]);

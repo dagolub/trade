@@ -9,7 +9,7 @@ from datetime import datetime
 
 
 async def create_transaction(
-    from_wallet, to_wallet, tx, amount, currency, _type, owner_id, deposit_id
+    from_wallet, to_wallet, tx, amount, currency, _type, owner_id, deposit_id, fee=0
 ):
     await crud.transaction.create(
         db=db,
@@ -21,6 +21,7 @@ async def create_transaction(
             "amount": amount,
             "currency": currency,
             "type": _type,
+            "fee": fee,
             "deposit_id": deposit_id,
             "created": datetime.utcnow(),
         },
@@ -176,7 +177,7 @@ async def create_corresponded_transactions(
         type_transfer=0,
     )
     sleep(2)
-
+    print("Main account", main_account)
     await create_transaction(
         from_wallet=wallet["wallet"],
         to_wallet="<internal>",
@@ -275,7 +276,7 @@ async def outgoing_transaction():
         owner_id = withdraw["owner_id"]
         fee = okx.get_currency_fee(_currency=currency, chain=chain)
         chain = okx.get_currency_chain(currency=currency, chain=chain)
-        print("Withdraw", currency, chain, amount, to_wallet, fee, chain)
+
         try:
             transaction = okx.make_withdrawal(
                 amount=amount,
@@ -284,6 +285,7 @@ async def outgoing_transaction():
                 chain=chain,
                 fee=fee,
             )
+            print("Withdraw", currency, chain, amount, to_wallet, fee, chain)
             await create_transaction(
                 from_wallet="<internal>",
                 to_wallet=to_wallet,
@@ -292,6 +294,8 @@ async def outgoing_transaction():
                 currency=currency,
                 _type="OKX",
                 owner_id=owner_id,
+                deposit_id="",
+                fee=fee,
             )
             await crud.withdraw.update(
                 db=db, db_obj={"id": withdraw["id"]}, obj_in={"status": "paid"}

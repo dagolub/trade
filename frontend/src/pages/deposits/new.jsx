@@ -15,12 +15,15 @@ function UsersNew() {
 
     const [currency, setCurrency] = React.useState(false)
     const [chain, setChain] = React.useState(false)
-    // const setCurrency = (data) => {
-    //     alert(data)
-    // }
-    // const setChain = (data) => {
-    //     alert(data)
-    // }
+    const setCurrencyRate = (data) => {
+        if ( data !== "USDT") {
+            setCurrencies({value: data, label: data})
+        }
+    }
+    const setChainRate = (data) => {
+        console.log(data)
+        setChains({value: data, label: data})
+    }
     React.useEffect(()=>{
         getCurrencies().then((data)=>setCurrencies(populateSelect(data, "currency")))
         getChains().then((data)=>setChains(populateSelect(data, "chain")))
@@ -46,17 +49,17 @@ function UsersNew() {
                             <div>
                                 <label>Currencies</label>
                                 <Select options={currencies}
-
+                                        menu: styles={{"width": "100px"}}
                                         // value={currency.find((d) => d.value === currency)}
-                                            onChange={(choice) => setCurrency(choice["value"])}/>
+                                            onChange={(choice) => setCurrencyRate(choice["value"])}/>
                             </div>
                         </div>
                         <div>
                             <div>
                                 <label>Chains</label>
-                                <Select options={chains} styles={{"width": "200px"}}
+                                <Select options={chains} styles={{"width": "100px"}}
                                         // value={chain.find((d) => d.value === chain)}
-                                            onChange={(choice) => setChain(choice["value"])}/>
+                                            onChange={(choice) => setChainRate(choice["value"])}/>
                             </div>
                         </div>
                         <div>
