@@ -1,7 +1,7 @@
 from app.services.client import OKX
 import time
 
-sub_accounts = ["OPtvwZUK", "OPksiZLG", "OPhhgEFB", "OPsvbMDS", "OPgojJXH"]
+sub_accounts = ["AdminkylRDH", "AdminrgrLXU", "AdmintktJAF", "AdmineatBOW"]
 
 if __name__ == "__main__":
     for sub_account in sub_accounts:

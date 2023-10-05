@@ -39,9 +39,7 @@ def delete_old_sub_account_api_keys(sub_account):
 
 
 async def incoming_transaction():  # noqa: 901
-    print("Before OKX")
     okx = OKX()
-    print("After OKX")
     wallets = await crud.deposit.get_by_status(db=db, status="created")
     print("Wallets", wallets)
     for wallet in wallets:
@@ -226,9 +224,10 @@ async def send_callback():
         if "callback" not in withdraw:
             continue
         callback = withdraw["callback"]
-
+        del withdraw["_id"]
+        del withdraw["created"]
         if withdraw["status"] == "paid":
-            response = requests.post(callback, json=deposit(withdraw))
+            response = requests.post(callback, json=withdraw)
             callback_response = response.text
 
             _status = "in process"
