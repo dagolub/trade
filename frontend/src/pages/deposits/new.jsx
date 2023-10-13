@@ -1,10 +1,10 @@
 import React from 'react';
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
-import {getCurrencies, getChains} from "../../services/api";
-import Select from "react-select";
+import {getCurrencies, getChains, createDeposit} from "../../services/api";
 import {populateSelect} from "../../utils"
-function UsersNew() {
+
+function DepositNew() {
     const refSum = React.useRef("")
     const refCurrency = React.useRef("")
     const refChain = React.useRef("")
@@ -13,20 +13,28 @@ function UsersNew() {
     const [currencies, setCurrencies] = React.useState([])
     const [chains, setChains] = React.useState([])
 
-    const [currency, setCurrency] = React.useState(false)
-    const [chain, setChain] = React.useState(false)
     const setCurrencyRate = (data) => {
-        if ( data !== "USDT") {
-            setCurrencies({value: data, label: data})
+        if (data === "USDT") {
+            refChain.current.value = "TRC20"
+        } else {
+            refChain.current.value = data
         }
+
     }
-    const setChainRate = (data) => {
-        console.log(data)
-        setChains({value: data, label: data})
+
+    const submitHendler = (e) => {
+        e.preventDefault()
+        const sum = refSum.current.value
+        const currency = refCurrency.current.value
+        const chain = refChain.current.value
+        const callback = refCallback.current.value
+
+        createDeposit()
     }
-    React.useEffect(()=>{
-        getCurrencies().then((data)=>setCurrencies(populateSelect(data, "currency")))
-        getChains().then((data)=>setChains(populateSelect(data, "chain")))
+
+    React.useEffect(() => {
+        getCurrencies().then((data) => setCurrencies(populateSelect(data, "currency")))
+        getChains().then((data) => setChains(populateSelect(data, "chain")))
     }, [])
     return (
         <div className="flex h-[100vh] overflow-hidden"> {/* Fixed typo in height */}
@@ -36,41 +44,63 @@ function UsersNew() {
                 <main className="grow">
                     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
                         <h1 className="text-3xl text-slate-800 dark:text-slate-100 font-bold mb-6">New deposit</h1>
-                        <div>
+                        <form method="POST" onSubmit={submitHendler}>
                             <div>
-                                <label className="block text-sm font-medium mb-1" htmlFor="supporting-text">
-                                    Sum
-                                </label>
-                                <input id="supporting-text" className="form-input w-full" type="text" ref={refSum}
-                                       style={{"width": "100px"}}/>
+                                <div>
+                                    <label className="block text-sm font-medium mb-1" htmlFor="supporting-text">
+                                        Sum
+                                    </label>
+                                    <input id="supporting-text" className="form-input w-full" type="text" ref={refSum}
+                                           style={{"width": "100px"}}/>
+                                </div>
                             </div>
-                        </div>
-                        <div>
                             <div>
-                                <label>Currencies</label>
-                                <Select options={currencies}
-                                        menu: styles={{"width": "100px"}}
-                                        // value={currency.find((d) => d.value === currency)}
-                                            onChange={(choice) => setCurrencyRate(choice["value"])}/>
+                                <div>
+                                    <label>Currencies</label><br/>
+                                    <select id="currency" name="currency" className="form-select w-full"
+                                            style={{"width": "100px"}} ref={refCurrency}>
+                                        {
+                                            currencies.map(entity => {
+                                                return (
+                                                    <option key={entity.value}
+                                                            onClick={() => setCurrencyRate(entity.value)}
+                                                            value={entity.value}>{entity.label}</option>)
+                                            })
+                                        }
+                                    </select>
+
+                                </div>
                             </div>
-                        </div>
-                        <div>
                             <div>
-                                <label>Chains</label>
-                                <Select options={chains} styles={{"width": "100px"}}
-                                        // value={chain.find((d) => d.value === chain)}
-                                            onChange={(choice) => setChainRate(choice["value"])}/>
+                                <div>
+                                    <label>Chains</label><br/>
+                                    <select id="chains" name="chains" className="form-select w-full"
+                                            style={{"width": "100px"}} ref={refChain}>
+                                        {
+                                            chains.map(entity => {
+                                                return (
+                                                    <option key={entity.value}
+                                                            value={entity.value}>{entity.label}</option>)
+                                            })
+                                        }
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        <div>
                             <div>
-                                <label className="block text-sm font-medium mb-1" htmlFor="supporting-text">
-                                    Callback
-                                </label>
-                                <input id="supporting-text" className="form-input w-full" type="text"
-                                       ref={refCallback}/>
+                                <div>
+                                    <label className="block text-sm font-medium mb-1" htmlFor="supporting-text">
+                                        Callback
+                                    </label>
+                                    <input id="supporting-text" className="form-input w-full" type="text"
+                                           ref={refCallback}/>
+                                </div>
                             </div>
-                        </div>
+                            <div className="m-1.5">
+                                <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white"
+                                        type="submit">Submit
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </main>
             </div>
@@ -78,4 +108,4 @@ function UsersNew() {
     );
 }
 
-export default UsersNew;
+export default DepositNew;

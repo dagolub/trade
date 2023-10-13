@@ -31,7 +31,7 @@ async def currencies():
 
 @router.get("/chains", response_model=[])
 async def chains():
-    return ["BTC", "BCH", "ETH", "TRX", "PLG", "ETC", "ETH"]
+    return ["BTC", "BCH", "ERC20", "TRC20", "PLG", "ETC", "ETH"]
 
 
 @router.get("/", response_model=List[schemas.Deposit])
@@ -179,6 +179,12 @@ def _deposit(deposit):
     result.setdefault("wallet", deposit["wallet"])
     result.setdefault("type", deposit["type"])
     result.setdefault("status", deposit["status"])
+    if "paid" in deposit:
+        result.setdefault(
+            "paid", okx.integer_to_fractional(deposit["paid"], deposit["currency"])
+        )
+    else:
+        result.setdefault("paid", 0)
     result.setdefault("callback", deposit["callback"])
     result.setdefault("callback_response", deposit["callback_response"])
     result.setdefault(

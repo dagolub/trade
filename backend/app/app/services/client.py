@@ -168,9 +168,9 @@ class OKX:
         if currency == "btc":
             return "BTC-Bitcoin"
         if currency == "usdt":
-            if chain == "eth":
+            if chain == "eth" or chain == "erc20":
                 return "USDT-ERC20"
-            elif chain == "trx":
+            elif chain == "trx" or chain == "trc20":
                 return "USDT-TRC20"
             elif chain == "plg":
                 return "USDT-Polygon"

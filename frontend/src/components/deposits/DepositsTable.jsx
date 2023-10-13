@@ -55,6 +55,9 @@ function DepositTable({
                   <div className="font-semibold text-left">Sum</div>
                 </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                  <div className="font-semibold text-left">Paid</div>
+                </th>
+                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                   <div className="font-semibold text-left">Currency</div>
                 </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
@@ -84,6 +87,7 @@ function DepositTable({
                       wallet={entity.wallet}
                       type={entity.type}
                       sum={entity.sum}
+                      paid={entity.paid}
                       currency={entity.currency}
                       chain={entity.chain}
                       status={entity.status}

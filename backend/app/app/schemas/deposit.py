@@ -13,6 +13,7 @@ class DepositBase(BaseModel):
     sum: float = None  # type: ignore
     currency: str = None  # type: ignore
     chain: str = None  # type: ignore
+    paid: str = None  # type: ignore
     created: Optional[datetime]
 
 

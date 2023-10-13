@@ -13,6 +13,7 @@ class Deposit(Base):
     sub_account = Column(Integer)
     currency = Column(String)
     chain = Column(String)
+    paid = Column(String)
     callback = Column(String)
     callback_response = Column(String)
     created = Column(DateTime)

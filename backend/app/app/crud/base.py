@@ -104,8 +104,12 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             return None
 
     async def get_by_status(self, db, status):
+        if not isinstance(status, (list)):
+            status = [status]
         result = []
-        async for wallet in db[self.model.__tablename__].find({"status": status}):
+        async for wallet in db[self.model.__tablename__].find(
+            {"status": {"$in": status}}
+        ):
             wallet["id"] = str(wallet["_id"])
             result.append(wallet)
         return result

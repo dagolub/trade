@@ -31,18 +31,21 @@ async def create_transaction(
 def delete_old_sub_account_api_keys(sub_account):
     print("Start delete")
     okx = OKX()
+    sleep(2)
     api_keys = okx.get_sub_account_api_keys(sub_account)
+    print("Delete api keys", api_keys)
+    sleep(2)
     for i in api_keys["data"]:
         okx.delete_api_key(sub_account=sub_account, api_key=i["apiKey"])
-        sleep(1)
+        sleep(2)
     print("End delete")
 
 
 async def incoming_transaction():  # noqa: 901
     okx = OKX()
-    wallets = await crud.deposit.get_by_status(db=db, status="created")
-    print("Wallets", wallets)
+    wallets = await crud.deposit.get_by_status(db=db, status=["created", "partially"])
     for wallet in wallets:
+        sleep(2)
         print("")
         print("Wallet", wallet)
         _deposit = await crud.deposit.get_by_wallet(db=db, wallet=wallet["wallet"])
@@ -52,9 +55,7 @@ async def incoming_transaction():  # noqa: 901
 
         print("Before get key")
         try:
-            print("Get deposit history")
             sleep(1)
-            print("Sub account", sub_account)
             sub_account_api_key = okx.create_sub_account_api_key(
                 sub_account=sub_account
             )
@@ -72,25 +73,48 @@ async def incoming_transaction():  # noqa: 901
                 if dh["to"] == wallet["wallet"]:
                     amount = dh["amt"]
                     currency = dh["ccy"]
-                    txId = dh["txId"]
+                    tx_id = dh["txId"]
+                    obj_in = {
+                        "status": wallet["status"] if "status" in wallet else "",
+                        "paid": wallet["paid"] if "paid" in wallet else 0,
+                    }
 
-                    deposit_amount = okx.integer_to_fractional(
-                        wallet["sum"], wallet["currency"]
-                    )
-                    status = "paid"
-                    if float(amount) < float(deposit_amount):
-                        status = "partially"
-                    elif float(amount) > float(deposit_amount):
-                        status = "overpayment"
+                    to_deposit = okx.fractional_to_integer(amount, wallet["currency"])
+
+                    if "status" not in obj_in:
+                        obj_in.setdefault("status", "partially")
+                    if "paid" not in obj_in:
+                        obj_in.setdefault("paid", to_deposit)
+                    if "paid" in obj_in:
+                        obj_in["paid"] = int(obj_in["paid"]) + int(to_deposit)
+
+                    if int(obj_in["paid"]) < int(wallet["sum"]):
+                        if "status" in obj_in:
+                            obj_in["status"] = "partially"
+                        else:
+                            obj_in.setdefault("status", "partially")
+
+                    if int(obj_in["paid"]) > int(wallet["sum"]):
+                        if "status" in obj_in:
+                            obj_in["status"] = "overpayment"
+                        else:
+                            obj_in.setdefault("status", "overpayment")
+
+                    if int(obj_in["paid"]) == int(wallet["sum"]):
+                        if "status" in obj_in:
+                            obj_in["status"] = "paid"
+                        else:
+                            obj_in.setdefault("status", "paid")
 
                     if currency == wallet["currency"]:
                         print("Amount", amount)
                         print("Currency", currency)
-                        print("txId", txId)
+                        print("tx_id", tx_id)
+                        print("obj_in", obj_in)
                         await crud.deposit.update(
                             db=db,
                             db_obj={"id": _deposit["id"]},
-                            obj_in={"status": status},
+                            obj_in=obj_in,
                         )
                         await create_corresponded_transactions(
                             okx=okx,
@@ -98,7 +122,7 @@ async def incoming_transaction():  # noqa: 901
                             amount=amount,
                             sub_account=sub_account,
                             wallet=wallet,
-                            txId=txId,
+                            tx_id=tx_id,
                             _deposit=_deposit,
                         )
                         user = await crud.user.get(
@@ -148,7 +172,7 @@ async def incoming_transaction():  # noqa: 901
 
 
 async def create_corresponded_transactions(
-    okx, currency, amount, sub_account, wallet, txId, _deposit
+    okx, currency, amount, sub_account, wallet, tx_id, _deposit
 ):
     okx.transfer_money_to_main_account(
         ccy=currency,
@@ -159,7 +183,7 @@ async def create_corresponded_transactions(
     await create_transaction(
         from_wallet="<external>",
         to_wallet=wallet["wallet"],
-        tx=txId,
+        tx=tx_id,
         amount=amount,
         currency=currency,
         _type="OKX",
@@ -189,7 +213,7 @@ async def create_corresponded_transactions(
 
 
 async def send_callback():
-    wallets = await crud.deposit.get_by_status(db=db, status="paid")
+    wallets = await crud.deposit.get_by_status(db=db, status=["paid", "overpayment"])
 
     for wallet in wallets:
         if "callback" not in wallet:

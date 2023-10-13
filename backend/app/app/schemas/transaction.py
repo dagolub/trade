@@ -7,7 +7,7 @@ class TransactionBase(BaseModel):
     from_wallet: Optional[str] = None
     to_wallet: Optional[str] = None
     tx: Optional[str] = None
-    amount: Optional[int] = None
+    amount: Optional[float] = None
     currency: Optional[str] = None
     type: Optional[str] = None
     created: Optional[datetime]
