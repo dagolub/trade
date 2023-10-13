@@ -71,6 +71,12 @@ async def incoming_transaction():  # noqa: 901
             for dh in deposit_history["data"]:
                 print("DH", dh)
                 if dh["to"] == wallet["wallet"]:
+                    transaction = await crud.transaction.get_by_tx(db=db, tx=dh["txId"])
+
+                    print("Transaction", transaction)
+                    if transaction:
+                        continue
+
                     amount = dh["amt"]
                     currency = dh["ccy"]
                     tx_id = dh["txId"]
@@ -174,42 +180,46 @@ async def incoming_transaction():  # noqa: 901
 async def create_corresponded_transactions(
     okx, currency, amount, sub_account, wallet, tx_id, _deposit
 ):
-    okx.transfer_money_to_main_account(
-        ccy=currency,
-        amt=amount,
-        sub_account=sub_account,
-    )
-    sleep(2)
-    await create_transaction(
-        from_wallet="<external>",
-        to_wallet=wallet["wallet"],
-        tx=tx_id,
-        amount=amount,
-        currency=currency,
-        _type="OKX",
-        owner_id=_deposit["owner_id"],
-        deposit_id=_deposit["id"],
-    )
-    main_account = okx.transfer_money_to_main_account(
-        ccy=currency,
-        amt=amount,
-        from_account=18,  # trading account
-        sub_account=sub_account,
-        to_account=6,  # funding account
-        type_transfer=0,
-    )
-    sleep(2)
-    print("Main account", main_account)
-    await create_transaction(
-        from_wallet=wallet["wallet"],
-        to_wallet="<internal>",
-        tx=main_account["data"][0]["transId"],
-        amount=amount,
-        currency=currency,
-        _type="OKX",
-        owner_id=_deposit["owner_id"],
-        deposit_id=_deposit["id"],
-    )
+    balance = okx.get_sub_account_balance(sub_account, currency)
+
+    if len(balance["data"]) > 0 and int(balance["data"][0]["availBal"]) > 0:
+        print("Balance", balance)
+        okx.transfer_money_to_main_account(
+            ccy=currency,
+            amt=amount,
+            sub_account=sub_account,
+        )
+        sleep(2)
+        await create_transaction(
+            from_wallet="<external>",
+            to_wallet=wallet["wallet"],
+            tx=tx_id,
+            amount=amount,
+            currency=currency,
+            _type="OKX",
+            owner_id=_deposit["owner_id"],
+            deposit_id=_deposit["id"],
+        )
+        main_account = okx.transfer_money_to_main_account(
+            ccy=currency,
+            amt=amount,
+            from_account=18,  # trading account
+            sub_account=sub_account,
+            to_account=6,  # funding account
+            type_transfer=0,
+        )
+        sleep(2)
+        print("Main account", main_account)
+        await create_transaction(
+            from_wallet=wallet["wallet"],
+            to_wallet="<internal>",
+            tx=main_account["data"][0]["transId"],
+            amount=amount,
+            currency=currency,
+            _type="OKX",
+            owner_id=_deposit["owner_id"],
+            deposit_id=_deposit["id"],
+        )
 
 
 async def send_callback():
@@ -220,13 +230,16 @@ async def send_callback():
             continue
         callback = wallet["callback"]
 
-        if wallet["status"] == "paid":
+        if wallet["status"] == "paid" or wallet["status"] == "overpayment":
             response = requests.post(callback, json=deposit(wallet))
             callback_response = response.text
 
             _status = "in process"
             if response.status_code == 200:
-                _status = "completed"
+                if wallet["status"] == "paid":
+                    _status = "completed"
+                else:
+                    _status = "completed-overpayment"
             await crud.callback.create(
                 db=db,
                 obj_in={

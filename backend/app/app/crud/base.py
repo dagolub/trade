@@ -103,6 +103,14 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         else:
             return None
 
+    async def get_by_tx(self, db, tx):
+        entity = await db[self.model.__tablename__].find_one({"tx": tx})  # type: ignore
+        if entity:
+            entity["id"] = str(entity["_id"])
+            return entity
+        else:
+            return None
+
     async def get_by_status(self, db, status):
         if not isinstance(status, (list)):
             status = [status]
