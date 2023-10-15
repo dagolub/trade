@@ -36,7 +36,7 @@ async def read_withdraws(
     return withdraws
 
 
-@router.post("/", response_model=schemas.WithdrawBaseCreated)
+@router.post("/", response_model=schemas.Withdraw)
 async def create_withdraw(
     *,
     db: Session = Depends(deps.get_db),

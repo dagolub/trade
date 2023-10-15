@@ -29,7 +29,11 @@ function DepositNew() {
         const chain = refChain.current.value
         const callback = refCallback.current.value
 
-        createDeposit()
+        createDeposit(sum, currency,chain, callback).then((data)=>{
+            if ( data.id ) {
+                window.location.href = "/deposits/view/" + data.id
+            }
+        })
     }
 
     React.useEffect(() => {

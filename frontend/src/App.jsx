@@ -6,14 +6,19 @@ import DepositsNew from './pages/deposits/new'; // Import Deposits properly
 import DepositsView from './pages/deposits/view'; // Import DepositsEdit properly
 
 import Settings from './pages/settings'; // Import Settings properly
+
 import Transactions from './pages/transactions/list'; // Import Transactions properly
 import TransactionsView from './pages/transactions/view'; // Import TransactionsNew properly
+
 import Users from './pages/users/list'; // Import Users properly
 import UsersEdit from './pages/users/edit'; // Import UsersEdit properly
 import UsersNew from './pages/users/new'; // Import UsersNew properly
+
 import Wallets from './pages/wallets/list'; // Import Wallets properly
 import WalletsView from './pages/wallets/view'; // Import WalletsNew properly
+
 import Withdraws from './pages/withdraws/list'; // Import Wallets properly
+import WithdrawsNew from './pages/withdraws/new'; // Import Wallets properly
 import WithdrawsView from './pages/withdraws/view'; // Import WalletsNew properly
 import Callbacks from './pages/callbacks/list'; // Import Wallets properly
 import CallbacksView from './pages/callbacks/view'; // Import WalletsNew properly
@@ -49,6 +54,8 @@ function App() {
         <Route path="/wallets/view/:id" element={<WalletsView />} />
 
         <Route path="/withdraws/list" element={<Withdraws />} />
+        <Route path="/withdraws/new" element={<WithdrawsNew />} />
+        <Route path="/withdraws/new?sum=:sum" element={<WithdrawsNew />} />
         <Route path="/withdraws/view/:id" element={<WithdrawsView />} />
 
         <Route path="/callbacks/list" element={<Callbacks />} />

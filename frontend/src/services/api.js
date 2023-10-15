@@ -160,6 +160,15 @@ const getWallets = (q = "", skip = 0, limit = 10) => {
 const getWallet = (id) => {
     return GET('/api/wallets/' + id)
 }
+const createWithdraw = (sum, to, currency, chain, callback) => {
+    return POST('/api/withdraws/', {
+        "sum": sum,
+        "to": to,
+        "currency": currency,
+        "chain": chain,
+        "callback": callback
+    })
+}
 const getWithdraws = (q = "", skip = 0, limit = 10) => {
     let url
     if (q === "") {
@@ -209,7 +218,7 @@ export {
     createDeposit, getDeposits, getDeposit, deleteDeposit, callbackDeposit, getCurrencies, getChains,
     getTransactions, getTransaction,
     getWallets, getWallet,
-    getWithdraws, getWithdraw, deleteWithdraw,
+    createWithdraw, getWithdraws, getWithdraw, deleteWithdraw,
     getCallbacks,
     getSetting, putSetting,
     getOTP
