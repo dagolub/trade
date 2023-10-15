@@ -3,8 +3,10 @@ import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
 import {createWithdraw, getChains, getCurrencies} from "../../services/api";
 import {populateSelect} from "../../utils";
+import {useParams} from 'react-router-dom';
 
 function WithdrawNew() {
+    const {sum} = useParams()
     const refSum = React.useRef("")
     const refTo = React.useRef("")
     const refCurrency = React.useRef("")
@@ -39,6 +41,9 @@ function WithdrawNew() {
     }
 
     React.useEffect(() => {
+        if ( sum > 0 ) {
+            refSum.current.value = sum
+        }
         getCurrencies().then((data) => setCurrencies(populateSelect(data, "currency")))
         getChains().then((data) => setChains(populateSelect(data, "chain")))
     }, [])
