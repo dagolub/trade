@@ -82,7 +82,7 @@ async def incoming_transaction():  # noqa: 901
                     tx_id = dh["txId"]
                     obj_in = {
                         "status": wallet["status"] if "status" in wallet else "",
-                        "paid": wallet["paid"] if "paid" in wallet else 0,
+                        "paid": wallet["paid"] if "pre paid" in wallet else 0,
                     }
 
                     to_deposit = okx.fractional_to_integer(amount, wallet["currency"])
@@ -108,7 +108,7 @@ async def incoming_transaction():  # noqa: 901
 
                     if int(obj_in["paid"]) == int(wallet["sum"]):
                         if "status" in obj_in:
-                            obj_in["status"] = "paid"
+                            obj_in["status"] = "pre paid"
                         else:
                             obj_in.setdefault("status", "pre paid")
 
@@ -239,7 +239,7 @@ async def send_callback():  # noqa: 901
 
                 _status = "in process"
                 if response.status_code == 200:
-                    if wallet["status"] == "paid":
+                    if wallet["status"] == "pre paid":
                         _status = "completed"
                     else:
                         _status = "completed-overpayment"
