@@ -238,7 +238,7 @@ async def send_callback():
                 db_obj={"id": wallet["id"]},
                 obj_in={"status": "paid"},
             )
-            wallet = crud.deposit.get(db=db, entity_id=wallet["id"])
+            wallet = await crud.deposit.get(db=db, entity_id=wallet["id"])
             response = requests.post(callback, json=deposit(wallet))
             callback_response = response.text
 
