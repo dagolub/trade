@@ -234,6 +234,7 @@ async def send_callback():  # noqa: 901
 
         if wallet["status"] == "pre paid" or wallet["status"] == "pre overpayment":
             try:
+                wallet["status"] = "paid"
                 response = requests.post(callback, json=deposit(wallet))
                 callback_response = response.text
 
