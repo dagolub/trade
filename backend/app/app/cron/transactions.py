@@ -102,7 +102,7 @@ async def incoming_transaction():  # noqa: 901
 
                     if int(obj_in["paid"]) > int(wallet["sum"]):
                         if "status" in obj_in:
-                            obj_in["status"] = "overpayment"
+                            obj_in["status"] = "pre overpayment"
                         else:
                             obj_in.setdefault("status", "pre overpayment")
 
