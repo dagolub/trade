@@ -240,7 +240,7 @@ async def send_callback():  # noqa: 901
 
                 _status = "in process"
                 if response.status_code == 200:
-                    if wallet["status"] == "pre paid":
+                    if wallet["status"] == "paid":
                         _status = "completed"
                     else:
                         _status = "completed-overpayment"
