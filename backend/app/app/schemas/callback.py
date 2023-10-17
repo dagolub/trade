@@ -5,9 +5,9 @@ from pydantic import BaseModel
 
 class CallbackBase(BaseModel):
     owner_id: Optional[str] = None
-    Callback_id: Optional[str] = None
     callback: Optional[str] = None
     callback_response: Optional[str] = None
+    deposit_id: Optional[str] = None
     created: Optional[datetime]
 
 

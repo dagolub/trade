@@ -251,6 +251,7 @@ async def send_callback():  # noqa: 901
                         "callback": callback,
                         "callback_response": callback_response,
                         "created": datetime.now(),
+                        "deposit_id": wallet["id"],
                     },
                 )
                 await crud.deposit.update(
