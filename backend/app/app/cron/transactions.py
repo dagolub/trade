@@ -104,13 +104,13 @@ async def incoming_transaction():  # noqa: 901
                         if "status" in obj_in:
                             obj_in["status"] = "overpayment"
                         else:
-                            obj_in.setdefault("status", "overpayment")
+                            obj_in.setdefault("status", "pre overpayment")
 
                     if int(obj_in["paid"]) == int(wallet["sum"]):
                         if "status" in obj_in:
                             obj_in["status"] = "paid"
                         else:
-                            obj_in.setdefault("status", "paid")
+                            obj_in.setdefault("status", "pre paid")
 
                     if currency == wallet["currency"]:
                         print("Amount", amount)
@@ -222,38 +222,50 @@ async def create_corresponded_transactions(
         )
 
 
-async def send_callback():
-    wallets = await crud.deposit.get_by_status(db=db, status=["paid", "overpayment"])
+async def send_callback():  # noqa: 901
+    wallets = await crud.deposit.get_by_status(
+        db=db, status=["pre paid", "pre overpayment"]
+    )
 
     for wallet in wallets:
         if "callback" not in wallet:
             continue
         callback = wallet["callback"]
 
-        if wallet["status"] == "paid" or wallet["status"] == "overpayment":
-            response = requests.post(callback, json=deposit(wallet))
-            callback_response = response.text
+        if wallet["status"] == "pre paid" or wallet["status"] == "pre overpayment":
+            try:
+                response = requests.post(callback, json=deposit(wallet))
+                callback_response = response.text
 
-            _status = "in process"
-            if response.status_code == 200:
-                if wallet["status"] == "paid":
-                    _status = "completed"
-                else:
-                    _status = "completed-overpayment"
-            await crud.callback.create(
-                db=db,
-                obj_in={
-                    "owner_id": wallet["owner_id"],
-                    "callback": callback,
-                    "callback_response": callback_response,
-                    "created": datetime.now(),
-                },
-            )
-            await crud.deposit.update(
-                db=db,
-                db_obj={"id": wallet["id"]},
-                obj_in={"callback_response": callback_response, "status": _status},
-            )
+                _status = "in process"
+                if response.status_code == 200:
+                    if wallet["status"] == "paid":
+                        _status = "completed"
+                    else:
+                        _status = "completed-overpayment"
+                await crud.callback.create(
+                    db=db,
+                    obj_in={
+                        "owner_id": wallet["owner_id"],
+                        "callback": callback,
+                        "callback_response": callback_response,
+                        "created": datetime.now(),
+                    },
+                )
+                await crud.deposit.update(
+                    db=db,
+                    db_obj={"id": wallet["id"]},
+                    obj_in={"callback_response": callback_response, "status": _status},
+                )
+            except Exception as e:
+                await crud.deposit.update(
+                    db=db,
+                    db_obj={"id": wallet["id"]},
+                    obj_in={
+                        "callback_response": str(e.args[0]),
+                        "status": "complete no callback",
+                    },
+                )
 
     withdraws = await crud.withdraw.get_by_status(db=db, status="paid")
 
