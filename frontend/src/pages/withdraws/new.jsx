@@ -17,6 +17,7 @@ function WithdrawNew() {
     const [chains, setChains] = React.useState([])
 
     const setCurrencyRate = (data) => {
+        console.log("Set currency rate", data)
         if (data === "USDT") {
             refChain.current.value = "TRC20"
         } else {
@@ -44,6 +45,13 @@ function WithdrawNew() {
         const sum = searchParams.get("sum")
         if ( sum > 0 ) {
              refSum.current.value = sum
+        }
+        const currency = searchParams.get("currency")
+        if ( currency ) {
+            console.log("Current currency", refCurrency.current.value )
+            refCurrency.current.value = currency
+            console.log("Current currency", refCurrency.current.value )
+            setCurrencyRate(currency)
         }
         getCurrencies().then((data) => setCurrencies(populateSelect(data, "currency")))
         getChains().then((data) => setChains(populateSelect(data, "chain")))

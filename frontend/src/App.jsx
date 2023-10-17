@@ -53,7 +53,7 @@ function App() {
         <Route path="/wallets/list" element={<Wallets />} />
         <Route path="/wallets/view/:id" element={<WalletsView />} />
 
-        <Route path="/withdraws/new?sum=:sum" element={<WithdrawsNew />} />
+        <Route path="/withdraws/new?sum=:sum&currency=:currency" element={<WithdrawsNew />} />
         <Route path="/withdraws/list" element={<Withdraws />} />
         <Route path="/withdraws/new" element={<WithdrawsNew />} />
 

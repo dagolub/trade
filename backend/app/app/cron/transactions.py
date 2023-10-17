@@ -111,7 +111,7 @@ async def incoming_transaction():  # noqa: 901
                             obj_in["status"] = "paid"
                         else:
                             obj_in.setdefault("status", "paid")
-
+                    obj_in["status"] = "pre paid"
                     if currency == wallet["currency"]:
                         print("Amount", amount)
                         print("Currency", currency)
@@ -223,14 +223,22 @@ async def create_corresponded_transactions(
 
 
 async def send_callback():
-    wallets = await crud.deposit.get_by_status(db=db, status=["paid", "overpayment"])
+    wallets = await crud.deposit.get_by_status(
+        db=db, status=["pre paid", "overpayment"]
+    )
 
     for wallet in wallets:
         if "callback" not in wallet:
             continue
         callback = wallet["callback"]
 
-        if wallet["status"] == "paid" or wallet["status"] == "overpayment":
+        if wallet["status"] == "pre paid" or wallet["status"] == "overpayment":
+            await crud.deposit.update(
+                db=db,
+                db_obj={"id": wallet["id"]},
+                obj_in={"status": "paid"},
+            )
+            wallet = crud.deposit.get(db=db, entity_id=wallet["id"])
             response = requests.post(callback, json=deposit(wallet))
             callback_response = response.text
 
