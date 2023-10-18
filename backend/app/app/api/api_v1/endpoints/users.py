@@ -7,7 +7,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic.networks import EmailStr
 from sqlalchemy.orm import Session  # type: ignore
-
+from datetime import datetime
 from app import crud, models, schemas
 from app.api import deps
 from app.core.config import settings
@@ -183,6 +183,37 @@ async def delete_deposit(
         raise HTTPException(status_code=404, detail="User doesn't exists")
 
     return await crud.user.remove(db=db, entity_id=entity_id)
+
+
+@router.post("/open", response_model=schemas.User)
+def create_user_open(
+    *,
+    db: Session = Depends(deps.get_db),
+    password: str = Body(...),
+    email: EmailStr = Body(...),
+    full_name: str = Body(None),
+) -> Any:
+    """
+    Create new user without the need to be logged in.
+    """
+    if not settings.USERS_OPEN_REGISTRATION:
+        raise HTTPException(
+            status_code=403,
+            detail="Open user registration is forbidden on this server",
+        )
+    user = crud.user.get_by_email(db, email=email)
+    if user:
+        raise HTTPException(
+            status_code=400,
+            detail="The user with this username already exists in the system",
+        )
+    user_in = schemas.UserCreate(password=password, email=email, full_name=full_name)
+    user_in.created = datetime.utcnow()
+    user_in.is_superuser = False
+    user_in.is_active = True
+    user_in.autotransfer = False
+    user = crud.user.create(db, obj_in=user_in)
+    return user
 
 
 def _get_search(q: str = ""):

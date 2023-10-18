@@ -9,5 +9,6 @@ class Callback(Base):
     owner_id = Column(String, index=True)
     callback = Column(String)
     callback_response = Column(String)
-    deposit_id = Column(String, index=True)
+    deposit_id = Column(String)
+    withdraw_id = Column(String)
     created = Column(DateTime)

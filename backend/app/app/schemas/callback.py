@@ -8,6 +8,7 @@ class CallbackBase(BaseModel):
     callback: Optional[str] = None
     callback_response: Optional[str] = None
     deposit_id: Optional[str] = None
+    withdraw_id: Optional[str] = None
     created: Optional[datetime]
 
 

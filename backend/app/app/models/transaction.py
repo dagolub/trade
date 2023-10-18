@@ -14,5 +14,6 @@ class Transaction(Base):
     currency = Column(String)
     type = Column(String)
     deposit_id = Column(String)
+    withdraw_id = Column(String)
     fee = Column(Float)
     created = Column(DateTime)

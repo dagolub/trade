@@ -9,7 +9,16 @@ from datetime import datetime
 
 
 async def create_transaction(
-    from_wallet, to_wallet, tx, amount, currency, _type, owner_id, deposit_id, fee=0
+    from_wallet,
+    to_wallet,
+    tx,
+    amount,
+    currency,
+    _type,
+    owner_id,
+    deposit_id="",
+    withdraw_id="",
+    fee=0,
 ):
     await crud.transaction.create(
         db=db,
@@ -23,6 +32,7 @@ async def create_transaction(
             "type": _type,
             "fee": fee,
             "deposit_id": deposit_id,
+            "withdraw_id": withdraw_id,
             "created": datetime.utcnow(),
         },
     )
@@ -292,6 +302,7 @@ async def send_callback():  # noqa: 901
                     "owner_id": withdraw["owner_id"],
                     "callback": callback,
                     "callback_response": callback_response,
+                    "withdraw_id": withdraw["id"],
                     "created": datetime.now(),
                 },
             )
@@ -348,6 +359,7 @@ async def outgoing_transaction():
                 owner_id=owner_id,
                 deposit_id="",
                 fee=fee,
+                withdraw_id=withdraw["id"],
             )
             await crud.withdraw.update(
                 db=db, db_obj={"id": withdraw["id"]}, obj_in={"status": "paid"}
