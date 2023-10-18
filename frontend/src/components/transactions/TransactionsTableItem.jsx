@@ -89,6 +89,9 @@ function TransactionTableItem(props) {
                 <div className="font-medium text-slate-800 dark:text-slate-100">{props.amount}</div>
             </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
+                <div className="font-medium text-slate-800 dark:text-slate-100">{props.fee}</div>
+            </td>
+            <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
                 <div className="font-medium text-slate-800 dark:text-slate-100">{props.currency}</div>
             </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>

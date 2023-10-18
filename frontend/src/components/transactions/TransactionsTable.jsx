@@ -61,6 +61,9 @@ function TransactionTable({
                   <div className="font-semibold text-left">Amount</div>
                 </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                  <div className="font-semibold text-left">Fee</div>
+                </th>
+                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                   <div className="font-semibold text-left">Currency</div>
                 </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
@@ -89,6 +92,7 @@ function TransactionTable({
                       to_wallet={entity.to_wallet}
                       tx={entity.tx}
                       amount={entity.amount}
+                      fee={entity.fee}
                       currency={entity.currency}
                       type={entity.type}
                       created={entity.created}
