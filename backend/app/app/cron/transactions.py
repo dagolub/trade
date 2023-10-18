@@ -82,7 +82,7 @@ async def incoming_transaction():  # noqa: 901
                     tx_id = dh["txId"]
                     obj_in = {
                         "status": wallet["status"] if "status" in wallet else "",
-                        "paid": wallet["paid"] if "pre paid" in wallet else 0,
+                        "paid": wallet["paid"] if "paid" in wallet else 0,
                     }
 
                     to_deposit = okx.fractional_to_integer(amount, wallet["currency"])
