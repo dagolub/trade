@@ -90,6 +90,7 @@ function WalletTable({
                       chain={entity.chain}
                       status={entity.status}
                       created={entity.created}
+                      withdraw_id={entity.withdraw_id}
 
                       handleClick={handleClick}
                       isChecked={isCheck.includes(entity.id)}

@@ -12,12 +12,12 @@ class TransactionBase(BaseModel):
     type: Optional[str] = None
     fee: Optional[float] = 0
     created: Optional[datetime]
+    deposit_id: Optional[str] = None
+    withdraw_id: Optional[str] = None
 
 
 class TransactionCreate(TransactionBase):
     owner_id: Optional[str] = None
-    deposit_id: Optional[str] = None
-    withdraw_id: Optional[str] = None
 
 
 class TransactionUpdate(TransactionBase):

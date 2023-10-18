@@ -186,7 +186,7 @@ async def delete_deposit(
 
 
 @router.post("/open", response_model=schemas.User)
-def create_user_open(
+async def create_user_open(
     *,
     db: Session = Depends(deps.get_db),
     password: str = Body(...),
@@ -196,7 +196,7 @@ def create_user_open(
     """
     Create new user without the need to be logged in.
     """
-    user = crud.user.get_by_email(db, email=email)
+    user = await crud.user.get_by_email(db, email=email)
     if user:
         raise HTTPException(
             status_code=400,
@@ -207,7 +207,7 @@ def create_user_open(
     user_in.is_superuser = False
     user_in.is_active = True
     user_in.autotransfer = False
-    user = crud.user.create(db, obj_in=user_in)
+    user = await crud.user.create(db, obj_in=user_in)
     return user
 
 
