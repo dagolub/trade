@@ -365,6 +365,10 @@ async def outgoing_transaction():
                 db=db, db_obj={"id": withdraw["id"]}, obj_in={"status": "paid"}
             )
 
+            user = await crud.user.get(db=db, entity_id=owner_id)
+            user_in = {"bal": user["bal"][currency] - amount}
+            await crud.user.update(db=db, db_obj={"id": owner_id}, obj_in=user_in)
+
         except ValueError as e:
             print("Exception in outgoing transaction", e.args[0])
     return
