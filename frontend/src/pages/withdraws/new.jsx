@@ -3,7 +3,8 @@ import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
 import {createWithdraw, getChains, getCurrencies} from "../../services/api";
 import {populateSelect} from "../../utils";
-import { useSearchParams } from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
+import load from '../../images/load.svg'
 
 function WithdrawNew() {
     let [searchParams, setSearchParams] = useSearchParams();
@@ -15,6 +16,7 @@ function WithdrawNew() {
 
     const [currencies, setCurrencies] = React.useState([])
     const [chains, setChains] = React.useState([])
+    const [loading, setLoading] = React.useState(false)
 
     const setCurrencyRate = (data) => {
         console.log("Set currency rate", data)
@@ -33,24 +35,27 @@ function WithdrawNew() {
         const currency = refCurrency.current.value
         const chain = refChain.current.value
         const callback = refCallback.current.value
-
-        createWithdraw(sum, to, currency,chain, callback).then((data)=>{
-            if ( data.id ) {
-                window.location.href = "/withdraws/view/" + data.id
-            }
-        })
+        if (loading === false) {
+            setLoading(true)
+            createWithdraw(sum, to, currency, chain, callback).then((data) => {
+                if (data.id) {
+                    window.location.href = "/withdraws/view/" + data.id
+                }
+            })
+        }
     }
 
     React.useEffect(() => {
+
         const sum = searchParams.get("sum")
-        if ( sum > 0 ) {
-             refSum.current.value = sum
+        if (sum > 0) {
+            refSum.current.value = sum
         }
         const currency = searchParams.get("currency")
-        if ( currency ) {
-            console.log("Current currency", refCurrency.current.value )
+        if (currency) {
+            console.log("Current currency", refCurrency.current.value)
             refCurrency.current.value = currency
-            console.log("Current currency", refCurrency.current.value )
+            console.log("Current currency", refCurrency.current.value)
             setCurrencyRate(currency)
         }
         getCurrencies().then((data) => setCurrencies(populateSelect(data, "currency")))
@@ -127,7 +132,9 @@ function WithdrawNew() {
                             </div>
                             <div className="m-1.5">
                                 <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white"
-                                        type="submit">Submit
+                                        type="submit">
+                                    {loading ? <img src={load} width="24" height="24"/> : ''}
+                                    Submit
                                 </button>
                             </div>
                         </form>

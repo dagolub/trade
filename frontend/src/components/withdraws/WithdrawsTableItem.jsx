@@ -30,10 +30,7 @@ function WalletTableItem(props) {
                 </div>
             </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
-                <div className="font-medium text-slate-800 dark:text-slate-100">
-                    {props.withdraw_id ? "-": ""}
-                    {props.sum}{props.withdraw_id}
-                </div>
+                <div className="font-medium text-slate-800 dark:text-slate-100">{props.sum}</div>
             </td>
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
                 <div className="font-medium text-slate-800 dark:text-slate-100">{props.to}</div>

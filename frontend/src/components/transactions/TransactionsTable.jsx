@@ -96,6 +96,7 @@ function TransactionTable({
                       currency={entity.currency}
                       type={entity.type}
                       created={entity.created}
+                      withdraw_id={entity.withdraw_id}
                       
                       handleClick={handleClick}
                       isChecked={isCheck.includes(entity.id)}

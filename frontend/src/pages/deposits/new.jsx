@@ -3,6 +3,7 @@ import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
 import {getCurrencies, getChains, createDeposit} from "../../services/api";
 import {populateSelect} from "../../utils"
+import load from '../../images/load.svg'
 
 function DepositNew() {
     const refSum = React.useRef("")
@@ -12,6 +13,7 @@ function DepositNew() {
 
     const [currencies, setCurrencies] = React.useState([])
     const [chains, setChains] = React.useState([])
+    const [loading, setLoading] = React.useState(false)
 
     const setCurrencyRate = (data) => {
         if (data === "USDT") {
@@ -29,11 +31,14 @@ function DepositNew() {
         const chain = refChain.current.value
         const callback = refCallback.current.value
 
-        createDeposit(sum, currency,chain, callback).then((data)=>{
-            if ( data.id ) {
-                window.location.href = "/deposits/view/" + data.id
-            }
-        })
+        if (loading === false) {
+            setLoading(true)
+            createDeposit(sum, currency, chain, callback).then((data) => {
+                if (data.id) {
+                    window.location.href = "/deposits/view/" + data.id
+                }
+            })
+        }
     }
 
     React.useEffect(() => {
@@ -101,7 +106,9 @@ function DepositNew() {
                             </div>
                             <div className="m-1.5">
                                 <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white"
-                                        type="submit">Submit
+                                        type="submit">
+                                    {loading ? <img src={load} width="24" height="24"/> : ''}
+                                    Submit
                                 </button>
                             </div>
                         </form>
