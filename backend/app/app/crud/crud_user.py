@@ -16,7 +16,7 @@ ModelType = TypeVar("ModelType", bound=Base)
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     async def get_by_email(self, db: Session, email: str) -> Optional[User]:
-        return await db["users"].find_one({"email": email})  # type: ignore
+        return await db["user"].find_one({"email": email})  # type: ignore
 
     async def create(self, db: Session, obj_in: dict) -> User:
         obj_in = jsonable_encoder(obj_in)
