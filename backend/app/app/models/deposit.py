@@ -3,7 +3,7 @@ from sqlalchemy import Column, DateTime, Integer, String  # type: ignore
 
 
 class Deposit(Base):
-    __tablename__ = "deposits"  # type: ignore
+    __tablename__ = "deposit"  # type: ignore
     _id = Column(String, primary_key=True, index=True)
     owner_id = Column(String, index=True)
     wallet = Column(String, index=True)

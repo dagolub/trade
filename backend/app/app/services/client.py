@@ -1,9 +1,11 @@
 from app.services.okx.Broker_api import BrokerAPI
 from app.services.okx.Funding_api import FundingAPI
 from app.services.okx.subAccount_api import SubAccountAPI
+from app.services.okx.Convert_api import ConvertAPI
 from app.core.config import settings
 import string
 import random
+from decimal import Decimal
 
 
 def generate_random_small(length):
@@ -133,27 +135,58 @@ class OKX:
     def get_withdrawal_history(self, ccy, wdId):
         return self.funding.get_withdrawal_history(ccy, wdId=wdId)
 
+    def estimate_quota(self, from_ccy, to_ccy, amount, side="buy"):
+        convert = ConvertAPI(flag="0")
+
+        result = convert.estimate_quote(
+            baseCcy=from_ccy,
+            quoteCcy=to_ccy,
+            side=side,
+            rfqSz=amount,
+            rfqSzCcy=from_ccy,
+        )
+
+        if (
+            result["code"] == "58009"
+            or result["code"] == "52914"  # noqa
+            or result["code"] == "52915"  # noqa
+        ):
+            return False
+
+        return result.get("data")[0]
+
+    def convert_trade(self, from_ccy, to_ccy, amount, quota_id, side="buy"):
+        convert = ConvertAPI(flag="0")
+
+        result = convert.convert_trade(
+            baseCcy=from_ccy,
+            quoteCcy=to_ccy,
+            side=side,
+            sz=amount,
+            szCcy=from_ccy,
+            quoteId=quota_id,
+        )
+
+        return result
+
     @staticmethod
     def integer_to_fractional(amount: str, currency: str):
-        if currency.lower() in ("ltc", "bch", "btc", "waves"):
-            _amount = int(amount) * 0.00000001
-            return float(f"{_amount:.100f}")
+        if currency.lower() in ("ltc", "bch", "btc"):
+            return float(Decimal(str(amount)) * Decimal("0.00000001"))
         if currency.lower() == "usdt":
-            _amount = int(amount) * 0.000001
-            return float(f"{_amount:.100f}")
-        if currency.lower() in ("eth", "etc", "plg"):
-            _amount = int(amount) * 0.000000000000000001
-            return float(f"{_amount:.100f}")
+            return float(Decimal(str(amount)) * Decimal("0.000001"))
+        if currency.lower() in ("eth", "etc"):
+            return float(Decimal(str(amount)) * Decimal("0.000000000000000001"))
 
     @staticmethod
     def fractional_to_integer(amount: str, currency: str) -> int:  # type: ignore
-        if currency.lower() in ("ltc", "bch", "btc", "waves"):
+        if currency.lower() in ("ltc", "bch", "btc"):
             _amount = float(amount) * 100000000
             return int(f"{_amount:.0f}")
         if currency.lower() == "usdt":
             _amount = float(amount) * 1000000
             return int(f"{_amount:.0f}")
-        if currency.lower() in ("etc", "eth", "plg"):
+        if currency.lower() in ("etc", "eth"):
             _amount = float(amount) * 1000000000000000000
             return int(f"{_amount:.0f}")
 

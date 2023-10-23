@@ -3,13 +3,6 @@ from .consts import *
 
 
 class ConvertAPI(Client):
-    def __init__(
-        self, api_key, api_secret_key, passphrase, use_server_time=False, flag="1"
-    ):
-        Client.__init__(
-            self, api_key, api_secret_key, passphrase, use_server_time, flag
-        )
-
     def get_currencies(self):
         params = {}
         return self._request_with_params(GET, GET_CURRENCIES, params)

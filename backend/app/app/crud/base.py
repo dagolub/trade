@@ -115,9 +115,16 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         if not isinstance(status, (list)):
             status = [status]
         result = []
-        async for wallet in db[self.model.__tablename__].find(
+        async for instance in db[self.model.__tablename__].find(
             {"status": {"$in": status}}
         ):
-            wallet["id"] = str(wallet["_id"])
-            result.append(wallet)
+            instance["id"] = str(instance["_id"])
+            result.append(instance)
+        return result
+
+    async def get_by_regex(self, db, search):
+        result = []
+        async for instance in db[self.model.__tablename__].find(search):
+            instance["id"] = str(instance["_id"])
+            result.append(instance)
         return result

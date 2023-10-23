@@ -6,6 +6,8 @@ from app.api.api_v1.endpoints.deposits import _deposit as deposit
 from app.db.session import database as db
 from app.services.client import OKX
 from datetime import datetime
+import traceback
+from decimal import Decimal
 
 
 async def create_transaction(
@@ -104,19 +106,19 @@ async def incoming_transaction():  # noqa: 901
                     if "paid" in obj_in:
                         obj_in["paid"] = int(obj_in["paid"]) + int(to_deposit)
 
-                    if int(obj_in["paid"]) < int(wallet["sum"]):
+                    if float(obj_in["paid"]) < float(wallet["sum"]):
                         if "status" in obj_in:
                             obj_in["status"] = "partially"
                         else:
                             obj_in.setdefault("status", "partially")
 
-                    if int(obj_in["paid"]) > int(wallet["sum"]):
+                    if float(obj_in["paid"]) > float(wallet["sum"]):
                         if "status" in obj_in:
                             obj_in["status"] = "pre overpayment"
                         else:
                             obj_in.setdefault("status", "pre overpayment")
 
-                    if int(obj_in["paid"]) == int(wallet["sum"]):
+                    if float(obj_in["paid"]) == float(wallet["sum"]):
                         if "status" in obj_in:
                             obj_in["status"] = "pre paid"
                         else:
@@ -164,27 +166,8 @@ async def incoming_transaction():  # noqa: 901
                     print("No wallets to update")
         except Exception as e:
             print("Exception in get sub account")
-            print(e.args[0])
-            #  auto exchange
-        # if float(sub_account_balance["data"][0]["bal"]) > 0:
-        #     main_account_balance = okx.get_account_balance(  # noqa
-        #         ccy=sub_account_balance["data"][0]["ccy"]
-        #     )
-        #     sleep(2)
-        # WHAT ?
-        # transaction = okx.make_withdrawal(
-        #     sub_account_balance["data"][0]["ccy"],
-        #     main_account_balance["data"][0]["bal"],
-        #     to_wallet,
-        # )
-
-        # await create_transaction(from_wallet="<internal>",
-        #                          to_wallet=to_wallet,
-        #                          tx=transaction['wdId'],
-        #                          amount=sub_account_balance["data"][0]["bal"],
-        #                          currency=sub_account_balance["data"][0]["ccy"],
-        #                          type="OKX",
-        #                          owner_id=deposit["owner_id"])
+            print(e)
+            traceback.print_exc()
 
 
 async def create_corresponded_transactions(
@@ -192,7 +175,7 @@ async def create_corresponded_transactions(
 ):
     balance = okx.get_sub_account_balance(sub_account, currency)
 
-    if len(balance["data"]) > 0 and int(balance["data"][0]["availBal"]) > 0:
+    if len(balance["data"]) > 0 and float(balance["data"][0]["availBal"]) > 0:
         print("Balance", balance)
         okx.transfer_money_to_main_account(
             ccy=currency,
@@ -232,6 +215,53 @@ async def create_corresponded_transactions(
         )
 
 
+async def exchange():
+    wallets = await crud.deposit.get_by_regex(
+        db=db, search={"status": {"$regex": "exchange"}}
+    )
+    for wallet in wallets:
+        ...
+        # get quota
+        okx = OKX()
+        quota = okx.estimate_quota(
+            from_ccy=wallet["currency"],
+            to_ccy="USDT",
+            side="sell",
+            amount=okx.integer_to_fractional(wallet["sum"], wallet["currency"]),
+        )
+        exchange = okx.convert_trade(
+            from_ccy=quota["baseCcy"],
+            to_ccy=quota["quoteCcy"],
+            amount=quota["rfqSz"],
+            quota_id=quota["quoteId"],
+            side=quota["side"],
+        )
+
+        if len(exchange.get("data")) > 0:
+            exchange_data = exchange.get("data")[0]
+            obj_in = {
+                "deposit_id": wallet["id"],
+                "currency": wallet["currency"],
+                "rate": exchange_data["fillPx"],
+                "usdt": str(
+                    Decimal(str(exchange_data["fillPx"]))  # noqa
+                    * Decimal(str(exchange_data["fillQuoteSz"]))  # noqa
+                ),
+                "created": datetime.utcnow(),
+            }
+            await crud.exchange.create(db=db, obj_in=obj_in)
+
+            # update deposit
+            deposit_in = {
+                "status": wallet["status"].split(" ")[1]  # noqa
+                + " "  # noqa
+                + wallet["status"].split(" ")[2]  # noqa
+            }
+            await crud.deposit.update(
+                db=db, db_obj={"id": wallet["id"]}, obj_in=deposit_in
+            )
+
+
 async def send_callback():  # noqa: 901
     wallets = await crud.deposit.get_by_status(
         db=db, status=["pre paid", "pre overpayment"]
@@ -240,14 +270,25 @@ async def send_callback():  # noqa: 901
     for wallet in wallets:
         if "callback" not in wallet:
             continue
-        callback = wallet["callback"]
 
         if wallet["status"] == "pre paid" or wallet["status"] == "pre overpayment":
+            user = await crud.user.get(db=db, entity_id=wallet["owner_id"])
+            if wallet["currency"] != "usdt" and user["autotransfer"]:
+                wallet["status"] = "exchange " + wallet["status"]
+                await crud.deposit.update(
+                    db=db,
+                    db_obj={"id": wallet["id"]},
+                    obj_in={"status": wallet["status"]},
+                )
+                continue
             try:
                 wallet["status"] = (
                     "paid" if wallet["status"] == "pre paid" else "overpayment"
                 )
-                response = requests.post(callback, json=deposit(wallet))
+                exchange = crud.exchange.get_by_deposit(wallet["id"])
+                if exchange:
+                    wallet["exchange"] = exchange
+                response = requests.post(wallet["callback"], json=deposit(wallet))
                 callback_response = response.text
 
                 _status = "in process"
@@ -260,7 +301,7 @@ async def send_callback():  # noqa: 901
                     db=db,
                     obj_in={
                         "owner_id": wallet["owner_id"],
-                        "callback": callback,
+                        "callback": wallet["callback"],
                         "callback_response": callback_response,
                         "created": datetime.now(),
                         "deposit_id": wallet["id"],
@@ -377,7 +418,9 @@ async def outgoing_transaction():
 
 
 if __name__ == "__main__":
-    asyncio.run(incoming_transaction())
-    asyncio.run(outgoing_transaction())
+    # asyncio.run(incoming_transaction())
+    # asyncio.run(outgoing_transaction())
+    # asyncio.run(send_callback())
+    asyncio.run(exchange())
     asyncio.run(send_callback())
-    asyncio.run(fill_transaction())
+    # asyncio.run(fill_transaction())

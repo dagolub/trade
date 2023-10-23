@@ -23,3 +23,9 @@ from .withdraw import (  # noqa
     WithdrawUpdate,
     WithdrawBaseCreated,
 )  # noqa
+from .exhange import (  # noqa
+    Exchange,
+    ExchangeCreate,
+    ExchangeInDB,
+    ExchangeUpdate,
+)  # noqa
