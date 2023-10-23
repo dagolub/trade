@@ -273,7 +273,11 @@ async def send_callback():  # noqa: 901
 
         if wallet["status"] == "pre paid" or wallet["status"] == "pre overpayment":
             user = await crud.user.get(db=db, entity_id=wallet["owner_id"])
-            if wallet["currency"] != "usdt" and user["autotransfer"]:
+            if (
+                wallet["currency"] != "usdt"  # noqa
+                and "autotransfer" in user  # noqa
+                and user["autotransfer"]  # noqa
+            ):
                 wallet["status"] = "exchange " + wallet["status"]
                 await crud.deposit.update(
                     db=db,
