@@ -418,9 +418,9 @@ async def outgoing_transaction():
 
 
 if __name__ == "__main__":
-    # asyncio.run(incoming_transaction())
-    # asyncio.run(outgoing_transaction())
-    # asyncio.run(send_callback())
+    asyncio.run(incoming_transaction())
+    asyncio.run(outgoing_transaction())
+    asyncio.run(send_callback())
     asyncio.run(exchange())
     asyncio.run(send_callback())
-    # asyncio.run(fill_transaction())
+    asyncio.run(fill_transaction())
