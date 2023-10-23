@@ -289,7 +289,9 @@ async def send_callback():  # noqa: 901
                 wallet["status"] = (
                     "paid" if wallet["status"] == "pre paid" else "overpayment"
                 )
-                exchange = crud.exchange.get_by_deposit(wallet["id"])
+                exchange = await crud.exchange.get_by_deposit(
+                    db=db, deposit_id=wallet["id"]
+                )
                 if exchange:
                     wallet["exchange"] = exchange
                 response = requests.post(wallet["callback"], json=deposit(wallet))
