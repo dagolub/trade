@@ -9,7 +9,7 @@ repos:
         name: Run black
         entry: black
         language: system
-        exclude: (.github/workflows/flake8.yml|backend/app/pyproject.toml|backend/app/poetry.lock|.env|frontend|backend/app/app/tests|backend/app/app/services/okx_core|.pre-commit-config.yaml|README.md|.github/workflows/bandit.yml)
+        exclude: (.gitignore|.github/workflows/flake8.yml|backend/app/pyproject.toml|backend/app/poetry.lock|.env|frontend|backend/app/app/tests|backend/app/app/services/okx_core|.pre-commit-config.yaml|README.md|.github/workflows/bandit.yml)
       - id: bandit
         name: Run bandit
         entry: bandit -s B311,B113,B105,B107
@@ -19,4 +19,4 @@ repos:
         name: Run flake8
         entry: flake8
         language: system
-        exclude: (.env|mypy.ini|.github/workflows/bandit.yml|.github/workflows/black.yml|backend/app/app/services/okx|frontend|backend/app/app/test|backend/app/app/codegen|.flake8|.github/workflows/flake8.yml|README.md|backend/.gitignore|backend/app/pyproject.toml|backend/app/pyproject.toml|backend/app/prestart.sh|.pre-commit-config.yaml|backend/app/poetry.lock)
+        exclude: (.gitignore|.env|mypy.ini|.github/workflows/bandit.yml|.github/workflows/black.yml|backend/app/app/services/okx|frontend|backend/app/app/test|backend/app/app/codegen|.flake8|.github/workflows/flake8.yml|README.md|backend/.gitignore|backend/app/pyproject.toml|backend/app/pyproject.toml|backend/app/prestart.sh|.pre-commit-config.yaml|backend/app/poetry.lock)
