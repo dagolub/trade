@@ -38,7 +38,7 @@ def generate_random_string_passphrase(length):
 
 class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
     async def get_by_wallet(self, db, wallet):
-        wallet = await db["deposits"].find_one({"wallet": wallet})  # type: ignore
+        wallet = await db["deposit"].find_one({"wallet": wallet})  # type: ignore
         if wallet:
             wallet["id"] = str(wallet["_id"])
             return wallet
