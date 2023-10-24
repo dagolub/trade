@@ -3,6 +3,9 @@ import {getToken} from './token'; // Import getToken from the appropriate locati
 
 const getUrl = (url) => {
     const base = 'http://localhost:8001/api/v1';
+    if (window.location.host === "admin.rpay.io") {
+        return base + url.replace('admin.rpay.io/api', 'api.rpay.io');
+    }
     if (window.location.port > 80) {
         return base + url.replace('/api', '');
     }
