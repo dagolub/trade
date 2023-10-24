@@ -51,7 +51,7 @@ class OKX:
         return account.asset_balances(subAcct=sub_account, ccy=currency)
 
     def create_sub_account_api_key(self, sub_account):
-        ip = "178.128.196.184,165.22.19.20"
+        ip = "178.128.196.184,165.22.19.20,104.248.131.103"
 
         sub_account_label = sub_account + generate_random_small(6)
         return self.broker.nd_create_apikey(
