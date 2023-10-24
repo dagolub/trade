@@ -22,7 +22,7 @@ function Signin() {
       saveToken(response.data.access_token);
       window.location.pathname = '/';
     } else {
-      showError(alert, response);
+      console.log(response);
     }
 
     return false;
