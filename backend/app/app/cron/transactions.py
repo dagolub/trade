@@ -229,37 +229,38 @@ async def exchange():
             side="sell",
             amount=okx.integer_to_fractional(wallet["sum"], wallet["currency"]),
         )
-        exchange = okx.convert_trade(
-            from_ccy=quota["baseCcy"],
-            to_ccy=quota["quoteCcy"],
-            amount=quota["rfqSz"],
-            quota_id=quota["quoteId"],
-            side=quota["side"],
-        )
-
-        if len(exchange.get("data")) > 0:
-            exchange_data = exchange.get("data")[0]
-            obj_in = {
-                "deposit_id": wallet["id"],
-                "currency": wallet["currency"],
-                "rate": exchange_data["fillPx"],
-                "usdt": str(
-                    Decimal(str(exchange_data["fillPx"]))  # noqa
-                    * Decimal(str(exchange_data["fillQuoteSz"]))  # noqa
-                ),
-                "created": datetime.utcnow(),
-            }
-            await crud.exchange.create(db=db, obj_in=obj_in)
-
-            # update deposit
-            deposit_in = {
-                "status": wallet["status"].split(" ")[1]  # noqa
-                + " "  # noqa
-                + wallet["status"].split(" ")[2]  # noqa
-            }
-            await crud.deposit.update(
-                db=db, db_obj={"id": wallet["id"]}, obj_in=deposit_in
+        if quota and "baseCcy" in quota:
+            exchange = okx.convert_trade(
+                from_ccy=quota["baseCcy"],
+                to_ccy=quota["quoteCcy"],
+                amount=quota["rfqSz"],
+                quota_id=quota["quoteId"],
+                side=quota["side"],
             )
+
+            if len(exchange.get("data")) > 0:
+                exchange_data = exchange.get("data")[0]
+                obj_in = {
+                    "deposit_id": wallet["id"],
+                    "currency": wallet["currency"],
+                    "rate": exchange_data["fillPx"],
+                    "usdt": str(
+                        Decimal(str(exchange_data["fillPx"]))  # noqa
+                        * Decimal(str(exchange_data["fillQuoteSz"]))  # noqa
+                    ),
+                    "created": datetime.utcnow(),
+                }
+                await crud.exchange.create(db=db, obj_in=obj_in)
+
+                # update deposit
+                deposit_in = {
+                    "status": wallet["status"].split(" ")[1]  # noqa
+                    + " "  # noqa
+                    + wallet["status"].split(" ")[2]  # noqa
+                }
+                await crud.deposit.update(
+                    db=db, db_obj={"id": wallet["id"]}, obj_in=deposit_in
+                )
 
 
 async def send_callback():  # noqa: 901
