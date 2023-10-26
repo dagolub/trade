@@ -169,6 +169,9 @@ class OKX:
 
         return result
 
+    def get_currencies(self):
+        return self.funding.get_currency()
+
     @staticmethod
     def integer_to_fractional(amount: str, currency: str):
         if currency.lower() in ("ltc", "bch", "btc"):

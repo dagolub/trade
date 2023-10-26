@@ -1,5 +1,5 @@
 from typing import Any, List
-
+import traceback
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
@@ -89,6 +89,7 @@ async def create_deposit(
             await crud.deposit.create(db=db, obj_in=deposit_in, owner=current_user)  # type: ignore
         )
     except ValueError as e:
+        traceback.print_exc()
         return JSONResponse(
             status_code=500,
             content={"detail": e.args[0]},
@@ -109,27 +110,6 @@ async def read_deposit(
         raise HTTPException(status_code=400, detail="Deposit doesn't exists")
     deposit = _deposit(deposit)
 
-    return deposit
-
-
-@router.put("/{entity_id}", response_model=schemas.Deposit)
-async def update_deposit(
-    *,
-    db: Session = Depends(deps.get_db),
-    entity_id: str,
-    deposit_in: schemas.DepositUpdate,
-    current_user: models.User = Depends(deps.get_current_active_user),
-) -> Any:
-    """
-    Update a deposit.
-    """
-    deposit = await crud.deposit.get(db=db, entity_id=entity_id)
-    if not deposit:
-        raise HTTPException(
-            status_code=404,
-            detail="Deposit doesn't exists",
-        )
-    deposit = await crud.deposit.update(db=db, db_obj=deposit, obj_in=deposit_in)  # type: ignore
     return deposit
 
 
@@ -175,6 +155,8 @@ def _deposit(deposit):
     if not okx:
         raise ValueError("Exchanger 'OKX' is not available in parse deposit")
     result = {}
+    if deposit is None:
+        raise ValueError("Wrong deposit")
     result.setdefault("id", deposit["id"])
     result.setdefault("wallet", deposit["wallet"])
     result.setdefault("type", deposit["type"])
