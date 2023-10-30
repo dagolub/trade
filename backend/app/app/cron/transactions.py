@@ -251,6 +251,7 @@ async def exchange():
                     "usdt": usdt,
                     "created": datetime.utcnow(),
                 }
+
                 await crud.exchange.create(db=db, obj_in=obj_in)
 
                 # update deposit
