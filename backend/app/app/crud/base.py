@@ -70,6 +70,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     async def create(
         self, db: Session, obj_in: dict, current_user: dict
     ) -> Optional[ModelType]:
+        if current_user:
+            obj_in["owner_id"] = current_user["id"]
         obj = await db[self.model.__tablename__].insert_one(document=obj_in)  # type: ignore
         object = await db[self.model.__tablename__].find_one(  # type: ignore
             {"_id": ObjectId(obj.inserted_id)}

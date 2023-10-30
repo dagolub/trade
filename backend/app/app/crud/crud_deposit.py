@@ -108,7 +108,9 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                     "created": datetime.utcnow(),
                 }
 
-                current_deposit = await super().create(db=db, obj_in=obj_in)
+                current_deposit = await super().create(
+                    db=db, obj_in=obj_in, current_user=owner
+                )
                 await crud.wallet.create(
                     db=db,
                     obj_in={  # type: ignore
