@@ -22,10 +22,10 @@ async def create_transaction(
     withdraw_id="",
     fee=0,
 ):
+    user = await crud.user.get(db=db, entity_id=owner_id)
     await crud.transaction.create(
         db=db,
         obj_in={
-            "owner_id": owner_id,
             "from_wallet": from_wallet,
             "to_wallet": to_wallet,
             "tx": tx,
@@ -37,6 +37,7 @@ async def create_transaction(
             "withdraw_id": withdraw_id,
             "created": datetime.utcnow(),
         },
+        current_user=user,
     )
 
 
