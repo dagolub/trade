@@ -294,7 +294,8 @@ async def exchange():
 
 async def send_callback():  # noqa: 901
     wallets = await crud.deposit.get_by_status(
-        db=db, status=["pre paid", "pre overpayment"]
+        db=db,
+        status=["pre paid", "pre overpayment", "aex pre paid", "aex pre overpayment"],
     )
 
     for wallet in wallets:
