@@ -260,6 +260,7 @@ async def exchange():
                 print("Exchange fillPx", exchange_data["fillPx"])
                 print("Exchange fillQuoteSz", exchange_data["fillQuoteSz"])
                 print("usdt", usdt)
+                print("exchange_data", exchange_data)
 
                 obj_in = {
                     "deposit_id": wallet["id"],
@@ -273,7 +274,7 @@ async def exchange():
 
                 # update deposit
                 deposit_in = {
-                    "status": "aex"
+                    "status": "aex "
                     + wallet["status"].split(" ")[1]  # noqa
                     + " "  # noqa
                     + wallet["status"].split(" ")[2]  # noqa
