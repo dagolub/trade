@@ -302,6 +302,7 @@ async def send_callback():  # noqa: 901
             continue
 
         if "aex" in wallet["status"] or "pre" in wallet["status"]:
+            print("Wallet status", wallet["status"])
             user = await crud.user.get(db=db, entity_id=wallet["owner_id"])
             if (
                 wallet["currency"] != "USDT"  # noqa
@@ -316,6 +317,7 @@ async def send_callback():  # noqa: 901
                 )
                 continue
             try:
+                print("PRE WALLET STATUS", wallet["status"])
                 wallet["status"] = (
                     "paid"
                     if wallet["status"] == "pre paid"  # noqa
