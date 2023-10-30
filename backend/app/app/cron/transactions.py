@@ -304,19 +304,20 @@ async def send_callback():  # noqa: 901
 
         if "aex" in wallet["status"] or "pre" in wallet["status"]:
             print("Wallet status", wallet["status"])
-            user = await crud.user.get(db=db, entity_id=wallet["owner_id"])
-            if (
-                wallet["currency"] != "USDT"  # noqa
-                and "autotransfer" in user  # noqa
-                and user["autotransfer"]  # noqa
-            ):
-                wallet["status"] = "exchange " + wallet["status"]
-                await crud.deposit.update(
-                    db=db,
-                    db_obj={"id": wallet["id"]},
-                    obj_in={"status": wallet["status"]},
-                )
-                continue
+            if "aex" not in wallet["status"]:
+                user = await crud.user.get(db=db, entity_id=wallet["owner_id"])
+                if (
+                    wallet["currency"] != "USDT"  # noqa
+                    and "autotransfer" in user  # noqa
+                    and user["autotransfer"]  # noqa
+                ):
+                    wallet["status"] = "exchange " + wallet["status"]
+                    await crud.deposit.update(
+                        db=db,
+                        db_obj={"id": wallet["id"]},
+                        obj_in={"status": wallet["status"]},
+                    )
+                    continue
             try:
                 print("PRE WALLET STATUS", wallet["status"])
                 wallet["status"] = (
