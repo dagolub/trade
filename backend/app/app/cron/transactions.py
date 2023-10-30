@@ -273,7 +273,8 @@ async def exchange():
 
                 # update deposit
                 deposit_in = {
-                    "status": wallet["status"].split(" ")[1]  # noqa
+                    "status": "aex"
+                    + wallet["status"].split(" ")[1]  # noqa
                     + " "  # noqa
                     + wallet["status"].split(" ")[2]  # noqa
                 }
@@ -283,10 +284,10 @@ async def exchange():
                 # update balance
                 u = await crud.user.get(db=db, entity_id=wallet["owner_id"])
                 user = {"bal": u["bal"]}
-                user["bal"][quota["baseCcy"]] = (
-                    user["bal"][quota["baseCcy"].lower()] - quota["rfqSz"]
-                )
-                user["bal"]["usdt"] = user["bal"]["usdt"] + usdt
+                user["bal"][quota["baseCcy"]] = float(
+                    user["bal"][quota["baseCcy"].lower()]
+                ) - float(quota["rfqSz"])
+                user["bal"]["usdt"] = float(user["bal"]["usdt"]) + float(usdt)
                 await crud.user.update(db=db, db_obj=u, obj_in=user)
 
 
@@ -315,7 +316,10 @@ async def send_callback():  # noqa: 901
                 continue
             try:
                 wallet["status"] = (
-                    "paid" if wallet["status"] == "pre paid" else "overpayment"
+                    "paid"
+                    if wallet["status"] == "pre paid"  # noqa
+                    or wallet["status"] == "aex pre paid"  # noqa
+                    else "overpayment"  # noqa
                 )
                 exchange = await crud.exchange.get_by_deposit(
                     db=db, deposit_id=wallet["id"]
