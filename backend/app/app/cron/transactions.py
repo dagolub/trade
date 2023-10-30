@@ -23,7 +23,7 @@ async def create_transaction(
     fee=0,
 ):
     user = await crud.user.get(db=db, entity_id=owner_id)
-    await crud.transaction.create(
+    return await crud.transaction.create(
         db=db,
         obj_in={
             "from_wallet": from_wallet,
@@ -129,12 +129,7 @@ async def incoming_transaction():  # noqa: 901
                         print("Currency", currency)
                         print("tx_id", tx_id)
                         print("obj_in", obj_in)
-                        await crud.deposit.update(
-                            db=db,
-                            db_obj={"id": _deposit["id"]},
-                            obj_in=obj_in,
-                        )
-                        await create_corresponded_transactions(
+                        transaction = await create_corresponded_transactions(
                             okx=okx,
                             currency=currency,
                             amount=amount,
@@ -143,25 +138,34 @@ async def incoming_transaction():  # noqa: 901
                             tx_id=tx_id,
                             _deposit=_deposit,
                         )
-                        user = await crud.user.get(
-                            db=db, entity_id=_deposit["owner_id"]
-                        )
-                        if "bal" in user:
-                            bal = user["bal"]
-                        else:
-                            bal = {}
-                        if "bal" not in user or not bal:
-                            bal = {
-                                "btc": 0,
-                                "ltc": 0,
-                                "bch": 0,
-                                "usdt": 0,
-                                "etc": 0,
-                                "eth": 0,
-                            }
+                        if transaction:
+                            await crud.deposit.update(
+                                db=db,
+                                db_obj={"id": _deposit["id"]},
+                                obj_in=obj_in,
+                            )
 
-                        bal[currency.lower()] += float(amount)
-                        await crud.user.update(db=db, db_obj=user, obj_in={"bal": bal})
+                            user = await crud.user.get(
+                                db=db, entity_id=_deposit["owner_id"]
+                            )
+                            if "bal" in user:
+                                bal = user["bal"]
+                            else:
+                                bal = {}
+                            if "bal" not in user or not bal:
+                                bal = {
+                                    "btc": 0,
+                                    "ltc": 0,
+                                    "bch": 0,
+                                    "usdt": 0,
+                                    "etc": 0,
+                                    "eth": 0,
+                                }
+
+                            bal[currency.lower()] += float(amount)
+                            await crud.user.update(
+                                db=db, db_obj=user, obj_in={"bal": bal}
+                            )
                 else:
                     print("No wallets to update")
         except Exception as e:
@@ -175,6 +179,7 @@ async def create_corresponded_transactions(
 ):
     balance = okx.get_sub_account_balance(sub_account, currency)
     print("Balance", balance)
+    transactions = None
     if len(balance["data"]) > 0 and float(balance["data"][0]["availBal"]) > 0:
         print("Balance", balance)
         okx.transfer_money_to_main_account(
@@ -183,7 +188,7 @@ async def create_corresponded_transactions(
             sub_account=sub_account,
         )
         sleep(2)
-        await create_transaction(
+        transaction = await create_transaction(
             from_wallet="<external>",
             to_wallet=wallet["wallet"],
             tx=tx_id,
@@ -193,6 +198,8 @@ async def create_corresponded_transactions(
             owner_id=_deposit["owner_id"],
             deposit_id=_deposit["id"],
         )
+        if transaction:
+            transactions += 1
         main_account = okx.transfer_money_to_main_account(
             ccy=currency,
             amt=amount,
@@ -203,7 +210,7 @@ async def create_corresponded_transactions(
         )
         sleep(2)
         print("Main account", main_account)
-        await create_transaction(
+        transaction = await create_transaction(
             from_wallet=wallet["wallet"],
             to_wallet="<internal>",
             tx=main_account["data"][0]["transId"],
@@ -213,6 +220,12 @@ async def create_corresponded_transactions(
             owner_id=_deposit["owner_id"],
             deposit_id=_deposit["id"],
         )
+        if transaction:
+            transactions += 1
+
+        if transactions == 2:
+            return True
+    return False
 
 
 async def exchange():
@@ -244,6 +257,10 @@ async def exchange():
                     Decimal(str(exchange_data["fillPx"]))  # noqa
                     * Decimal(str(exchange_data["fillQuoteSz"]))  # noqa
                 )
+                print("Exchange fillPx", exchange_data["fillPx"])
+                print("Exchange fillQuoteSz", exchange_data["fillQuoteSz"])
+                print("usdt", usdt)
+
                 obj_in = {
                     "deposit_id": wallet["id"],
                     "currency": wallet["currency"],
@@ -267,7 +284,7 @@ async def exchange():
                 u = await crud.user.get(db=db, entity_id=wallet["owner_id"])
                 user = {"bal": u["bal"]}
                 user["bal"][quota["baseCcy"]] = (
-                    user["bal"][quota["baseCcy"]] - quota["rfqSz"]
+                    user["bal"][quota["baseCcy"].lower()] - quota["rfqSz"]
                 )
                 user["bal"]["usdt"] = user["bal"]["usdt"] + usdt
                 await crud.user.update(db=db, db_obj=u, obj_in=user)
