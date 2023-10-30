@@ -114,12 +114,12 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                 await crud.wallet.create(
                     db=db,
                     obj_in={  # type: ignore
-                        "owner_id": owner["id"],
                         "deposit_id": current_deposit["id"],  # type: ignore
                         "wallet": wallet,
                         "type": deposit_type,
                         "created": datetime.utcnow(),
                     },
+                    current_user=owner,
                 )
 
             return current_deposit  # type: ignore
