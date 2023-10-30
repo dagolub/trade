@@ -255,10 +255,10 @@ async def exchange():
                 exchange_data = exchange.get("data")[0]
                 usdt = str(
                     Decimal(str(exchange_data["fillPx"]))  # noqa
-                    * Decimal(str(exchange_data["fillQuoteSz"]))  # noqa
+                    * Decimal(str(exchange_data["fillBaseSz"]))  # noqa
                 )
                 print("Exchange fillPx", exchange_data["fillPx"])
-                print("Exchange fillQuoteSz", exchange_data["fillQuoteSz"])
+                print("Exchange fillQuoteSz", exchange_data["fillBaseSz"])
                 print("usdt", usdt)
                 print("exchange_data", exchange_data)
 
@@ -301,7 +301,7 @@ async def send_callback():  # noqa: 901
         if "callback" not in wallet:
             continue
 
-        if wallet["status"] == "pre paid" or wallet["status"] == "pre overpayment":
+        if "aex" in wallet["status"] or "pre" in wallet["status"]:
             user = await crud.user.get(db=db, entity_id=wallet["owner_id"])
             if (
                 wallet["currency"] != "USDT"  # noqa
