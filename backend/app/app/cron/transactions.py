@@ -179,7 +179,7 @@ async def create_corresponded_transactions(
 ):
     balance = okx.get_sub_account_balance(sub_account, currency)
     print("Balance", balance)
-    transactions = None
+    transactions = 0
     if len(balance["data"]) > 0 and float(balance["data"][0]["availBal"]) > 0:
         print("Balance", balance)
         okx.transfer_money_to_main_account(
@@ -199,7 +199,7 @@ async def create_corresponded_transactions(
             deposit_id=_deposit["id"],
         )
         if transaction:
-            transactions += 1
+            transactions = transactions + 1
         main_account = okx.transfer_money_to_main_account(
             ccy=currency,
             amt=amount,
@@ -221,7 +221,7 @@ async def create_corresponded_transactions(
             deposit_id=_deposit["id"],
         )
         if transaction:
-            transactions += 1
+            transactions = transactions + 1
 
         if transactions == 2:
             return True
