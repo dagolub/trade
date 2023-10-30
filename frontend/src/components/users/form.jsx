@@ -7,8 +7,7 @@ function Form({
   is_active = false,
   is_superuser = false,
   id = '',
-  auto = false,
-  otp = ''
+  auto = false
 }) {
   const refName = React.useRef('');
   const refEmail = React.useRef('');
@@ -62,7 +61,7 @@ function Form({
       setAutoTransfer(auto);
       setFirstTime(true);
     }
-  });
+  }, []);
 
     return (
         <div className="max-w-sm mx-auto w-full px-4 py-8">
@@ -129,7 +128,6 @@ function Form({
                             className="text-sm text-slate-400 dark:text-slate-500 italic ml-2">{autotransfer ? 'On' : 'Off'}</div>
                     </div>
                 </div>
-                <img src={"/" + otp} />
                 <div className="m-1.5">
                     <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white" type="submit">Submit</button>
                 </div>

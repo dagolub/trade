@@ -92,6 +92,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                 deposit_type = obj_in.type  # type: ignore
 
             deposit_sum = okx.fractional_to_integer(obj_in.sum, obj_in.currency.lower())  # type: ignore
+            current_deposit = None
             if owner and obj_in and sub_account and deposit_sum > 0:
                 obj_in = {
                     "owner_id": owner["id"],
@@ -119,7 +120,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                     },
                 )
 
-                return current_deposit  # type: ignore
+            return current_deposit  # type: ignore
         except Exception as e:
             sentry_sdk.capture_exception(e)
             traceback.print_exc()

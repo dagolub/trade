@@ -66,7 +66,7 @@ function TransactionTableItem(props) {
             <td className={"px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + props.id}>
                 <div
                     className="font-medium text-slate-800 dark:text-slate-100">{props.tx.length > 9 ? props.tx.substring(0, 5) + " ... " + props.tx.substring(props.tx.length - 5) : props.tx}
-                    {props.tx.length > 12 &&
+                    {props.tx.length > 9 &&
                         <svg fill="#64748b"
                              style={{"display": "inline-block", "margin-left": "5px", "cursor": "pointer"}}
                              height="20px" width="20px" viewBox="0 0 330 330" onClick={() => handlerCopy(props.tx)}>

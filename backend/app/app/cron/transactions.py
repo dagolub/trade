@@ -65,7 +65,6 @@ async def incoming_transaction():  # noqa: 901
         sub_account = _deposit["sub_account"]
         delete_old_sub_account_api_keys(sub_account=sub_account)
 
-        print("Before get key")
         try:
             sleep(1)
             sub_account_api_key = okx.create_sub_account_api_key(
@@ -240,14 +239,15 @@ async def exchange():
 
             if len(exchange.get("data")) > 0:
                 exchange_data = exchange.get("data")[0]
+                usdt = str(
+                    Decimal(str(exchange_data["fillPx"]))  # noqa
+                    * Decimal(str(exchange_data["fillQuoteSz"]))  # noqa
+                )
                 obj_in = {
                     "deposit_id": wallet["id"],
                     "currency": wallet["currency"],
                     "rate": exchange_data["fillPx"],
-                    "usdt": str(
-                        Decimal(str(exchange_data["fillPx"]))  # noqa
-                        * Decimal(str(exchange_data["fillQuoteSz"]))  # noqa
-                    ),
+                    "usdt": usdt,
                     "created": datetime.utcnow(),
                 }
                 await crud.exchange.create(db=db, obj_in=obj_in)
@@ -261,6 +261,14 @@ async def exchange():
                 await crud.deposit.update(
                     db=db, db_obj={"id": wallet["id"]}, obj_in=deposit_in
                 )
+                # update balance
+                u = await crud.user.get(db=db, entity_id=wallet["owner_id"])
+                user = {"bal": u["bal"]}
+                user["bal"][quota["baseCcy"]] = (
+                    user["bal"][quota["baseCcy"]] - quota["rfqSz"]
+                )
+                user["bal"]["usdt"] = user["bal"]["usdt"] + usdt
+                await crud.user.update(db=db, db_obj=u, obj_in=user)
 
 
 async def send_callback():  # noqa: 901

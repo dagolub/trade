@@ -58,7 +58,6 @@ function UsersEdit() {
               is_active={is_active}
               is_superuser={is_superuser}
               auto={autotransfer}
-              otp={otp}
               id={id}
             />
           </div>

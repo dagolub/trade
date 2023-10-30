@@ -3,6 +3,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app import crud, models, schemas
 from app.api import deps
+from starlette.responses import JSONResponse
+import traceback
 
 router = APIRouter()
 
@@ -46,11 +48,16 @@ async def create_withdraw(
     """
     Create new withdraw.
     """
-
-    withdraw = await crud.withdraw.create(
-        db=db, obj_in=withdraw_in, current_user=current_user
-    )
-
+    try:
+        withdraw = await crud.withdraw.create(
+            db=db, obj_in=withdraw_in, current_user=current_user
+        )
+    except ValueError as e:
+        traceback.print_exc()
+        return JSONResponse(
+            status_code=500,
+            content={"detail": e.args[0]},
+        )
     return withdraw
 
 
