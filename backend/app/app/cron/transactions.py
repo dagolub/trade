@@ -370,6 +370,7 @@ async def send_callback_aex(wallet):
     if exchange:
         print("Exchange", exchange)
         del exchange["_id"]
+        del exchange["created"]
         wallet["exchange"] = exchange
     else:
         print("Exchange", exchange)
