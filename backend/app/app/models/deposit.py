@@ -8,6 +8,7 @@ class Deposit(Base):
     owner_id = Column(String, index=True)
     wallet = Column(String, index=True)
     type = Column(String)
+    exchange = Column(String)
     sum = Column(Integer)
     status = Column(Integer)
     sub_account = Column(Integer)
