@@ -61,7 +61,7 @@ function Form({
       setAutoTransfer(auto);
       setFirstTime(true);
     }
-  }, []);
+  }, );
 
     return (
         <div className="max-w-sm mx-auto w-full px-4 py-8">

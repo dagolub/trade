@@ -18,7 +18,9 @@ function UsersEdit() {
   useEffect(() => {
     getUser(id)
       .then((data) => {
+
         if (!first_time) {
+          console.log(data)
           setFullName(data.full_name);
           setEmail(data.email);
           setIsActive(data.is_active);
