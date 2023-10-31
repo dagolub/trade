@@ -369,6 +369,7 @@ async def send_callback_aex(wallet):
     exchange = await crud.exchange.get_by_deposit(db=db, deposit_id=wallet["id"])
     if exchange:
         print("Exchange", exchange)
+        del exchange["_id"]
         wallet["exchange"] = exchange
     else:
         print("Exchange", exchange)
