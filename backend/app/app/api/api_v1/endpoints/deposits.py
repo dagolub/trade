@@ -160,6 +160,10 @@ def _deposit(deposit):
     result.setdefault("id", deposit["id"])
     result.setdefault("wallet", deposit["wallet"])
     result.setdefault("type", deposit["type"])
+    if "exchange" in deposit:
+        result.setdefault("exchange", deposit["exchange"])
+    else:
+        result.setdefault("exchange", "")
     result.setdefault("status", deposit["status"])
     if "paid" in deposit:
         result.setdefault(

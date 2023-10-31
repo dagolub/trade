@@ -286,7 +286,7 @@ async def exchange_usdt(wallet):
             # update balance
             u = await crud.user.get(db=db, entity_id=wallet["owner_id"])
             user = {"bal": u["bal"]}
-            user["bal"][quota["baseCcy"]] = float(
+            user["bal"][quota["baseCcy"].lower()] = float(
                 user["bal"][quota["baseCcy"].lower()]
             ) - float(quota["rfqSz"])
             user["bal"]["usdt"] = float(user["bal"]["usdt"]) + float(usdt)
@@ -370,6 +370,8 @@ async def send_callback_aex(wallet):
     if exchange:
         print("Exchange", exchange)
         wallet["exchange"] = exchange
+    else:
+        print("Exchange", exchange)
     response = requests.post(wallet["callback"], json=deposit(wallet))
     callback_response = response.text
 
