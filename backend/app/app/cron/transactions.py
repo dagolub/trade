@@ -230,64 +230,70 @@ async def create_corresponded_transactions(
 
 async def exchange():
     wallets = await crud.deposit.get_by_regex(
-        db=db, search={"status": {"$regex": "exchange"}}
+        db=db, search={"status": {"$regex": "(pre paid|pre overpayment)"}}
     )
     for wallet in wallets:
-        ...
-        # get quota
-        okx = OKX()
-        quota = okx.estimate_quota(
-            from_ccy=wallet["currency"],
-            to_ccy="USDT",
-            side="sell",
-            amount=okx.integer_to_fractional(wallet["sum"], wallet["currency"]),
+        await crud.deposit.update(
+            db=db,
+            db_obj={"id": wallet["id"]},
+            obj_in={"status": wallet["status"].replace("pre", "aex")},
         )
-        if quota and "baseCcy" in quota:
-            exchange = okx.convert_trade(
-                from_ccy=quota["baseCcy"],
-                to_ccy=quota["quoteCcy"],
-                amount=quota["rfqSz"],
-                quota_id=quota["quoteId"],
-                side=quota["side"],
+
+        user = await crud.user.get(db=db, entity_id=wallet["owner_id"])
+        if (
+            wallet["currency"] != "USDT"  # noqa
+            and "autotransfer" in user  # noqa
+            and user["autotransfer"]  # noqa
+        ):
+            # get quota
+            await exchange_usdt(wallet)
+
+
+async def exchange_usdt(wallet):
+    okx = OKX()
+    quota = okx.estimate_quota(
+        from_ccy=wallet["currency"],
+        to_ccy="USDT",
+        side="sell",
+        amount=okx.integer_to_fractional(wallet["sum"], wallet["currency"]),
+    )
+    if quota and "baseCcy" in quota:
+        exchange = okx.convert_trade(
+            from_ccy=quota["baseCcy"],
+            to_ccy=quota["quoteCcy"],
+            amount=quota["rfqSz"],
+            quota_id=quota["quoteId"],
+            side=quota["side"],
+        )
+
+        if len(exchange.get("data")) > 0:
+            exchange_data = exchange.get("data")[0]
+            usdt = str(
+                Decimal(str(exchange_data["fillPx"]))  # noqa
+                * Decimal(str(exchange_data["fillBaseSz"]))  # noqa
             )
+            print("USDT: ", usdt)
 
-            if len(exchange.get("data")) > 0:
-                exchange_data = exchange.get("data")[0]
-                usdt = str(
-                    Decimal(str(exchange_data["fillPx"]))  # noqa
-                    * Decimal(str(exchange_data["fillBaseSz"]))  # noqa
-                )
-                print("Exchange fillPx", exchange_data["fillPx"])
-                print("Exchange fillQuoteSz", exchange_data["fillBaseSz"])
-                print("usdt", usdt)
-                print("exchange_data", exchange_data)
+            obj_in = {
+                "deposit_id": wallet["id"],
+                "currency": wallet["currency"],
+                "rate": exchange_data["fillPx"],
+                "usdt": usdt,
+                "created": datetime.utcnow(),
+            }
+            await crud.exchange.create(db=db, obj_in=obj_in)
 
-                obj_in = {
-                    "deposit_id": wallet["id"],
-                    "currency": wallet["currency"],
-                    "rate": exchange_data["fillPx"],
-                    "usdt": usdt,
-                    "created": datetime.utcnow(),
-                }
-
-                await crud.exchange.create(db=db, obj_in=obj_in)
-
-                # update deposit
-                deposit_in = {"status": wallet["status"].replace("pre", "aex")}
-                await crud.deposit.update(
-                    db=db, db_obj={"id": wallet["id"]}, obj_in=deposit_in
-                )
-                # update balance
-                u = await crud.user.get(db=db, entity_id=wallet["owner_id"])
-                user = {"bal": u["bal"]}
-                user["bal"][quota["baseCcy"]] = float(
-                    user["bal"][quota["baseCcy"].lower()]
-                ) - float(quota["rfqSz"])
-                user["bal"]["usdt"] = float(user["bal"]["usdt"]) + float(usdt)
-                await crud.user.update(db=db, db_obj=u, obj_in=user)
+            # update balance
+            u = await crud.user.get(db=db, entity_id=wallet["owner_id"])
+            user = {"bal": u["bal"]}
+            user["bal"][quota["baseCcy"]] = float(
+                user["bal"][quota["baseCcy"].lower()]
+            ) - float(quota["rfqSz"])
+            user["bal"]["usdt"] = float(user["bal"]["usdt"]) + float(usdt)
+            await crud.user.update(db=db, db_obj=u, obj_in=user)
 
 
-async def send_callback():  # noqa: 901
+async def send_callback():
     wallets = await crud.deposit.get_by_regex(
         db=db,
         search={"status": {"$regex": "(paid|overpayment)"}},
@@ -301,61 +307,11 @@ async def send_callback():  # noqa: 901
             print("Wallet status", wallet["status"])
             if "pre" in wallet["status"]:
                 print("Pre status", wallet["status"])
-                user = await crud.user.get(db=db, entity_id=wallet["owner_id"])
-                if (
-                    wallet["currency"] != "USDT"  # noqa
-                    and "autotransfer" in user  # noqa
-                    and user["autotransfer"]  # noqa
-                ):
-                    wallet["status"] = "exchange " + wallet["status"]
-                    await crud.deposit.update(
-                        db=db,
-                        db_obj={"id": wallet["id"]},
-                        obj_in={"status": wallet["status"]},
-                    )
-                    continue
+                continue
 
             if "aex" in wallet["status"]:
                 try:
-                    print("Aex status", wallet["status"])
-                    wallet["status"] = (
-                        "paid"
-                        if wallet["status"] == "pre paid"  # noqa
-                        or wallet["status"] == "aex pre paid"  # noqa
-                        else "overpayment"  # noqa
-                    )
-                    exchange = await crud.exchange.get_by_deposit(
-                        db=db, deposit_id=wallet["id"]
-                    )
-                    if exchange:
-                        wallet["exchange"] = exchange
-                    response = requests.post(wallet["callback"], json=deposit(wallet))
-                    callback_response = response.text
-
-                    _status = "in process"
-                    if response.status_code == 200:
-                        if wallet["status"] == "paid":
-                            _status = "completed"
-                        else:
-                            _status = "completed-overpayment"
-                    await crud.callback.create(
-                        db=db,
-                        obj_in={
-                            "owner_id": wallet["owner_id"],
-                            "callback": wallet["callback"],
-                            "callback_response": callback_response,
-                            "created": datetime.now(),
-                            "deposit_id": wallet["id"],
-                        },
-                    )
-                    await crud.deposit.update(
-                        db=db,
-                        db_obj={"id": wallet["id"]},
-                        obj_in={
-                            "callback_response": callback_response,
-                            "status": _status,
-                        },
-                    )
+                    await send_callback_aex(wallet)
                 except Exception as e:
                     await crud.deposit.update(
                         db=db,
@@ -369,33 +325,78 @@ async def send_callback():  # noqa: 901
     withdraws = await crud.withdraw.get_by_status(db=db, status="paid")
 
     for withdraw in withdraws:
-        if "callback" not in withdraw:
+        result = send_callback_withdraw(withdraw)
+        if not result:
             continue
-        callback = withdraw["callback"]
-        del withdraw["_id"]
-        del withdraw["created"]
-        if withdraw["status"] == "paid":
-            response = requests.post(callback, json=withdraw)
-            callback_response = response.text
 
-            _status = "in process"
-            if response.status_code == 200:
-                _status = "completed"
-            await crud.callback.create(
-                db=db,
-                obj_in={
-                    "owner_id": withdraw["owner_id"],
-                    "callback": callback,
-                    "callback_response": callback_response,
-                    "withdraw_id": withdraw["id"],
-                    "created": datetime.now(),
-                },
-            )
-            await crud.withdraw.update(
-                db=db,
-                db_obj={"id": withdraw["id"]},
-                obj_in={"callback_response": callback_response, "status": _status},
-            )
+
+async def send_callback_withdraw(withdraw):
+    if "callback" not in withdraw:
+        return False
+    callback = withdraw["callback"]
+    del withdraw["_id"]
+    del withdraw["created"]
+    if withdraw["status"] == "paid":
+        response = requests.post(callback, json=withdraw)
+        callback_response = response.text
+
+        _status = "in process"
+        if response.status_code == 200:
+            _status = "completed"
+        await crud.callback.create(
+            db=db,
+            obj_in={
+                "owner_id": withdraw["owner_id"],
+                "callback": callback,
+                "callback_response": callback_response,
+                "withdraw_id": withdraw["id"],
+                "created": datetime.now(),
+            },
+        )
+        await crud.withdraw.update(
+            db=db,
+            db_obj={"id": withdraw["id"]},
+            obj_in={"callback_response": callback_response, "status": _status},
+        )
+        return True
+
+
+async def send_callback_aex(wallet):
+    print("Aex status", wallet["status"])
+    wallet["status"] = (
+        "paid" if wallet["status"] == "aex paid" else "overpayment"  # noqa  # noqa
+    )
+    exchange = await crud.exchange.get_by_deposit(db=db, deposit_id=wallet["id"])
+    if exchange:
+        print("Exchange", exchange)
+        wallet["exchange"] = exchange
+    response = requests.post(wallet["callback"], json=deposit(wallet))
+    callback_response = response.text
+
+    _status = "in process"
+    if response.status_code == 200:
+        if wallet["status"] == "paid":
+            _status = "completed"
+        else:
+            _status = "completed-overpayment"
+    await crud.callback.create(
+        db=db,
+        obj_in={
+            "owner_id": wallet["owner_id"],
+            "callback": wallet["callback"],
+            "callback_response": callback_response,
+            "created": datetime.now(),
+            "deposit_id": wallet["id"],
+        },
+    )
+    await crud.deposit.update(
+        db=db,
+        db_obj={"id": wallet["id"]},
+        obj_in={
+            "callback_response": callback_response,
+            "status": _status,
+        },
+    )
 
 
 async def fill_transaction():
