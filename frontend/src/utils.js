@@ -1,3 +1,5 @@
+import Banner from "./components/Banner";
+
 const populateSelect = (data, label_field) => {
     let result = []
     for (const i in data) {
@@ -33,14 +35,10 @@ const deleteRow = (id) => {
         }
     }
 }
-const showError = (alert, response) => {
-    if (response.response) {
-        let message = response.response.data.detail ? response.response.data.detail : response.response.data
-        if (typeof message === "object") {
-            console.log("Object")
-            message = message[0]["msg"]
-        }
-        alert.show(message)
+const showError = (data) => {
+    //console.log(data)
+    if (data.hasOwnProperty("response")) {
+        alert(data.response.data.detail)
     }
 }
 const id2key = async (list) => {

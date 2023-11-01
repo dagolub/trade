@@ -6,8 +6,6 @@ from starlette.responses import JSONResponse
 from app.services.client import OKX
 from app import crud, models, schemas
 from app.api import deps
-from app.cron.callback import get_callback
-from app.db.session import database as db
 
 
 router = APIRouter()
@@ -137,17 +135,6 @@ async def delete_deposit(
         raise HTTPException(status_code=404, detail="Deposit doesn't exists")
 
     return await crud.deposit.remove(db=db, entity_id=entity_id)
-
-
-@router.get("/callback/{entity_id}")
-async def callback(entity_id: str):
-    original_deposit = await crud.deposit.get(db=db, entity_id=entity_id)
-    deposit = _deposit(original_deposit)
-    response, status_code = get_callback(deposit["callback"], deposit)
-    await crud.deposit.update(
-        db=db, db_obj=original_deposit, obj_in={"callback_response": response}  # type: ignore
-    )
-    return response
 
 
 def _deposit(deposit):

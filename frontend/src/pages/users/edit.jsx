@@ -4,6 +4,7 @@ import Form from '../../components/users/form';
 import Header from '../../partials/Header';
 import { getUser, getOTP } from '../../services/api';
 import { useParams } from 'react-router-dom';
+import {showError} from '../../utils'
 
 function UsersEdit() {
   const { id } = useParams();
@@ -12,40 +13,20 @@ function UsersEdit() {
   const [is_active, setIsActive] = useState(false);
   const [is_superuser, setIsSuperUser] = useState(false);
   const [autotransfer, setAutoTransfer] = useState(false);
-  const [otp, setOTP] = useState('');
-  const [first_time, setFirstTime] = useState(false);
 
   useEffect(() => {
     getUser(id)
       .then((data) => {
-
-        if (!first_time) {
-          console.log(data)
           setFullName(data.full_name);
           setEmail(data.email);
           setIsActive(data.is_active);
           setIsSuperUser(data.is_superuser);
           setAutoTransfer(data.autotransfer);
-          setFirstTime(true);
-        }
       })
       .catch((error) => {
-        console.error('Error fetching user:', error);
+        showError(error);
       });
-  }, [id, first_time]);
-
-  useEffect(() => {
-    getOTP(email)
-      .then((data) => {
-        if (data.code !== 'ERR_BAD_RESPONSE') {
-          console.log('OTP', data);
-          setOTP(data);
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching OTP:', error);
-      });
-  }, [email]);
+  }, [id]);
 
   return (
     <div className="flex h-[100vh] overflow-hidden">

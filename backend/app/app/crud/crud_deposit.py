@@ -126,7 +126,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
         except Exception as e:
             sentry_sdk.capture_exception(e)
             traceback.print_exc()
-            raise ValueError("Can not create deposit for --- " + e.args[0])
+            raise ValueError("Can not create deposit " + e.args[0])
 
     def _get_type(self):
         return "OKX"
