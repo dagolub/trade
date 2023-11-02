@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { deleteRow, showError } from '../../utils'; // Make sure to provide the correct path to deleteRow
+import React from 'react';
+import { deleteRow } from '../../utils'; // Make sure to provide the correct path to deleteRow
 import { deleteUser } from '../../services/api'; // Make sure to provide the correct path to deleteUser
 
 function UsersTableItem(props) {

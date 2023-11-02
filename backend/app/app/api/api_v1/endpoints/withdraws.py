@@ -31,10 +31,15 @@ async def read_withdraws(
     """
     Retrieve withdraw.
     """
-    _search = _get_search(q)
-    withdraws = await crud.withdraw.get_multi(
-        db, skip=skip, limit=limit, search=_search
-    )
+    search = _get_search(q)
+    if current_user["is_superuser"]:
+        withdraws = await crud.withdraw.get_multi(
+            db, skip=skip, limit=limit, search=search
+        )
+    else:
+        withdraws = await crud.withdraw.get_multi_by_owner(
+            db, owner_id=current_user["id"], skip=skip, limit=limit, search=search
+        )
     return withdraws
 
 

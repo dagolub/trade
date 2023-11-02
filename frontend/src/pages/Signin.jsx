@@ -3,7 +3,6 @@ import AuthImage from "../images/auth-image.jpg"
 import React from "react"
 import { Login } from "../services/api"; // Replace with the correct path
 import { saveToken } from "../services/token"; // Replace with the correct path
-import { showError } from "../utils"; // Replace with the correct path
 
 function Signin() {
   const refEmail = React.useRef();
@@ -22,7 +21,7 @@ function Signin() {
       saveToken(response.data.access_token);
       window.location.pathname = '/';
     } else {
-      console.log(response);
+      alert(response);
     }
 
     return false;

@@ -24,12 +24,12 @@ async def count(
 
 @router.get("/currencies", response_model=[])
 async def currencies():
-    return ["BTC", "BCH", "USDT", "ETC", "ETH"]
+    return ["BTC", "BCH", "LTC", "USDT", "ETC", "ETH"]
 
 
 @router.get("/chains", response_model=[])
 async def chains():
-    return ["BTC", "BCH", "ERC20", "TRC20", "PLG", "ETC", "ETH"]
+    return ["BTC", "BCH", "LCT", "ERC20", "TRC20", "PLG", "ETC", "ETH"]
 
 
 @router.get("/", response_model=List[schemas.Deposit])

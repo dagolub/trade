@@ -63,8 +63,8 @@ def _get_search(q: str = ""):
     if q != "":
         search = {
             "$or": [
-                {"wallet": {"$regex": str(q)}},
-                {"type": {"$regex": str(q)}},
+                {"callback": {"$regex": str(q)}},
+                {"callback_response": {"$regex": str(q)}},
             ]
         }
     return search

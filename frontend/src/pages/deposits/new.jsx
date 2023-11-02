@@ -4,7 +4,7 @@ import Header from '../../partials/Header';
 import {getCurrencies, getChains, createDeposit} from "../../services/api";
 import {populateSelect} from "../../utils"
 import load from '../../images/load.svg'
-import {showError} from '../../utils'
+import showError from '../../components/showError'
 function DepositNew() {
     const refSum = React.useRef("")
     const refCurrency = React.useRef("")

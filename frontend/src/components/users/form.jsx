@@ -1,6 +1,6 @@
 import React from 'react';
 import { updateUser, createUser } from '../../services/api'; // Make sure to provide the correct path to your API methods
-import {showError} from '../../utils'
+
 function Form({
   name = '',
   email = '',
@@ -21,7 +21,7 @@ function Form({
     if (resp.email === refEmail.current.value) {
       window.location.href = '/users/list';
     } else {
-      showError(resp);
+      alert(resp);
       setLoading(false)
     }
   };

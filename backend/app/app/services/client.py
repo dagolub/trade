@@ -23,7 +23,8 @@ class OKX:
 
     def get_address(self, sub_account, currency, chain):
         chain = self.get_currency_chain(currency, chain)
-
+        if not chain:
+            ValueError("Wrong chain")
         try:
             self.broker.create_subaccount(sub_account, sub_account + "Label")
             account = self.broker.subaccount_deposit_address(

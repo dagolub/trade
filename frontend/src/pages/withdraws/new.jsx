@@ -5,7 +5,7 @@ import {createWithdraw, getChains, getCurrencies} from "../../services/api";
 import {populateSelect} from "../../utils";
 import {useSearchParams} from "react-router-dom";
 import load from '../../images/load.svg'
-import {showError} from '../../utils'
+
 
 function WithdrawNew() {
     let [searchParams, setSearchParams] = useSearchParams();
@@ -20,7 +20,6 @@ function WithdrawNew() {
     const [loading, setLoading] = React.useState(false)
 
     const setCurrencyRate = (data) => {
-        console.log("Set currency rate", data)
         if (data === "USDT") {
             refChain.current.value = "TRC20"
         } else {
@@ -42,7 +41,7 @@ function WithdrawNew() {
                 if (data.id) {
                     window.location.href = "/withdraws/view/" + data.id
                 } else {
-                    showError(data)
+                    alert(data)
                     setLoading(false)
                 }
             })

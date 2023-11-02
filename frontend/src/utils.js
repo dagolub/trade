@@ -1,4 +1,4 @@
-import Banner from "./components/Banner";
+
 
 const populateSelect = (data, label_field) => {
     let result = []
@@ -35,13 +35,8 @@ const deleteRow = (id) => {
         }
     }
 }
-const showError = (data) => {
-    //console.log(data)
-    if (data.hasOwnProperty("response")) {
-        alert(data.response.data.detail)
-    }
-}
+
 const id2key = async (list) => {
     return Object.fromEntries((await list).map(item => [item.id, item]));
 }
-export {populateSelect, convertList, id2key, deleteRow, showError}
+export {populateSelect, convertList, id2key, deleteRow}

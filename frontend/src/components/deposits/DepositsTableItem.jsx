@@ -38,7 +38,7 @@ function DepositTableItem(props) {
                     className="font-medium text-slate-800 dark:text-slate-100">{props.wallet.length > 9 ? props.wallet.substring(0, 5) + " ... " + props.wallet.substring(props.wallet.length - 5) : props.wallet}
                 {props.wallet.length > 9 &&
                     <svg fill="#64748b"
-                         style={{"display": "inline-block", "margin-left": "5px", "cursor": "pointer"}}
+                         style={{"display": "inline-block", "marginLeft": "5px", "cursor": "pointer"}}
                          height="20px" width="20px" viewBox="0 0 330 330" onClick={() => handlerCopy(props.wallet)}>
                         <g>
                             <path d="M35,270h45v45c0,8.284,6.716,15,15,15h200c8.284,0,15-6.716,15-15V75c0-8.284-6.716-15-15-15h-45V15
