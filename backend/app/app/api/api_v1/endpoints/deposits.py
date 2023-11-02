@@ -29,7 +29,7 @@ async def currencies():
 
 @router.get("/chains", response_model=[])
 async def chains():
-    return ["BTC", "BCH", "LCT", "ERC20", "TRC20", "PLG", "ETC", "ETH"]
+    return ["BTC", "BCH", "LTC", "ERC20", "TRC20", "PLG", "ETC", "ETH"]
 
 
 @router.get("/", response_model=List[schemas.Deposit])
