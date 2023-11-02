@@ -36,7 +36,7 @@ const deleteRow = (id) => {
     }
 }
 
-const id2key = async (list) => {
-    return Object.fromEntries((await list).map(item => [item.id, item]));
+const copyMe = (copy) => {
+    alert(copy)
 }
-export {populateSelect, convertList, id2key, deleteRow}
+export {populateSelect, convertList, copyMe, deleteRow}

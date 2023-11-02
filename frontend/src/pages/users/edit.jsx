@@ -4,7 +4,7 @@ import Form from '../../components/users/form';
 import Header from '../../partials/Header';
 import { getUser, getOTP } from '../../services/api';
 import { useParams } from 'react-router-dom';
-
+import showError from "../../components/showError";
 function UsersEdit() {
   const { id } = useParams();
   const [full_name, setFullName] = useState('');
@@ -23,7 +23,7 @@ function UsersEdit() {
           setAutoTransfer(data.autotransfer);
       })
       .catch((error) => {
-        alert(error);
+        showError(error);
       });
   }, [id]);
 

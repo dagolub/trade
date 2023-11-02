@@ -2,6 +2,7 @@ import React from 'react';
 import {deleteDeposit} from '../../services/api'; // Correct path to your API service
 import {deleteRow} from '../../utils';
 import dayjs from "dayjs"; // Correct path to your utility function
+import {copyMe} from '../../utils'
 
 function DepositTableItem(props) {
     const viewHandler = (id) => {
@@ -17,8 +18,8 @@ function DepositTableItem(props) {
             });
         }, 200);
     };
-    const handlerCopy = (str) => {
-        alert(str)
+    const handlerCopy = (copy) => {
+        copyMe(copy)
     }
 
     return (

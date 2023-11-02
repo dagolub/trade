@@ -1,12 +1,13 @@
 import React from 'react';
 import dayjs from "dayjs"; // Make sure to provide the correct path to your deleteRow utility
+import {copyMe} from '../../utils'
 
 function TransactionTableItem(props) {
     const viewHandler = (id) => {
         window.location.href = "/transactions/view/" + id
     }
-    const handlerCopy = (item) => {
-        alert(item)
+    const handlerCopy = (copy) => {
+        copyMe(copy)
     }
     return (
         <tr id={"tr" + props.id}>

@@ -5,6 +5,7 @@ import {createWithdraw, getChains, getCurrencies} from "../../services/api";
 import {populateSelect} from "../../utils";
 import {useSearchParams} from "react-router-dom";
 import load from '../../images/load.svg'
+import showError from "../../components/showError";
 
 
 function WithdrawNew() {
@@ -41,7 +42,7 @@ function WithdrawNew() {
                 if (data.id) {
                     window.location.href = "/withdraws/view/" + data.id
                 } else {
-                    alert(data)
+                    showError(data)
                     setLoading(false)
                 }
             })
