@@ -8,6 +8,7 @@ class DepositBase(BaseModel):
     wallet: Optional[str] = None
     type: Optional[str] = None
     status: Optional[str] = None
+    exchange: dict = {}
     callback: Optional[str] = None
     callback_response: Optional[str] = ""
     sum: float = None  # type: ignore

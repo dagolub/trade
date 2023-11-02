@@ -1,3 +1,5 @@
+
+
 const populateSelect = (data, label_field) => {
     let result = []
     for (const i in data) {
@@ -33,17 +35,8 @@ const deleteRow = (id) => {
         }
     }
 }
-const showError = (alert, response) => {
-    if (response.response) {
-        let message = response.response.data.detail ? response.response.data.detail : response.response.data
-        if (typeof message === "object") {
-            console.log("Object")
-            message = message[0]["msg"]
-        }
-        alert.show(message)
-    }
+
+const copyMe = (copy) => {
+    alert(copy)
 }
-const id2key = async (list) => {
-    return Object.fromEntries((await list).map(item => [item.id, item]));
-}
-export {populateSelect, convertList, id2key, deleteRow, showError}
+export {populateSelect, convertList, copyMe, deleteRow}

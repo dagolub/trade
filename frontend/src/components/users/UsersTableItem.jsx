@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import { deleteRow, showError } from '../../utils'; // Make sure to provide the correct path to deleteRow
+import React from 'react';
+import { deleteRow } from '../../utils'; // Make sure to provide the correct path to deleteRow
 import { deleteUser } from '../../services/api'; // Make sure to provide the correct path to deleteUser
-
+import showError from "../showError";
 function UsersTableItem(props) {
-    // const alert = useAlert();
-
     const deleteHandler = (id) => {
         deleteRow(id);
         setTimeout(() => {
             deleteUser(id).then((response) => {
                 if (response.email) {
                     document.getElementById("tr" + id).remove();
+                } else {
+                    showError(response)
                 }
                 // setTimeout(()=>{
                 //     let hash = parseInt(window.location.hash.split("#")[1]);

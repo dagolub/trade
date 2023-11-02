@@ -10,6 +10,7 @@ from app.db.base_class import Base
 from app.models.deposit import Deposit
 from app.schemas.deposit import DepositCreate, DepositUpdate
 from app.services.client import OKX
+import traceback
 
 ModelType = TypeVar("ModelType", bound=Base)
 
@@ -45,6 +46,17 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
         else:
             return None
 
+    def _get_min_deposit(
+        self, currencies: [], currency: str, chain: str, amount: float
+    ):
+        okx = OKX()
+        for c in currencies:
+            if str(c["ccy"]) == str(currency):
+                _chain = okx.get_currency_chain(currency, chain)
+                if c["chain"] == _chain:
+                    if "minDep" in c:
+                        return c["minDep"]
+
     async def create(  # type: ignore
         self, db: Session, obj_in: dict, owner=None
     ) -> Optional[ModelType]:
@@ -52,7 +64,17 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
             okx = OKX()
             if not okx:
                 raise ValueError("OKX is not available in crud_deposit create")
-
+            currencies = okx.get_currencies()
+            min_deposit = self._get_min_deposit(
+                currencies["data"],
+                str(obj_in.currency),
+                str(obj_in.chain),
+                float(obj_in.sum),
+            )
+            if float(obj_in.sum) < float(min_deposit):
+                raise ValueError(
+                    f"Min deposit in {obj_in.currency} {obj_in.chain} is {min_deposit}"
+                )
             sub_account = (
                 owner["full_name"] + generate_random_small(3) + generate_random_big(3)
             )
@@ -70,6 +92,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                 deposit_type = obj_in.type  # type: ignore
 
             deposit_sum = okx.fractional_to_integer(obj_in.sum, obj_in.currency.lower())  # type: ignore
+            current_deposit = None
             if owner and obj_in and sub_account and deposit_sum > 0:
                 obj_in = {
                     "owner_id": owner["id"],
@@ -85,24 +108,25 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                     "created": datetime.utcnow(),
                 }
 
-                current_deposit = await super().create(db=db, obj_in=obj_in)
+                current_deposit = await super().create(
+                    db=db, obj_in=obj_in, current_user=owner
+                )
                 await crud.wallet.create(
                     db=db,
                     obj_in={  # type: ignore
-                        "owner_id": owner["id"],
                         "deposit_id": current_deposit["id"],  # type: ignore
                         "wallet": wallet,
                         "type": deposit_type,
                         "created": datetime.utcnow(),
                     },
+                    current_user=owner,
                 )
 
-                return current_deposit  # type: ignore
+            return current_deposit  # type: ignore
         except Exception as e:
             sentry_sdk.capture_exception(e)
-            raise ValueError("Can not create deposit for --- " + e.args[0])
-        else:
-            raise ValueError("OKX not available")
+            traceback.print_exc()
+            raise ValueError("Can not create deposit " + e.args[0])
 
     def _get_type(self):
         return "OKX"

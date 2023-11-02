@@ -1,14 +1,13 @@
 import React from 'react';
 import { updateUser, createUser } from '../../services/api'; // Make sure to provide the correct path to your API methods
-
+import showError from "../showError";
 function Form({
   name = '',
   email = '',
   is_active = false,
   is_superuser = false,
   id = '',
-  auto = false,
-  otp = ''
+  auto = false
 }) {
   const refName = React.useRef('');
   const refEmail = React.useRef('');
@@ -16,53 +15,55 @@ function Form({
   const refActive = React.useRef(false);
   const refSuperuser = React.useRef(false);
   const [autotransfer, setAutoTransfer] = React.useState(false);
-  const [first_time, setFirstTime] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const setResp = (resp) => {
     if (resp.email === refEmail.current.value) {
       window.location.href = '/users/list';
     } else {
-      alert(resp.response.data.detail);
+      showError(resp);
+      setLoading(false)
     }
   };
 
   const submitHandler = async (e) => {
     e.preventDefault();
-
-    if (id) {
-      const r = await updateUser(
-        id,
-        refName.current.value,
-        refEmail.current.value,
-        refPassword.current.value,
-        refActive.current.checked,
-        refSuperuser.current.checked,
-        autotransfer
-      );
-      setResp(r);
-    } else {
-      const r = await createUser(
-        refName.current.value,
-        refEmail.current.value,
-        refPassword.current.value,
-        refActive.current.checked,
-        refSuperuser.current.checked,
-        autotransfer
-      );
-      setResp(r);
+    if (!loading) {
+        if (id) {
+            const r = await updateUser(
+                id,
+                refName.current.value,
+                refEmail.current.value,
+                refPassword.current.value,
+                refActive.current.checked,
+                refSuperuser.current.checked,
+                autotransfer
+            );
+            setResp(r);
+        } else {
+            const r = await createUser(
+                refName.current.value,
+                refEmail.current.value,
+                refPassword.current.value,
+                refActive.current.checked,
+                refSuperuser.current.checked,
+                autotransfer
+            );
+            setResp(r);
+        }
+        setLoading(true)
     }
   };
 
   React.useEffect(() => {
-    if ((name || email || is_active || is_superuser || auto) && !first_time) {
+    if (name || email || is_active || is_superuser || auto) {
       refName.current.value = name;
       refEmail.current.value = email;
       refActive.current.checked = is_active;
       refSuperuser.current.checked = is_superuser;
       setAutoTransfer(auto);
-      setFirstTime(true);
     }
-  });
+  }, [name, email, is_active, is_superuser, auto]);
 
     return (
         <div className="max-w-sm mx-auto w-full px-4 py-8">
@@ -129,7 +130,6 @@ function Form({
                             className="text-sm text-slate-400 dark:text-slate-500 italic ml-2">{autotransfer ? 'On' : 'Off'}</div>
                     </div>
                 </div>
-                <img src={"/" + otp} />
                 <div className="m-1.5">
                     <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white" type="submit">Submit</button>
                 </div>

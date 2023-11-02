@@ -35,15 +35,7 @@ function Settings() {
             <form onSubmit={onSubmit} method="POST">
               <div>
                 <div>
-                  <label className="block text-sm font-medium mb-1" htmlFor="usdt">
-                    USDT
-                  </label>
-                  <input
-                    id="usdt"
-                    className="form-input w-full px-2 py-1"
-                    type="text"
-                    ref={usdt}
-                  />
+
                 </div>
               </div>
 

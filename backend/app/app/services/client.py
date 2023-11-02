@@ -23,7 +23,8 @@ class OKX:
 
     def get_address(self, sub_account, currency, chain):
         chain = self.get_currency_chain(currency, chain)
-
+        if not chain:
+            ValueError("Wrong chain")
         try:
             self.broker.create_subaccount(sub_account, sub_account + "Label")
             account = self.broker.subaccount_deposit_address(
@@ -169,6 +170,9 @@ class OKX:
 
         return result
 
+    def get_currencies(self):
+        return self.funding.get_currency()
+
     @staticmethod
     def integer_to_fractional(amount: str, currency: str):
         if currency.lower() in ("ltc", "bch", "btc"):
@@ -179,16 +183,16 @@ class OKX:
             return float(Decimal(str(amount)) * Decimal("0.000000000000000001"))
 
     @staticmethod
-    def fractional_to_integer(amount: str, currency: str) -> int:  # type: ignore
+    def fractional_to_integer(amount: str, currency: str) -> float:  # type: ignore
         if currency.lower() in ("ltc", "bch", "btc"):
             _amount = float(amount) * 100000000
-            return int(f"{_amount:.0f}")
+            return float(f"{_amount:.10f}")
         if currency.lower() == "usdt":
             _amount = float(amount) * 1000000
-            return int(f"{_amount:.0f}")
+            return float(f"{_amount:.10f}")
         if currency.lower() in ("etc", "eth"):
             _amount = float(amount) * 1000000000000000000
-            return int(f"{_amount:.0f}")
+            return float(f"{_amount:.10f}")
 
     @staticmethod
     def get_currency_chain(currency: str, chain: str):

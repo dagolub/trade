@@ -5,6 +5,8 @@ import {createWithdraw, getChains, getCurrencies} from "../../services/api";
 import {populateSelect} from "../../utils";
 import {useSearchParams} from "react-router-dom";
 import load from '../../images/load.svg'
+import showError from "../../components/showError";
+
 
 function WithdrawNew() {
     let [searchParams, setSearchParams] = useSearchParams();
@@ -19,7 +21,6 @@ function WithdrawNew() {
     const [loading, setLoading] = React.useState(false)
 
     const setCurrencyRate = (data) => {
-        console.log("Set currency rate", data)
         if (data === "USDT") {
             refChain.current.value = "TRC20"
         } else {
@@ -28,7 +29,7 @@ function WithdrawNew() {
 
     }
 
-    const submitHendler = (e) => {
+    const submitHandler = (e) => {
         e.preventDefault()
         const sum = refSum.current.value
         const to = refTo.current.value
@@ -40,6 +41,9 @@ function WithdrawNew() {
             createWithdraw(sum, to, currency, chain, callback).then((data) => {
                 if (data.id) {
                     window.location.href = "/withdraws/view/" + data.id
+                } else {
+                    showError(data)
+                    setLoading(false)
                 }
             })
         }
@@ -70,7 +74,7 @@ function WithdrawNew() {
                     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto"><h1
                         className="text-3xl text-slate-800 dark:text-slate-100 font-bold mb-6">New withdraw</h1>
 
-                        <form method="POST" onSubmit={submitHendler}>
+                        <form method="POST" onSubmit={submitHandler}>
                             <div>
                                 <div>
                                     <label className="block text-sm font-medium mb-1" htmlFor="supporting-text">

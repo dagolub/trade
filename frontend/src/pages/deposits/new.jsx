@@ -4,7 +4,7 @@ import Header from '../../partials/Header';
 import {getCurrencies, getChains, createDeposit} from "../../services/api";
 import {populateSelect} from "../../utils"
 import load from '../../images/load.svg'
-
+import showError from '../../components/showError'
 function DepositNew() {
     const refSum = React.useRef("")
     const refCurrency = React.useRef("")
@@ -24,7 +24,7 @@ function DepositNew() {
 
     }
 
-    const submitHendler = (e) => {
+    const submitHandler = (e) => {
         e.preventDefault()
         const sum = refSum.current.value
         const currency = refCurrency.current.value
@@ -36,6 +36,9 @@ function DepositNew() {
             createDeposit(sum, currency, chain, callback).then((data) => {
                 if (data.id) {
                     window.location.href = "/deposits/view/" + data.id
+                } else {
+                    showError(data)
+                    setLoading(false)
                 }
             })
         }
@@ -53,7 +56,7 @@ function DepositNew() {
                 <main className="grow">
                     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
                         <h1 className="text-3xl text-slate-800 dark:text-slate-100 font-bold mb-6">New deposit</h1>
-                        <form method="POST" onSubmit={submitHendler}>
+                        <form method="POST" onSubmit={submitHandler}>
                             <div>
                                 <div>
                                     <label className="block text-sm font-medium mb-1" htmlFor="supporting-text">
