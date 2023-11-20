@@ -56,8 +56,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self, db: Session, owner_id, skip: int = 0, limit: int = 100, search=""
     ) -> List[ModelType]:
         result = []
-        if search == "":
-            search = {}
+        search = {"owner_id": owner_id}
 
         async for document in db[self.model.__tablename__].find(search).sort("created", -1).skip(skip).limit(limit):  # type: ignore
             document["id"] = str(document["_id"])  # noqa

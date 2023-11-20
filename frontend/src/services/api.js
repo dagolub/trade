@@ -2,13 +2,6 @@ import axios from 'axios';
 import {getToken} from './token'; // Import getToken from the appropriate location
 
 const getUrl = (url) => {
-    const base = 'http://localhost:8001/api/v1';
-    if (window.location.host === "admin.rpay.io") {
-        return base + url.replace('/api', 'api.rpay.io');
-    }
-    if (window.location.port > 80) {
-        return base + url.replace('/api', '');
-    }
     return url;
 };
 const Login = (authenticate) => {
@@ -79,14 +72,15 @@ const getUserMe = () => {
     return GET('/api/users/me')
 }
 // USERS
-const createUser = (full_name, email, password, is_active, is_superuser, autotransfer) => {
+const createUser = (full_name, email, password, is_active, is_superuser, autotransfer, commission) => {
     return POST('/api/users/', {
         "email": email,
         "is_active": is_active,
         "is_superuser": is_superuser,
         "full_name": full_name,
         "password": password,
-        "autotransfer": autotransfer
+        "autotransfer": autotransfer,
+        "commission": commission
     })
 }
 const getUsers = (q = "", skip = 0, limit = 10) => {
@@ -95,16 +89,15 @@ const getUsers = (q = "", skip = 0, limit = 10) => {
 const getUser = (id) => {
     return GET('/api/users/' + id)
 }
-const updateUser = (id, full_name, email, password, is_active, is_superuser, autotransfer) => {
+const updateUser = (id, full_name, email, password, is_active, is_superuser, autotransfer, commission) => {
     return PUT('/api/users/' + id, {
         "email": email,
         "is_active": is_active,
         "is_superuser": is_superuser,
         "full_name": full_name,
-        "avatar": "string",
-        "description": "string",
         "password": password,
-        "autotransfer": autotransfer
+        "autotransfer": autotransfer,
+        "commissions": commission
     })
 }
 const deleteUser = (id) => {

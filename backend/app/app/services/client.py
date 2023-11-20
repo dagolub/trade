@@ -184,13 +184,13 @@ class OKX:
 
     @staticmethod
     def fractional_to_integer(amount: str, currency: str) -> float:  # type: ignore
-        if currency.lower() in ("ltc", "bch", "btc"):
+        if currency.lower() in ("ltc", "btc"):
             _amount = float(amount) * 100000000
             return float(f"{_amount:.10f}")
         if currency.lower() == "usdt":
             _amount = float(amount) * 1000000
             return float(f"{_amount:.10f}")
-        if currency.lower() in ("etc", "eth"):
+        if currency.lower() in ("eth"):
             _amount = float(amount) * 1000000000000000000
             return float(f"{_amount:.10f}")
 
@@ -200,8 +200,6 @@ class OKX:
         chain = chain.lower()
         if currency == "ltc":
             return "LTC-Litecoin"
-        if currency == "bch":
-            return "BCH-BitcoinCash"
         if currency == "btc":
             return "BTC-Bitcoin"
         if currency == "usdt":
@@ -211,7 +209,5 @@ class OKX:
                 return "USDT-TRC20"
             elif chain == "plg":
                 return "USDT-Polygon"
-        if currency == "etc":
-            return "ETC-Ethereum Classic"
         if currency == "eth":
             return "ETH-ERC20"

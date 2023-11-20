@@ -14,10 +14,11 @@ class TransactionBase(BaseModel):
     created: Optional[datetime]
     deposit_id: Optional[str] = None
     withdraw_id: Optional[str] = None
+    owner_id: Optional[str] = None
 
 
 class TransactionCreate(TransactionBase):
-    owner_id: Optional[str] = None
+    pass
 
 
 class TransactionUpdate(TransactionBase):

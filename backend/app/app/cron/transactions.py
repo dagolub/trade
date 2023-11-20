@@ -8,6 +8,16 @@ from app.services.client import OKX
 from datetime import datetime
 import traceback
 from decimal import Decimal
+from app import schemas
+
+
+async def get_superuser() -> schemas.User:
+    email = crud.user.get_by_email(db=db, emai="admin@cryptopayments.fastapi.xyz")
+    if not email:
+        email = crud.user.get_by_email(db=db, email="admin@rpay.io")
+    if not email:
+        return False
+    return email
 
 
 async def create_transaction(
@@ -148,6 +158,24 @@ async def incoming_transaction():  # noqa: 901
                             user = await crud.user.get(
                                 db=db, entity_id=_deposit["owner_id"]
                             )
+
+                            comm = user["commissions"][currency]["in"]
+                            if comm:
+                                admin_amount = (
+                                    amount * 0.0100 * comm["percent"] + comm["fixed"]
+                                )
+                                amount = amount - admin_amount
+
+                                super_user = await get_superuser()
+                                if super_user:
+                                    #  update super user balance
+                                    bal = {
+                                        currency: super_user[currency] + admin_amount
+                                    }
+                                    crud.user.update(
+                                        db=db, db_obj=super_user, obj_in={"bal": bal}
+                                    )
+
                             if "bal" in user:
                                 bal = user["bal"]
                             else:
@@ -156,9 +184,7 @@ async def incoming_transaction():  # noqa: 901
                                 bal = {
                                     "btc": 0,
                                     "ltc": 0,
-                                    "bch": 0,
                                     "usdt": 0,
-                                    "etc": 0,
                                     "eth": 0,
                                 }
 
@@ -325,7 +351,7 @@ async def send_callback():
     withdraws = await crud.withdraw.get_by_status(db=db, status="paid")
 
     for withdraw in withdraws:
-        result = send_callback_withdraw(withdraw)
+        result = await send_callback_withdraw(withdraw)
         if not result:
             continue
 
@@ -382,7 +408,7 @@ async def send_callback_aex(wallet):
         if wallet["status"] == "paid":
             _status = "completed"
         else:
-            _status = "completed-overpayment"
+            _status = "c-overpayment"
     await crud.callback.create(
         db=db,
         obj_in={

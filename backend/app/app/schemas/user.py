@@ -12,6 +12,7 @@ class UserBase(BaseModel):
     full_name: Optional[str] = None
     created: Optional[datetime]
     bal: Optional[dict]
+    commissions: Optional[dict]
 
 
 # Properties to receive via API on creation

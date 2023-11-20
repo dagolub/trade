@@ -20,8 +20,8 @@ async def count(
     return await crud.callback.count(db=db, owner_id=owner_id, search=_search)
 
 
-@router.get("/", response_model=List[schemas.Wallet])
-async def read_wallets(
+@router.get("/", response_model=List[schemas.Callback])
+async def read_callbacks(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
@@ -44,7 +44,7 @@ async def read_wallets(
 
 
 @router.get("/{id}", response_model=schemas.Wallet)
-async def read_wallet(
+async def read_callback(
     id: str,
     current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
@@ -54,7 +54,7 @@ async def read_wallet(
     """
     wallet = await crud.callback.get(db=db, entity_id=id)
     if not wallet:
-        raise HTTPException(status_code=400, detail="Wallet doesn't exists")
+        raise HTTPException(status_code=400, detail="Callback doesn't exists")
     return wallet
 
 

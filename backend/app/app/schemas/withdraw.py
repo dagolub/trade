@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 class WithdrawBase(BaseModel):
+    owner_id: Optional[str] = None
     to: str
     sum: float
     created: Optional[datetime] = None
@@ -14,7 +15,7 @@ class WithdrawBase(BaseModel):
 
 
 class WithdrawCreate(WithdrawBase):
-    owner_id: Optional[str] = None
+    pass
 
 
 class WithdrawUpdate(WithdrawBase):

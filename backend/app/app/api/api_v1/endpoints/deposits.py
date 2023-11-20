@@ -24,12 +24,12 @@ async def count(
 
 @router.get("/currencies", response_model=[])
 async def currencies():
-    return ["BTC", "BCH", "LTC", "USDT", "ETC", "ETH"]
+    return ["BTC", "LTC", "USDT", "ETH"]
 
 
 @router.get("/chains", response_model=[])
 async def chains():
-    return ["BTC", "BCH", "LTC", "ERC20", "TRC20", "PLG", "ETC", "ETH"]
+    return ["BTC", "LTC", "ERC20", "TRC20", "PLG", "ETH"]
 
 
 @router.get("/", response_model=List[schemas.Deposit])
@@ -145,6 +145,10 @@ def _deposit(deposit):
     if deposit is None:
         raise ValueError("Wrong deposit")
     result.setdefault("id", deposit["id"])
+    if "owner_id" in deposit:
+        result.setdefault("owner_id", deposit["owner_id"])
+    else:
+        result.setdefault("owner_id", "")
     result.setdefault("wallet", deposit["wallet"])
     result.setdefault("type", deposit["type"])
     if "exchange" in deposit:
@@ -154,14 +158,15 @@ def _deposit(deposit):
     result.setdefault("status", deposit["status"])
     if "paid" in deposit:
         result.setdefault(
-            "paid", okx.integer_to_fractional(deposit["paid"], deposit["currency"])
+            "paid",
+            round(okx.integer_to_fractional(deposit["paid"], deposit["currency"]), 4),
         )
     else:
         result.setdefault("paid", 0)
     result.setdefault("callback", deposit["callback"])
     result.setdefault("callback_response", deposit["callback_response"])
     result.setdefault(
-        "sum", okx.integer_to_fractional(deposit["sum"], deposit["currency"])
+        "sum", round(okx.integer_to_fractional(deposit["sum"], deposit["currency"]), 4)
     )
     result.setdefault("currency", deposit["currency"])
     result.setdefault("chain", deposit["chain"])

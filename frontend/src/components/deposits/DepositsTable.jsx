@@ -2,30 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Deposit from './DepositsTableItem'; // Correct path to your Deposit component
 
 function DepositTable({
-  selectedItems,
   list,
   settingList
 }) {
-  const [selectAll, setSelectAll] = useState(false);
-  const [isCheck, setIsCheck] = useState([]);
-
-  const handleSelectAll = () => {
-    setSelectAll(!selectAll);
-    setIsCheck(selectAll ? [] : list.map(li => li.id));
-  };
-
-  const handleClick = e => {
-    const { id, checked } = e.target;
-    setSelectAll(false);
-    setIsCheck(prevIsCheck =>
-      checked ? [...prevIsCheck, id] : prevIsCheck.filter(item => item !== id)
-    );
-  };
-
-  useEffect(() => {
-    selectedItems(isCheck);
-  }, [isCheck]);
-
   return (
     <div className="bg-white dark:bg-slate-800 shadow-lg rounded-sm border border-slate-200 dark:border-slate-700 relative">
       <div>
@@ -36,20 +15,11 @@ function DepositTable({
             {/* Table header */}
             <thead className="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/20 border-t border-b border-slate-200 dark:border-slate-700">
               <tr>
-                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
-                  <div className="flex items-center">
-                    <label className="inline-flex">
-                      <span className="sr-only">Select all</span>
-                      <input className="form-checkbox" checked={selectAll} onChange={handleSelectAll} />
-                    </label>
-                  </div>
+                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                  <div className="font-semibold text-left">User</div>
                 </th>
-
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                   <div className="font-semibold text-left">Wallet</div>
-                </th>
-                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">Type</div>
                 </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                   <div className="font-semibold text-left">Sum</div>
@@ -92,9 +62,8 @@ function DepositTable({
                       chain={entity.chain}
                       status={entity.status}
                       created={entity.created}
+                      owner_id={entity.owner_id}
 
-                      handleClick={handleClick}
-                      isChecked={isCheck.includes(entity.id)}
                       settingList={settingList}
                     />
                   )
