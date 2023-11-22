@@ -1,61 +1,69 @@
-import React, { useState, useEffect } from 'react';
-import Wallet from './WalletsTableItem'; // Make sure to provide the correct path
+import React from 'react'
+import Wallet from './WalletsTableItem'
+import {getUserMe} from "../../services/api"
 
 function WalletTable({
-  list,
-  settingList
-}) {
-  return (
-    <div className="bg-white dark:bg-slate-800 shadow-lg rounded-sm border border-slate-200 dark:border-slate-700 relative">
-      <div>
-        <div className="overflow-x-auto">
-          <table className="table-auto w-full dark:text-slate-300">
-            <thead className="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/20 border-t border-b border-slate-200 dark:border-slate-700">
-              <tr>
+                         list,
+                         settingList
+                     }) {
+    const [superuser, setSuperuser] = React.useState(false)
+    React.useEffect(() => {
+        getUserMe().then((data) => setSuperuser(data["is_superuser"]))
+    })
+    return (
+        <div
+            className="bg-white dark:bg-slate-800 shadow-lg rounded-sm border border-slate-200 dark:border-slate-700 relative">
+            <div>
+                <div className="overflow-x-auto">
+                    <table className="table-auto w-full dark:text-slate-300">
+                        <thead
+                            className="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/20 border-t border-b border-slate-200 dark:border-slate-700">
+                        <tr>
 
-               <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">User</div>
-                </th>
-                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">Wallet</div>
-                </th>
-                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">Created</div>
-                </th>
+                            {superuser && <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                                <div className="font-semibold text-left">User</div>
+                            </th>}
+                            <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                                <div className="font-semibold text-left">Wallet</div>
+                            </th>
+                            <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                                <div className="font-semibold text-left">Created</div>
+                            </th>
 
-                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">Act</div>
-                </th>
-              </tr>
-            </thead>
-            {/* Table body */}
-            <tbody className="text-sm divide-y divide-slate-200 dark:divide-slate-700">
-              {
+                            <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                                <div className="font-semibold text-left">Act</div>
+                            </th>
+                        </tr>
+                        </thead>
+                        {/* Table body */}
+                        <tbody className="text-sm divide-y divide-slate-200 dark:divide-slate-700">
+                        {
 
-                list.map(entity => {
-                  return (
-                    <Wallet
-                      key={entity.id}
-                      id={entity.id}
+                            list.map(entity => {
+                                return (
+                                    <Wallet
+                                        key={entity.id}
+                                        id={entity.id}
 
-                      owner_id={entity.owner_id}
-                      deposit_id={entity.deposit_id}
-                      wallet={entity.wallet}
-                      type={entity.type}
-                      created={entity.created}
+                                        owner_id={entity.owner_id}
+                                        deposit_id={entity.deposit_id}
+                                        wallet={entity.wallet}
+                                        type={entity.type}
+                                        created={entity.created}
+                                        superuser={superuser}
 
-                      settingList={settingList}
-                    />
-                  )
-                })
-              }
-            </tbody>
-          </table>
+                                        settingList={settingList}
+                                    />
+                                )
+                            })
+                        }
+                        </tbody>
+                    </table>
 
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }
 
 export default WalletTable;

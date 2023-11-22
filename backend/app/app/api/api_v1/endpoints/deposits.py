@@ -123,14 +123,25 @@ async def delete_deposit(
     """
     deposit = await crud.deposit.get(db=db, entity_id=entity_id)
     wallet = await crud.wallet.get_by_deposit(db=db, deposit_id=deposit["id"])  # type: ignore
-    transaction = await crud.transaction.get_by_deposit(db=db, deposit_id=deposit["id"])  # type: ignore
     if wallet:
         await crud.wallet.remove(db=db, entity_id=wallet["id"])
-    if transaction:
-        await crud.transaction.remove(db=db, entity_id=transaction["id"])
+
     transaction = await crud.transaction.get_by_deposit(db=db, deposit_id=deposit["id"])
     if transaction:
         await crud.transaction.remove(db=db, entity_id=transaction["id"])
+
+    transaction = await crud.transaction.get_by_deposit(db=db, deposit_id=deposit["id"])
+    if transaction:
+        await crud.transaction.remove(db=db, entity_id=transaction["id"])
+
+    transaction = await crud.transaction.get_by_deposit(db=db, deposit_id=deposit["id"])
+    if transaction:
+        await crud.transaction.remove(db=db, entity_id=transaction["id"])
+
+    callback = await crud.callback.get_by_deposit(db=db, deposit_id=deposit["id"])  # type: ignore
+    if callback:
+        await crud.callback.remove(db=db, entity_id=callback["id"])
+
     if not deposit:
         raise HTTPException(status_code=404, detail="Deposit doesn't exists")
 
@@ -170,6 +181,13 @@ def _deposit(deposit):
     )
     result.setdefault("currency", deposit["currency"])
     result.setdefault("chain", deposit["chain"])
+    if "fee" in deposit:
+        result.setdefault(
+            "fee",
+            round(okx.integer_to_fractional(deposit["fee"], deposit["currency"]), 4),
+        )
+    else:
+        result.setdefault("fee", 0)
     result.setdefault("created", str(deposit["created"]))
     return result
 

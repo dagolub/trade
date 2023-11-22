@@ -16,6 +16,7 @@ class DepositBase(BaseModel):
     currency: str = None  # type: ignore
     chain: str = None  # type: ignore
     paid: str = None  # type: ignore
+    fee: str = None  # type: ignore
     created: Optional[datetime]
 
 

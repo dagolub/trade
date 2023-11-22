@@ -40,7 +40,7 @@ const deleteRow = (id) => {
 
 
 const showWallet = (wallet) => {
-    return wallet.length > 9 ? wallet.substring(0, 5) + " ... " + wallet.substring(wallet.length - 5) : wallet
+    return wallet.length > 12 ? wallet.substring(0, 5) + " ... " + wallet.substring(wallet.length - 5) : wallet
 }
 
 const copyMe = (copy) => {

@@ -9,9 +9,9 @@ function WalletTableItem(props) {
     }
     return (
         <tr id={"tr" + props.id}>
-            <td className={tdClass(props.id)}>
+            {props.superuser && <td className={tdClass(props.id)}>
                 <div className={divClass}>{searchUser(props.owner_id)}</div>
-            </td>
+            </td>}
             <td className={tdClass(props.id)}>
                 <div className={divClass}>{props.wallet}</div>
             </td>
@@ -20,7 +20,7 @@ function WalletTableItem(props) {
             </td>
             <td className={tdClass(props.id)}>
                 <div className="space-x-1" style={{"display": "flex"}}>
-                        <button onClick={() => viewHandler(props.id)} className={buttonView}><View /></button>
+                    <button onClick={() => viewHandler(props.id)} className={buttonView}><View/></button>
                 </div>
             </td>
         </tr>

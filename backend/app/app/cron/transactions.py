@@ -12,9 +12,11 @@ from app import schemas
 
 
 async def get_superuser() -> schemas.User:
-    email = crud.user.get_by_email(db=db, emai="admin@cryptopayments.fastapi.xyz")
+    email = await crud.user.get_by_email(
+        db=db, email="admin@cryptopayments.fastapi.xyz"
+    )
     if not email:
-        email = crud.user.get_by_email(db=db, email="admin@rpay.io")
+        email = await crud.user.get_by_email(db=db, email="admin@rpay.io")
     if not email:
         return False
     return email
@@ -27,7 +29,7 @@ async def create_transaction(
     amount,
     currency,
     _type,
-    owner_id,
+    owner_id="",
     deposit_id="",
     withdraw_id="",
     fee=0,
@@ -43,6 +45,7 @@ async def create_transaction(
             "currency": currency,
             "type": _type,
             "fee": fee,
+            "owner_id": owner_id,
             "deposit_id": deposit_id,
             "withdraw_id": withdraw_id,
             "created": datetime.utcnow(),
@@ -159,23 +162,51 @@ async def incoming_transaction():  # noqa: 901
                                 db=db, entity_id=_deposit["owner_id"]
                             )
 
-                            comm = user["commissions"][currency]["in"]
+                            comm = user["commissions"][currency.lower()]["in"]
                             if comm:
-                                admin_amount = (
-                                    amount * 0.0100 * comm["percent"] + comm["fixed"]
+                                admin_amount = okx.integer_to_fractional(
+                                    _deposit["fee"], _deposit["currency"].lower()
                                 )
-                                amount = amount - admin_amount
+                                amount = float(amount) - float(admin_amount)
 
                                 super_user = await get_superuser()
                                 if super_user:
                                     #  update super user balance
-                                    bal = {
-                                        currency: super_user[currency] + admin_amount
-                                    }
-                                    crud.user.update(
-                                        db=db, db_obj=super_user, obj_in={"bal": bal}
-                                    )
+                                    if "bal" not in super_user:
+                                        super_user["bal"] = {
+                                            "btc": 0,
+                                            "ltc": 0,
+                                            "usdt": 0,
+                                            "eth": 0,
+                                        }
+                                    if currency.lower() in super_user["bal"]:
+                                        new_admin_balance = (
+                                            super_user["bal"][currency.lower()]
+                                            + admin_amount  # noqa
+                                        )
+                                    else:
+                                        new_admin_balance = admin_amount
 
+                                    await crud.user.update(
+                                        db=db,
+                                        db_obj={"id": super_user["id"]},
+                                        obj_in={
+                                            "bal": {currency.lower(): new_admin_balance}
+                                        },
+                                    )
+                            fee = _deposit["fee"]
+                            if fee > 0:
+                                await create_transaction(
+                                    from_wallet="<internal>",
+                                    to_wallet="<commission>",
+                                    currency=_deposit["currency"],
+                                    tx="",
+                                    amount=0,
+                                    _type="OKX",
+                                    fee=fee,
+                                    owner_id=_deposit["owner_id"],
+                                    deposit_id=_deposit["id"],
+                                )
                             if "bal" in user:
                                 bal = user["bal"]
                             else:
@@ -207,7 +238,7 @@ async def create_corresponded_transactions(
     print("Balance", balance)
     transactions = 0
     if len(balance["data"]) > 0 and float(balance["data"][0]["availBal"]) > 0:
-        print("Balance", balance)
+        print("Balance", balance, balance["data"][0])
         okx.transfer_money_to_main_account(
             ccy=currency,
             amt=amount,
@@ -277,11 +308,14 @@ async def exchange():
 
 async def exchange_usdt(wallet):
     okx = OKX()
+    amount = okx.integer_to_fractional(
+        wallet["sum"], wallet["currency"]
+    ) - okx.integer_to_fractional(wallet["fee"], wallet["currency"])
     quota = okx.estimate_quota(
         from_ccy=wallet["currency"],
         to_ccy="USDT",
         side="sell",
-        amount=okx.integer_to_fractional(wallet["sum"], wallet["currency"]),
+        amount=amount,
     )
     if quota and "baseCcy" in quota:
         exchange = okx.convert_trade(

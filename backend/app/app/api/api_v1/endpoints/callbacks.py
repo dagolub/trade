@@ -43,7 +43,7 @@ async def read_callbacks(
     return wallets
 
 
-@router.get("/{id}", response_model=schemas.Wallet)
+@router.get("/{id}", response_model=schemas.Callback)
 async def read_callback(
     id: str,
     current_user: models.User = Depends(deps.get_current_active_user),

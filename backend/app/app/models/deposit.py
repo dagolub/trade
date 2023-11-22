@@ -15,6 +15,7 @@ class Deposit(Base):
     currency = Column(String)
     chain = Column(String)
     paid = Column(String)
+    fee = Column(String)
     callback = Column(String)
     callback_response = Column(String)
     created = Column(DateTime)

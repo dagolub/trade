@@ -4,7 +4,7 @@ const copyMe = (data) =>{
     alert(data)
 }
 const showWalletCopy = (wallet) => {
-     return  ( wallet.length >9 && <svg fill="#64748b"
+     return  ( wallet.length > 12 && <svg fill="#64748b"
                          style={{"display": "inline-block", "marginLeft": "5px", "cursor": "pointer"}}
                          height="20px" width="20px" viewBox="0 0 330 330" onClick={() => copyMe(wallet)}>
                         <g>

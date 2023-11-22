@@ -15,9 +15,9 @@ const deleteHandler = (id) => {
 
     return (
         <tr id={"tr" + props.id}>
-            <td className={tdClass(props.id)}>
+            {props.superuser && <td className={tdClass(props.id)}>
                 <div className={divClass}>{searchUser(props.owner_id)}</div>
-            </td>
+            </td>}
             <td className={tdClass(props.id)}>
                 <div className={divClass}>{showWallet(props.wallet)}{showWalletCopy(props.wallet)}</div>
             </td>
@@ -26,6 +26,9 @@ const deleteHandler = (id) => {
             </td>
             <td className={tdClass(props.id)}>
                 <div className={divClass}>{props.paid}</div>
+            </td>
+            <td className={tdClass(props.id)}>
+                <div className={divClass}>{props.fee}</div>
             </td>
             <td className={tdClass(props.id)}>
                 <div className={divClass}>{props.currency}</div>

@@ -196,6 +196,9 @@ const getCallbacks = (q = "", skip = 0, limit = 10) => {
     }
     return GET(url)
 }
+const getCallback = (id) => {
+    return GET('/api/callbacks/' + id)
+}
 //INSERT1
 const getSetting = () => {
     return GET("/api/settings/all")
@@ -215,7 +218,7 @@ export {
     getTransactions, getTransaction,
     getWallets, getWallet,
     createWithdraw, getWithdraws, getWithdraw, deleteWithdraw,
-    getCallbacks,
+    getCallbacks, getCallback,
     getSetting, putSetting,
     getOTP
     // INSERT2

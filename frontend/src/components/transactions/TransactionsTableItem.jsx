@@ -10,10 +10,9 @@ function TransactionTableItem(props) {
     }
     return (
         <tr id={"tr" + props.id}>
-            <td className={tdClass(props.id)}>
+            {props.superuser && <td className={tdClass(props.id)}>
                 <div className={divClass}>{searchUser(props.owner_id)}</div>
-            </td>
-
+            </td>}
             <td className={tdClass(props.id)}>
                 <div className={divClass}>{showWallet(props.from_wallet)}{showWalletCopy(props.from_wallet)}</div>
             </td>
@@ -26,7 +25,7 @@ function TransactionTableItem(props) {
 
             </td>
             <td className={tdClass(props.id)}>
-                <div className={divClass}>{props.withdraw_id ? "-": ""}{props.amount}</div>
+                <div className={divClass}>{props.withdraw_id ? "-" : ""}{props.amount}</div>
             </td>
             <td className={tdClass(props.id)}>
                 <div className={divClass}>{props.fee}</div>
@@ -39,7 +38,7 @@ function TransactionTableItem(props) {
             </td>
             <td className={tdClass(props.id)}>
                 <div className="space-x-1" style={{"display": "flex"}}>
-                    <button onClick={() => viewHandler(props.id)} className={buttonView}><View /></button>
+                    <button onClick={() => viewHandler(props.id)} className={buttonView}><View/></button>
                 </div>
             </td>
         </tr>

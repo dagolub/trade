@@ -1,18 +1,18 @@
-import {showWallet, divClass, buttonView, tdClass} from "../../utils";
-import searchUser from "../searchUser";
-import showDate from "../showDate";
+import {showWallet, divClass, buttonView, tdClass} from "../../utils"
+import searchUser from "../searchUser"
+import showDate from "../showDate"
 import View from '../view'
 import showWalletCopy from "../showWalletCopy"
 
 function CallbackTableItem(props) {
     const viewHandler = (id) => {
-        window.location.href = "/callback/view/" + id
+        window.location.href = "/callbacks/view/" + id
     }
     return (
         <tr id={"tr" + props.id}>
-            <td className={tdClass(props.id)}>
+            {props.superuser && <td className={tdClass(props.id)}>
                 <div className={divClass}>{searchUser(props.owner_id)}</div>
-            </td>
+            </td>}
             <td className={tdClass(props.id)}>
                 <div className={divClass}>{showWallet(props.callback)}{showWalletCopy(props.callback)}</div>
             </td>

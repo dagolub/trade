@@ -1,9 +1,9 @@
 from typing import Any, List
-
 from app import crud, models, schemas
 from app.api import deps
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from app.services.client import OKX
 
 router = APIRouter()
 
@@ -37,9 +37,14 @@ async def read_transactions(
         )
     else:
         transactions = await crud.transaction.get_multi_by_owner(
-            db, owner_id=current_user["id"], skip=skip, limit=limit
+            db, owner_id=current_user["id"], skip=skip, limit=limit, search=_search
         )
-    return transactions
+    result = []
+    okx = OKX()
+    for t in transactions:
+        t["fee"] = okx.integer_to_fractional(t["fee"], t["currency"])
+        result.append(t)
+    return result
 
 
 @router.get("/{id}", response_model=schemas.Transaction)

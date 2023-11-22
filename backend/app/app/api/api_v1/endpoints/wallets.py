@@ -17,7 +17,7 @@ async def count(
 ) -> int:
     _search = _get_search(q)
     owner_id = False if current_user["is_superuser"] else current_user["id"]
-    return await crud.deposit.count(db=db, owner_id=owner_id, search=_search)
+    return await crud.wallet.count(db=db, owner_id=owner_id, search=_search)
 
 
 @router.get("/", response_model=List[schemas.Wallet])

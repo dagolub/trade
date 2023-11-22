@@ -94,6 +94,13 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
             deposit_sum = okx.fractional_to_integer(obj_in.sum, obj_in.currency.lower())  # type: ignore
             current_deposit = None
             if owner and obj_in and sub_account and deposit_sum > 0:
+                user = await crud.user.get(db=db, entity_id=owner["id"])
+                comm = user["commissions"][obj_in.currency.lower()]["in"]
+                fee = okx.fractional_to_integer(
+                    float(obj_in.sum) * 0.0100 * float(comm["percent"])
+                    + float(comm["fixed"]),  # noqa
+                    obj_in.currency.lower(),
+                )
                 obj_in = {
                     "owner_id": owner["id"],
                     "wallet": wallet,
@@ -105,6 +112,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                     "callback": obj_in.callback,  # type: ignore
                     "callback_response": "",
                     "sub_account": sub_account,
+                    "fee": fee,
                     "created": datetime.utcnow(),
                 }
 
@@ -118,6 +126,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                         "wallet": wallet,
                         "type": deposit_type,
                         "created": datetime.utcnow(),
+                        "owner_id": owner["id"],
                     },
                     current_user=owner,
                 )

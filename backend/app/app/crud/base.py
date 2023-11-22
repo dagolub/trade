@@ -17,15 +17,10 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self.model = model
 
     async def count(self, db: Session, owner_id=False, search="") -> int:
-        if search == "":
-            search = {}
         if owner_id:
-            if search != "":
-                search.update({"owner_id": owner_id})
-        if owner_id:
-            return await db[self.model.__tablename__].count_documents(search)
-        else:
-            return await db[self.model.__tablename__].count_documents(search)  # type: ignore
+            search.update({"owner_id": owner_id})
+        result = await db[self.model.__tablename__].count_documents(search)
+        return result
 
     async def get(self, db: Session, entity_id: str) -> Optional[ModelType]:
         entity = await db[self.model.__tablename__].find_one({"_id": ObjectId(entity_id)})  # type: ignore
@@ -56,7 +51,10 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self, db: Session, owner_id, skip: int = 0, limit: int = 100, search=""
     ) -> List[ModelType]:
         result = []
-        search = {"owner_id": owner_id}
+        if search == "":
+            search = {"owner_id": owner_id}
+        else:
+            search.update({"owner_id": owner_id})
 
         async for document in db[self.model.__tablename__].find(search).sort("created", -1).skip(skip).limit(limit):  # type: ignore
             document["id"] = str(document["_id"])  # noqa
