@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import Users from './UsersTableItem'; // Make sure to provide the correct path to UsersTableItem
+import React from 'react';
+import Users from './UsersTableItem'
 
 function UsersTable({list, settingList }) {
   return (

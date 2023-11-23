@@ -101,6 +101,7 @@ const updateUser = (id, full_name, email, password, is_active, is_superuser, aut
     })
 }
 const deleteUser = (id) => {
+    console.log(id)
     return DELETE('/api/users/' + id)
 }
 

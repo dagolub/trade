@@ -78,9 +78,10 @@ const setTot = (path, setTotal) => {
         }
     });
 }
-const deleteEntity = (deleteEntity, entity_id) => {
+const deleteEnt = (deleteEntity, entity_id) => {
     deleteRow(entity_id);
     setTimeout(() => {
+        console.log("DeleteEntity", entity_id)
         deleteEntity(entity_id).then((response) => {
             if (response.id) {
                 document.getElementById("tr" + entity_id).remove();
@@ -101,5 +102,5 @@ export {
     tdClass,
     getEntities,
     setTot,
-    deleteEntity
+    deleteEnt
 }

@@ -1,4 +1,4 @@
-import {deleteEntity} from '../../utils'
+import {deleteEnt} from '../../utils'
 import {deleteUser} from '../../services/api'
 import {buttonView, tdClass, divClass, buttonDelete} from '../../utils'
 import Delete from "../delete"
@@ -6,7 +6,8 @@ import Edit from "../edit"
 import typeIcon from "../typeIcon";
 function UsersTableItem(props) {
     const deleteHandler = (id) => {
-        deleteEntity(deleteUser(), id)
+        console.log(id)
+        deleteEnt(deleteUser, id)
     };
 
     const editHandler = (id) => {

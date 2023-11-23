@@ -16,8 +16,9 @@ ModelType = TypeVar("ModelType", bound=Base)
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     async def get_by_email(self, db: Session, email: str) -> Optional[User]:
-        user = await db["user"].find_one({"email": email})  # type: ignore
-        user["id"] = str(user["_id"])
+        user = await db["user"].find_one({"email": email})
+        if user:  # type: ignore
+            user["id"] = str(user["_id"])
         return user
 
     async def create(self, db: Session, obj_in: dict) -> User:

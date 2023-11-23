@@ -1,4 +1,4 @@
-import {showWallet, divClass, buttonView, buttonDelete, tdClass, deleteEntity} from '../../utils'
+import {showWallet, divClass, buttonView, buttonDelete, tdClass, deleteEnt} from '../../utils'
 import searchUser from "../searchUser"
 import showWalletCopy from "../showWalletCopy"
 import Del from '../delete'
@@ -11,7 +11,7 @@ function WalletTableItem(props) {
         window.location.href = "/withdraws/view/" + id
     }
     const deleteHandler = (id) => {
-        deleteEntity(deleteWithdraw(), id)
+        deleteEnt(deleteWithdraw, id)
     };
 
     return (

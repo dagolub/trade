@@ -1,5 +1,5 @@
 import {deleteDeposit} from '../../services/api'
-import {showWallet, divClass, buttonView, buttonDelete, tdClass, deleteEntity} from '../../utils'
+import {showWallet, divClass, buttonView, buttonDelete, tdClass, deleteEnt} from '../../utils'
 import searchUser from "../searchUser"
 import showWalletCopy from "../showWalletCopy"
 import Del from '../delete'
@@ -10,7 +10,7 @@ const viewHandler = (id) => {
     window.location.href = "/deposits/view/" + id
 }
 const deleteHandler = (id) => {
-    deleteEntity(deleteDeposit, id)
+    deleteEnt(deleteDeposit, id)
 };
 
     return (
