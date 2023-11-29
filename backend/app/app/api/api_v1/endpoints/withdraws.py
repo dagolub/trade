@@ -32,6 +32,7 @@ async def read_withdraws(
     Retrieve withdraw.
     """
     search = _get_search(q)
+    result = []
     if current_user["is_superuser"]:
         withdraws = await crud.withdraw.get_multi(
             db, skip=skip, limit=limit, search=search
@@ -40,7 +41,9 @@ async def read_withdraws(
         withdraws = await crud.withdraw.get_multi_by_owner(
             db, owner_id=current_user["id"], skip=skip, limit=limit, search=search
         )
-    return withdraws
+    for w in withdraws:
+        result.append(w)
+    return result
 
 
 @router.post("/", response_model=schemas.Withdraw)
@@ -91,6 +94,10 @@ async def delete_withdraw(
     """
     Delete withdraw.
     """
+    transaction = await crud.transaction.get_by_withdraw(db=db, withdraw_id=id)
+    while transaction:
+        await crud.transaction.remove(db=db, entity_id=transaction["id"])
+        transaction = await crud.transaction.get_by_withdraw(db=db, withdraw_id=id)
     withdraw = await crud.withdraw.get(db=db, entity_id=id)
     if not withdraw:
         raise HTTPException(status_code=404, detail="Withdraw doesn't exists")

@@ -27,6 +27,9 @@ function WalletTable({
                                 <div className="font-semibold text-left">Sum</div>
                             </th>
                             <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                                <div className="font-semibold text-left">Fee</div>
+                            </th>
+                            <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                                 <div className="font-semibold text-left">To</div>
                             </th>
                             <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
@@ -63,6 +66,7 @@ function WalletTable({
                                         status={entity.status}
                                         created={entity.created}
                                         owner_id={entity.owner_id}
+                                        fee={entity.fee}
                                         superuser={superuser}
 
                                         settingList={settingList}

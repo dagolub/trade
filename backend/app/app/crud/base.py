@@ -64,9 +64,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
         return result
 
-    async def create(
-        self, db: Session, obj_in: dict, current_user=None
-    ) -> Optional[ModelType]:
+    async def create(self, db: Session, obj_in: dict) -> Optional[ModelType]:
         obj = await db[self.model.__tablename__].insert_one(document=obj_in)  # type: ignore
         object = await db[self.model.__tablename__].find_one(  # type: ignore
             {"_id": ObjectId(obj.inserted_id)}
@@ -96,6 +94,14 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     async def get_by_deposit(self, db, deposit_id):
         entity = await db[self.model.__tablename__].find_one({"deposit_id": deposit_id})  # type: ignore
+        if entity:
+            entity["id"] = str(entity["_id"])
+            return entity
+        else:
+            return None
+
+    async def get_by_withdraw(self, db, withdraw_id):
+        entity = await db[self.model.__tablename__].find_one({"withdraw_id": withdraw_id})  # type: ignore
         if entity:
             entity["id"] = str(entity["_id"])
             return entity

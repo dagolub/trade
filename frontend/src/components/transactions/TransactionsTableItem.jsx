@@ -25,7 +25,7 @@ function TransactionTableItem(props) {
 
             </td>
             <td className={tdClass(props.id)}>
-                <div className={divClass}>{props.withdraw_id ? "-" : ""}{props.amount}</div>
+                <div className={divClass}>{props.withdraw_id && props.amount > 0? "-" : ""}{props.amount}</div>
             </td>
             <td className={tdClass(props.id)}>
                 <div className={divClass}>{props.fee}</div>

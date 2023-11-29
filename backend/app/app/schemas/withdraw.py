@@ -11,6 +11,8 @@ class WithdrawBase(BaseModel):
     callback: Optional[str] = None
     currency: str
     chain: str
+    fee: float
+    network_fee: float
     status: Optional[str] = None
 
 

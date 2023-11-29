@@ -23,6 +23,9 @@ function WalletTableItem(props) {
                 <div className={divClass}>{props.sum}</div>
             </td>
             <td className={tdClass(props.id)}>
+                <div className={divClass}>{props.fee}</div>
+            </td>
+            <td className={tdClass(props.id)}>
                 <div className={divClass}>{showWallet(props.to)}{showWalletCopy(props.to)}</div>
             </td>
             <td className={tdClass(props.id)}>

@@ -32,9 +32,8 @@ async def create_transaction(
     owner_id="",
     deposit_id="",
     withdraw_id="",
-    fee=0,
+    fee=0.0,
 ):
-    user = await crud.user.get(db=db, entity_id=owner_id)
     return await crud.transaction.create(
         db=db,
         obj_in={
@@ -50,7 +49,6 @@ async def create_transaction(
             "withdraw_id": withdraw_id,
             "created": datetime.utcnow(),
         },
-        current_user=user,
     )
 
 
@@ -179,7 +177,11 @@ async def incoming_transaction():  # noqa: 901
                                             "usdt": 0,
                                             "eth": 0,
                                         }
-                                    if currency.lower() in super_user["bal"]:
+                                    if (
+                                        "bal" in super_user
+                                        and currency.lower()  # noqa
+                                        in super_user["bal"]  # noqa
+                                    ):
                                         new_admin_balance = (
                                             super_user["bal"][currency.lower()]
                                             + admin_amount  # noqa
@@ -353,7 +355,7 @@ async def exchange_usdt(wallet):
             await crud.user.update(db=db, db_obj=u, obj_in=user)
 
 
-async def send_callback():
+async def send_callback():  # noqa: 901
     wallets = await crud.deposit.get_by_regex(
         db=db,
         search={"status": {"$regex": "(paid|overpayment)"}},
@@ -385,9 +387,17 @@ async def send_callback():
     withdraws = await crud.withdraw.get_by_status(db=db, status="paid")
 
     for withdraw in withdraws:
-        result = await send_callback_withdraw(withdraw)
-        if not result:
-            continue
+        try:
+            await send_callback_withdraw(withdraw)
+        except Exception as e:
+            await crud.withdraw.update(
+                db=db,
+                db_obj={"id": withdraw["id"]},
+                obj_in={
+                    "callback_response": str(e.args[0]),
+                    "status": "complete no callback",
+                },
+            )
 
 
 async def send_callback_withdraw(withdraw):
@@ -396,12 +406,12 @@ async def send_callback_withdraw(withdraw):
     callback = withdraw["callback"]
     del withdraw["_id"]
     del withdraw["created"]
-    if withdraw["status"] == "paid":
+    if "paid" in withdraw["status"]:
         response = requests.post(callback, json=withdraw)
         callback_response = response.text
 
-        _status = "in process"
-        if response.status_code == 200:
+        _status = withdraw["status"]
+        if response.status_code == 200 and withdraw["status"] == "paid":
             _status = "completed"
         await crud.callback.create(
             db=db,
@@ -487,18 +497,28 @@ async def outgoing_transaction():
         amount = withdraw["sum"]
         to_wallet = withdraw["to"]
         owner_id = withdraw["owner_id"]
-        fee = okx.get_currency_fee(_currency=currency, chain=chain)
+        network_fee = okx.get_currency_fee(_currency=currency, chain=chain)
         chain = okx.get_currency_chain(currency=currency, chain=chain)
-
+        user = await crud.user.get(db=db, entity_id=withdraw["owner_id"])
+        comm = {"percent": 0, "fixed": 0}
+        if (
+            "commissions" in user
+            and currency.lower() in user["commissions"]  # noqa
+            and "out" in user["commissions"][currency.lower()]  # noqa
+        ):
+            comm = user["commissions"][currency.lower()]["out"]
+        fee = float(amount) * 0.0100 * float(comm["percent"]) + float(comm["fixed"])
         try:
             transaction = okx.make_withdrawal(
-                amount=amount,
+                amount=float(amount) + float(network_fee),
                 address=to_wallet,
                 currency=currency,
                 chain=chain,
-                fee=fee,
+                fee=network_fee,
             )
-            print("Withdraw", currency, chain, amount, to_wallet, fee, chain)
+            print(
+                "Withdraw", currency, chain, amount, to_wallet, fee, network_fee, chain
+            )
             await create_transaction(
                 from_wallet="<internal>",
                 to_wallet=to_wallet,
@@ -507,19 +527,63 @@ async def outgoing_transaction():
                 currency=currency,
                 _type="OKX",
                 owner_id=owner_id,
-                deposit_id="",
+                fee=0,
+                withdraw_id=withdraw["id"],
+            )
+            await create_transaction(
+                from_wallet="<internal>",
+                to_wallet="<commission>",
+                currency=currency,
+                tx="",
+                amount=0,
+                _type="OKX",
                 fee=fee,
+                owner_id=owner_id,
                 withdraw_id=withdraw["id"],
             )
             await crud.withdraw.update(
-                db=db, db_obj={"id": withdraw["id"]}, obj_in={"status": "paid"}
+                db=db,
+                db_obj={"id": withdraw["id"]},
+                obj_in={
+                    "status": "paid",
+                    "network_fee": network_fee,
+                },
+            )
+            super_user = await get_superuser()
+            if "bal" in super_user:
+                super_user_bal = super_user["bal"]
+            else:
+                super_user_bal = {"btc": 0, "eth": 0, "ltc": 0, "usdt": 0}
+            if currency.lower() in super_user_bal:
+                current_balance = super_user_bal[currency.lower()]
+            else:
+                current_balance = 0
+
+            super_user_bal[currency.lower()] = (
+                Decimal(str(current_balance))
+                + Decimal(str(fee))  # noqa
+                - Decimal(str(network_fee))  # noqa
             )
 
+            await crud.user.update(
+                db=db,
+                db_obj={"id": super_user["id"]},
+                obj_in={"bal": super_user_bal},
+            )
             user = await crud.user.get(db=db, entity_id=owner_id)
-            user_in = {
-                "bal": {currency.lower(): user["bal"][currency.lower()] - amount}
-            }
-            await crud.user.update(db=db, db_obj={"id": owner_id}, obj_in=user_in)
+            user_bal = user["bal"]
+            if "bal" in user and currency.lower() in user["bal"]:
+                user_bal[currency.lower()] = Decimal(
+                    str(user["bal"][currency.lower()])
+                ) - (Decimal(str(amount)) + Decimal(str(fee)))
+            else:
+                user_bal[currency.lower()] = user["bal"][currency.lower()] - (
+                    Decimal(str(amount)) + Decimal(str(fee))
+                )
+
+            await crud.user.update(
+                db=db, db_obj={"id": owner_id}, obj_in={"bal": user_bal}
+            )
 
         except ValueError as e:
             print("Exception in outgoing transaction", e.args[0])

@@ -26,7 +26,7 @@ async def create_random_user(db: Session) -> User:
     email = random_email()
     password = random_lower_string()
     user_in = {"username": email, "email": email, "password": password}
-    return await crud.user.create(db=db, obj_in=user_in)
+    return await crud.user.create(db=db, obj_in=user_in, current_user=)
 
 
 def create_user(
@@ -77,7 +77,7 @@ async def authentication_token_from_email(
     user = await crud.user.get_by_email(db, email=email)
     if not user:
         user_in_create = UserCreate(username=email, email=email, password=password)
-        user = await crud.user.create(db, obj_in=user_in_create)  # type: ignore
+        user = await crud.user.create(db, obj_in=user_in_create, current_user=)  # type: ignore
     else:
         user_in_update = UserUpdate(password=password)
         user = await crud.user.update(db, db_obj=user, obj_in=user_in_update)

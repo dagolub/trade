@@ -175,12 +175,15 @@ class OKX:
 
     @staticmethod
     def integer_to_fractional(amount: str, currency: str):
-        if currency.lower() in ("ltc", "bch", "btc"):
-            return float(Decimal(str(amount)) * Decimal("0.00000001"))
+        if currency.lower() in ("ltc", "btc"):
+            f = Decimal(str(amount)) * Decimal("0.00000001")
+            return f"{f:.{abs(f.as_tuple().exponent)}f}"
         if currency.lower() == "usdt":
-            return float(Decimal(str(amount)) * Decimal("0.000001"))
-        if currency.lower() in ("eth", "etc"):
-            return float(Decimal(str(amount)) * Decimal("0.000000000000000001"))
+            f = float(Decimal(str(amount)) * Decimal("0.000001"))
+            return f"{f:f}"
+        if currency.lower() == "eth":
+            f = float(Decimal(str(amount)) * Decimal("0.000000000000000001"))
+            return f"{f:f}"
 
     @staticmethod
     def fractional_to_integer(amount: str, currency: str) -> float:  # type: ignore
@@ -190,7 +193,7 @@ class OKX:
         if currency.lower() == "usdt":
             _amount = float(amount) * 1000000
             return float(f"{_amount:.10f}")
-        if currency.lower() in ("eth"):
+        if currency.lower() == "eth":
             _amount = float(amount) * 1000000000000000000
             return float(f"{_amount:.10f}")
 

@@ -11,5 +11,7 @@ class Withdraw(Base):
     callback = Column(String)
     currency = Column(String)
     chain = Column(String)
+    fee = Column(String)
+    network_fee = Column(String)
     status = Column(String)
     created = Column(DateTime)

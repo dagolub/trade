@@ -84,7 +84,7 @@ async def create_deposit(
     """
     try:
         return _deposit(
-            await crud.deposit.create(db=db, obj_in=deposit_in, owner=current_user)  # type: ignore
+            await crud.deposit.create(db=db, obj_in=deposit_in)  # type: ignore
         )
     except ValueError as e:
         traceback.print_exc()
