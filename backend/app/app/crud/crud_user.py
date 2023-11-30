@@ -4,7 +4,7 @@ from bson.objectid import ObjectId  # type: ignore
 from fastapi.encoders import jsonable_encoder
 from motor.motor_asyncio import AsyncIOMotorClient  # type: ignore
 from sqlalchemy.orm import Session  # type: ignore
-
+from app import crud
 from app.core.security import get_password_hash, verify_password
 from app.crud.base import CRUDBase
 from app.db.base_class import Base
@@ -41,8 +41,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     async def update(
         self, db: Session, *, db_obj: User, obj_in: Union[UserUpdate, Dict[str, Any]]  # type: ignore
     ) -> User:
-        obj_in = jsonable_encoder(obj_in)
-        update_data = obj_in
+        update_data = await crud.user.get(db=db, entity_id=db_obj["id"])
 
         if "password" in update_data:  # type: ignore
             hashed_password = get_password_hash(update_data["password"])  # type: ignore

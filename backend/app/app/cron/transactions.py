@@ -109,7 +109,30 @@ async def incoming_transaction():  # noqa: 901
                     }
 
                     to_deposit = okx.fractional_to_integer(amount, wallet["currency"])
-
+                    if int(wallet["sum"]) == 0:
+                        wallet["sum"] = dh["amt"]
+                        obj_in["sum"] = dh["amt"]
+                        fee = 0
+                        if dh["amt"]:
+                            user = await crud.user.get(
+                                db=db, entity_id=wallet["owner_id"]
+                            )
+                            if (
+                                "commissions" in user
+                                and obj_in.currency.lower()  # noqa
+                                in user["commissions"]
+                            ):
+                                comm = user["commissions"][obj_in.currency.lower()][
+                                    "in"
+                                ]
+                            else:
+                                comm = {"percent": 0, "fixed": 0}
+                            fee = okx.fractional_to_integer(
+                                float(dh["amt"]) * 0.0100 * float(comm["percent"])
+                                + float(comm["fixed"]),  # noqa
+                                obj_in.currency.lower(),
+                            )
+                        obj_in["fee"] = fee
                     if "status" not in obj_in:
                         obj_in.setdefault("status", "partially")
                     if "paid" not in obj_in:
@@ -182,10 +205,11 @@ async def incoming_transaction():  # noqa: 901
                                         and currency.lower()  # noqa
                                         in super_user["bal"]  # noqa
                                     ):
-                                        new_admin_balance = (
+                                        new_admin_balance = float(
                                             super_user["bal"][currency.lower()]
-                                            + admin_amount  # noqa
-                                        )
+                                        ) + float(
+                                            admin_amount
+                                        )  # noqa
                                     else:
                                         new_admin_balance = admin_amount
 
@@ -310,9 +334,9 @@ async def exchange():
 
 async def exchange_usdt(wallet):
     okx = OKX()
-    amount = okx.integer_to_fractional(
-        wallet["sum"], wallet["currency"]
-    ) - okx.integer_to_fractional(wallet["fee"], wallet["currency"])
+    amount = float(
+        okx.integer_to_fractional(wallet["sum"], wallet["currency"])
+    ) - float(okx.integer_to_fractional(wallet["fee"], wallet["currency"]))
     quota = okx.estimate_quota(
         from_ccy=wallet["currency"],
         to_ccy="USDT",
@@ -347,7 +371,10 @@ async def exchange_usdt(wallet):
 
             # update balance
             u = await crud.user.get(db=db, entity_id=wallet["owner_id"])
-            user = {"bal": u["bal"]}
+            if "bal" in u:
+                user = {"bal": u["bal"]}
+            else:
+                user = {"bal": {"btc": 0.0, "ltc": 0.0, "eth": 0.0, "usdt": 0.0}}
             user["bal"][quota["baseCcy"].lower()] = float(
                 user["bal"][quota["baseCcy"].lower()]
             ) - float(quota["rfqSz"])
@@ -453,6 +480,8 @@ async def send_callback_aex(wallet):
             _status = "completed"
         else:
             _status = "c-overpayment"
+    else:
+        pass
     await crud.callback.create(
         db=db,
         obj_in={

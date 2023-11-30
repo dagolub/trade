@@ -84,7 +84,7 @@ async def create_deposit(
     """
     try:
         return _deposit(
-            await crud.deposit.create(db=db, obj_in=deposit_in)  # type: ignore
+            await crud.deposit.create(db=db, obj_in=deposit_in, owner=current_user)  # type: ignore
         )
     except ValueError as e:
         traceback.print_exc()
@@ -170,21 +170,21 @@ def _deposit(deposit):
     if "paid" in deposit:
         result.setdefault(
             "paid",
-            round(okx.integer_to_fractional(deposit["paid"], deposit["currency"]), 4),
+            okx.integer_to_fractional(deposit["paid"], deposit["currency"]),
         )
     else:
         result.setdefault("paid", 0)
     result.setdefault("callback", deposit["callback"])
     result.setdefault("callback_response", deposit["callback_response"])
     result.setdefault(
-        "sum", round(okx.integer_to_fractional(deposit["sum"], deposit["currency"]), 4)
+        "sum", okx.integer_to_fractional(deposit["sum"], deposit["currency"])
     )
     result.setdefault("currency", deposit["currency"])
     result.setdefault("chain", deposit["chain"])
     if "fee" in deposit:
         result.setdefault(
             "fee",
-            round(okx.integer_to_fractional(deposit["fee"], deposit["currency"]), 4),
+            okx.integer_to_fractional(deposit["fee"], deposit["currency"]),
         )
     else:
         result.setdefault("fee", 0)
