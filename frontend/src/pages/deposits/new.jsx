@@ -40,6 +40,7 @@ function DepositNew() {
                 } else {
                     setLoading(false)
                     setError(showError(data))
+
                 }
             })
         }

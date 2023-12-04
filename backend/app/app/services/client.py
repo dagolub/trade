@@ -197,6 +197,7 @@ class OKX:
             _amount = Decimal(str(amount)) * 1000000000000000000
             return int(_amount)
 
+
     @staticmethod
     def get_currency_chain(currency: str, chain: str):
         currency = currency.lower()

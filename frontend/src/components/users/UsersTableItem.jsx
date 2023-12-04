@@ -8,6 +8,7 @@ function UsersTableItem(props) {
     const deleteHandler = (id) => {
         console.log(id)
         deleteEnt(deleteUser, id)
+
     };
 
     const editHandler = (id) => {

@@ -14,6 +14,7 @@ function UsersEdit() {
   const [autotransfer, setAutoTransfer] = useState(false);
   const [commissions, setCommissions] = useState(false);
 
+
   useEffect(() => {
     getUser(id)
       .then((data) => {
@@ -23,6 +24,7 @@ function UsersEdit() {
           setIsSuperUser(data.is_superuser);
           setAutoTransfer(data.autotransfer);
           setCommissions(data.commissions);
+
       })
       .catch((error) => {
         showError(error);
@@ -43,6 +45,7 @@ function UsersEdit() {
               is_superuser={is_superuser}
               auto={autotransfer}
               commissions={commissions}
+
               id={id}
             />
           </div>

@@ -34,6 +34,7 @@ async def create_transaction(
     withdraw_id="",
     fee=0.0,
 ):
+
     return await crud.transaction.create(
         db=db,
         obj_in={
@@ -49,6 +50,7 @@ async def create_transaction(
             "withdraw_id": withdraw_id,
             "created": datetime.utcnow(),
         },
+        current_user=user,
     )
 
 
@@ -182,6 +184,7 @@ async def incoming_transaction():  # noqa: 901
                             user = await crud.user.get(
                                 db=db, entity_id=_deposit["owner_id"]
                             )
+
                             if (
                                 "commissions"
                                 and currency.lower() in user["commissions"]  # noqa
@@ -240,12 +243,14 @@ async def incoming_transaction():  # noqa: 901
                                     owner_id=_deposit["owner_id"],
                                     deposit_id=_deposit["id"],
                                 )
+
                             if "bal" in user:
                                 bal = user["bal"]
                             else:
                                 bal = {}
                             if "bal" not in user or not bal:
                                 bal = {
+
                                     "btc": 0.0,
                                     "ltc": 0.0,
                                     "usdt": 0.0,
@@ -255,6 +260,7 @@ async def incoming_transaction():  # noqa: 901
                             bal[currency.lower()] = float(
                                 bal[currency.lower()]
                             ) + float(amount)
+
 
                             await crud.user.update(
                                 db=db, db_obj=user, obj_in={"bal": bal}
@@ -330,6 +336,7 @@ async def exchange():
             db=db,
             db_obj={"id": wallet["id"]},
             obj_in={"status": wallet["status"].replace("pre", "aex")},
+
         )
 
         user = await crud.user.get(db=db, entity_id=wallet["owner_id"])
@@ -436,6 +443,7 @@ async def send_callback():  # noqa: 901
                     "status": "complete no callback",
                 },
             )
+
 
 
 async def send_callback_withdraw(withdraw):

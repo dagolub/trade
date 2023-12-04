@@ -3,6 +3,7 @@ import time
 
 sub_accounts = ["OPqgkYUU"]
 
+
 if __name__ == "__main__":
     for sub_account in sub_accounts:
         okx = OKX()

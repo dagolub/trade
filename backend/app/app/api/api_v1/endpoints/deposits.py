@@ -27,6 +27,7 @@ async def currencies():
     return ["BTC", "LTC", "USDT", "ETH"]
 
 
+
 @router.get("/chains", response_model=[])
 async def chains():
     return ["BTC", "LTC", "ERC20", "TRC20", "PLG", "ETH"]
@@ -66,20 +67,16 @@ async def create_deposit(
     """
     Currency: \n
         BTC
-        BCH
         USDT
         USDT
         USDT
-        ETC
         ETH
     Chain: \n
         BTC -> (OKX) BTC-Bitcoin
         LTC -> (OKX) LTC-Litecoin
-        BCH -> (OKX) BCH-BitcoinCash
         ETH -> (OKX) USDT-ERC20
         TRX -> (OKX) USDT-TRC20
         PLG -> (OKX) USDT-Polygon
-        ETC -> (OKX) ETC-Ethereum Classic
         ETH -> (OKX) ETH-ERC20"
     """
     try:

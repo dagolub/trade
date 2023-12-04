@@ -208,7 +208,6 @@ function Form({
                             className="text-sm text-slate-400 dark:text-slate-500 italic ml-2">{autotransfer ? 'On' : 'Off'}</div>
                     </div>
                 </div>
-
                 <div>
                     <div>
                         <label className="block text-sm font-medium mb-1" htmlFor="supporting-text">
@@ -271,7 +270,6 @@ function Form({
                         </table>
                     </div>
                 </div>
-
                 <div className="m-1.5">
                     <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white" type="submit">Submit</button>
                 </div>

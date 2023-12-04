@@ -8,6 +8,7 @@ from datetime import datetime
 from app.services.client import OKX
 from app import crud
 
+
 ModelType = TypeVar("ModelType", bound=Base)
 
 
@@ -21,6 +22,7 @@ class CRUDWithdraw(CRUDBase[Withdraw, WithdrawCreate, WithdrawUpdate]):
     def _get_min_withdraw(self, currencies: [], currency: str, chain: str):
         for c in currencies:
             if str(c["ccy"].lower()) == str(currency.lower()):
+
                 _chain = self.okx.get_currency_chain(currency, chain)
                 if c["chain"] == _chain:
                     if "minDep" in c:
@@ -37,6 +39,7 @@ class CRUDWithdraw(CRUDBase[Withdraw, WithdrawCreate, WithdrawUpdate]):
             raise ValueError(
                 f"Min withdraw in {obj_in.currency} {obj_in.chain} is {min_withdraw}"
             )
+
         user = await crud.user.get(db=db, entity_id=current_user["id"])
         comm = {"percent": 0, "fixed": 0}
         if (
@@ -50,6 +53,7 @@ class CRUDWithdraw(CRUDBase[Withdraw, WithdrawCreate, WithdrawUpdate]):
         if "bal" in user and obj_in.currency in user["bal"]:
             if fee + obj_in.sum > user["bal"][obj_in.currency]:
                 status = "Amount more than you have"
+
 
         obj_in = {
             "owner_id": current_user["id"],

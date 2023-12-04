@@ -19,12 +19,14 @@ function Signin() {
 
         let data = await Login(authenticate);
 
+
         if (data.status === 200) {
             saveToken(data.data.access_token);
             window.location.pathname = '/';
         } else {
             alert(data.response.data.detail)
         }
+
 
         return false;
     };

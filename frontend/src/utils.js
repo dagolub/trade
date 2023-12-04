@@ -2,6 +2,7 @@ import {deleteDeposit, GET} from "./services/api";
 import React from "react";
 
 
+
 const populateSelect = (data, label_field) => {
     let result = []
     for (const i in data) {
@@ -104,3 +105,4 @@ export {
     setTot,
     deleteEnt
 }
+

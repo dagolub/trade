@@ -12,7 +12,6 @@ function showError(data) {
             && data.response.data.hasOwnProperty("detail")) {
             error = data.response.data.detail
         }
-
         return <Banner type="error">{error}</Banner>
     }
 }

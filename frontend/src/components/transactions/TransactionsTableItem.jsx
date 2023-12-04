@@ -4,10 +4,12 @@ import showWalletCopy from "../showWalletCopy"
 import View from '../view'
 import showDate from "../showDate";
 
+
 function TransactionTableItem(props) {
     const viewHandler = (id) => {
         window.location.href = "/transactions/view/" + id
     }
+
     return (
         <tr id={"tr" + props.id}>
             {props.superuser && <td className={tdClass(props.id)}>
@@ -26,6 +28,7 @@ function TransactionTableItem(props) {
             </td>
             <td className={tdClass(props.id)}>
                 <div className={divClass}>{props.withdraw_id && props.amount > 0? "-" : ""}{props.amount}</div>
+
             </td>
             <td className={tdClass(props.id)}>
                 <div className={divClass}>{props.fee}</div>

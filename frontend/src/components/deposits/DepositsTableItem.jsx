@@ -20,6 +20,7 @@ const deleteHandler = (id) => {
             </td>}
             <td className={tdClass(props.id)}>
                 <div className={divClass}>{showWallet(props.wallet)}{showWalletCopy(props.wallet)}</div>
+
             </td>
             <td className={tdClass(props.id)}>
                 <div className={divClass}>{props.sum}</div>
