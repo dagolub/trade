@@ -14,16 +14,20 @@ function TransactionEdit() {
   const [currency, setCurrency] = useState('');
   const [type, setType] = useState('');
   const [created, setCreated] = useState('');
+  const [deposit, setDeposit] = useState('');
+  const [withdraw, setWithdraw] = useState('');
 
   useEffect(() => {
     getTransaction(id).then((data) => {
-      setFromWallet(data.from_wallet);
-      setToWallet(data.to_wallet);
-      setTx(data.tx);
-      setAmount(data.amount);
-      setCurrency(data.currency);
-      setType(data.type);
-      setCreated(data.created);t
+      setFromWallet(data.from_wallet)
+      setToWallet(data.to_wallet)
+      setTx(data.tx)
+      setAmount(data.amount)
+      setCurrency(data.currency)
+      setType(data.type)
+      setCreated(data.created)
+      setDeposit(data.deposit_id)
+      setWithdraw(data.withdraw_id)
     });
   }, [id]);
 
@@ -37,9 +41,12 @@ function TransactionEdit() {
             id: {id}<br />
             From wallet: {from_wallet}<br />
             To wallet: {to_wallet}<br />
+            TX: {tx}<br />
             Amount: {amount}<br />
             Currency: {currency}<br />
             Type: {type}<br />
+            Deposit: <a href={"/deposits/view/" + deposit} style={{"textDecoration": "underline"}}>{deposit}</a><br />
+            Withdraw: <a href={"/withdraws/view/" + withdraw} style={{"textDecoration": "underline"}}>{withdraw}</a><br />
             Created: {dayjs(created).format("HH:mm:ss DD MMM YY")}
           </div>
         </main>

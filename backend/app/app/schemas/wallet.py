@@ -7,11 +7,12 @@ class WalletBase(BaseModel):
     wallet: Optional[str] = None
     type: Optional[str] = None
     created: Optional[datetime]
+    owner_id: Optional[str] = None
+    deposit_id: Optional[str] = None
 
 
 class WalletCreate(WalletBase):
-    owner_id: Optional[str] = None
-    deposit_id: Optional[str] = None
+    pass
 
 
 class WalletUpdate(WalletBase):

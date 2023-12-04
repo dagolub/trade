@@ -12,6 +12,8 @@ function UsersEdit() {
   const [is_active, setIsActive] = useState(false);
   const [is_superuser, setIsSuperUser] = useState(false);
   const [autotransfer, setAutoTransfer] = useState(false);
+  const [commissions, setCommissions] = useState(false);
+
 
   useEffect(() => {
     getUser(id)
@@ -21,6 +23,8 @@ function UsersEdit() {
           setIsActive(data.is_active);
           setIsSuperUser(data.is_superuser);
           setAutoTransfer(data.autotransfer);
+          setCommissions(data.commissions);
+
       })
       .catch((error) => {
         showError(error);
@@ -40,6 +44,8 @@ function UsersEdit() {
               is_active={is_active}
               is_superuser={is_superuser}
               auto={autotransfer}
+              commissions={commissions}
+
               id={id}
             />
           </div>

@@ -14,6 +14,7 @@ function DepositNew() {
     const [currencies, setCurrencies] = React.useState([])
     const [chains, setChains] = React.useState([])
     const [loading, setLoading] = React.useState(false)
+    const [error, setError] = React.useState("")
 
     const setCurrencyRate = (data) => {
         if (data === "USDT") {
@@ -37,8 +38,9 @@ function DepositNew() {
                 if (data.id) {
                     window.location.href = "/deposits/view/" + data.id
                 } else {
-                    showError(data)
                     setLoading(false)
+                    setError(showError(data))
+
                 }
             })
         }
@@ -57,6 +59,7 @@ function DepositNew() {
                     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
                         <h1 className="text-3xl text-slate-800 dark:text-slate-100 font-bold mb-6">New deposit</h1>
                         <form method="POST" onSubmit={submitHandler}>
+                            {error}
                             <div>
                                 <div>
                                     <label className="block text-sm font-medium mb-1" htmlFor="supporting-text">

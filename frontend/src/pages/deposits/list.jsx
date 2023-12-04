@@ -1,44 +1,22 @@
-import React, {useEffect, useState} from 'react';
-import Header from '../../partials/Header';
-import PaginationClassic from '../../components/PaginationClassic';
-import SearchForm from '../../partials/actions/SearchForm';
-import Sidebar from '../../partials/Sidebar';
-import DepositsTable from '../../components/deposits/DepositsTable'; // Corrected import
-import {getDeposits, GET} from '../../services/api'; // Corrected import
+import React from 'react'
+import Header from '../../partials/Header'
+import PaginationClassic from '../../components/PaginationClassic'
+import SearchForm from '../../partials/actions/SearchForm'
+import Sidebar from '../../partials/Sidebar'
+import DepositsTable from '../../components/deposits/DepositsTable'
+import {getDeposits} from '../../services/api'
+import {getEntities, setTot} from '../../utils'
 
 function Deposits() {
-    const [selectedItems, setSelectedItems] = useState([]);
-    const [list, setList] = useState([]);
-    const [total, setTotal] = useState(0);
-
-    const handleSelectedItems = (selectedItems) => {
-        setSelectedItems([...selectedItems]);
+    const [list, setList] = React.useState([]);
+    const [total, setTotal] = React.useState(0);
+    const settingList = () => {
+        getEntities(getDeposits, setList)
     };
 
-    const settingList = (q = '', count) => {
-        setTimeout(() => {
-            q = document.location.search.split('=')[1];
-            getDeposits(q, count).then((data) => setList(data));
-        }, 500);
-    };
-
-    useEffect(() => {
-        let hash = parseInt(window.location.hash.split('#')[1]);
-        hash = hash > 0 ? hash : 0;
-
-        let q = document.location.search.split('=')[1];
-        getDeposits(q, hash * 10).then((data) => {
-            if (data.hasOwnProperty('response') && data.response.status === 403) {
-                window.location.href = "/signin"
-            }
-            setList(data)
-        });
-        q = document.location.search.split('=')[1];
-        if (q) {
-            GET('/api/deposits/count?q=' + q).then((data) => setTotal(data));
-        } else {
-            GET('/api/deposits/count').then((data) => setTotal(data));
-        }
+    React.useEffect(() => {
+        settingList()
+        setTot('deposits', setTotal)
     }, []);
 
     return (
@@ -54,7 +32,7 @@ function Deposits() {
                                     ✨</h1>
                             </div>
                             <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
-                                <SearchForm placeholder="Search by user ID…"/>
+                                <SearchForm placeholder="Search by wallet …"/>
                                 <a href="/deposits/new">
                                     <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white">
                                         <svg className="w-4 h-4 fill-current opacity-50 shrink-0" viewBox="0 0 16 16">
@@ -77,7 +55,7 @@ function Deposits() {
                                 </ul>
                             </div>
                         </div>
-                        <DepositsTable selectedItems={handleSelectedItems} list={list} settingList={settingList}/>
+                        <DepositsTable list={list} settingList={settingList}/>
                         <div className="mt-8">
                             <PaginationClassic total={total} settingList={settingList}/>
                         </div>

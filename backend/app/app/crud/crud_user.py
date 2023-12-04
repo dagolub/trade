@@ -4,7 +4,7 @@ from bson.objectid import ObjectId  # type: ignore
 from fastapi.encoders import jsonable_encoder
 from motor.motor_asyncio import AsyncIOMotorClient  # type: ignore
 from sqlalchemy.orm import Session  # type: ignore
-
+from app import crud
 from app.core.security import get_password_hash, verify_password
 from app.crud.base import CRUDBase
 from app.db.base_class import Base
@@ -16,7 +16,10 @@ ModelType = TypeVar("ModelType", bound=Base)
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     async def get_by_email(self, db: Session, email: str) -> Optional[User]:
-        return await db["user"].find_one({"email": email})  # type: ignore
+        user = await db["user"].find_one({"email": email})
+        if user:  # type: ignore
+            user["id"] = str(user["_id"])
+        return user
 
     async def create(self, db: Session, obj_in: dict) -> User:
         obj_in = jsonable_encoder(obj_in)
@@ -35,18 +38,41 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         user["id"] = str(obj.inserted_id)
         return user
 
-    async def update(
+    async def update(  # noqa: 901
         self, db: Session, *, db_obj: User, obj_in: Union[UserUpdate, Dict[str, Any]]  # type: ignore
     ) -> User:
-        obj_in = jsonable_encoder(obj_in)
-        update_data = obj_in
-
-        if "password" in update_data:  # type: ignore
-            hashed_password = get_password_hash(update_data["password"])  # type: ignore
-            del update_data["password"]  # type: ignore
-            update_data["hashed_password"] = hashed_password  # type: ignore
+        update_data = await crud.user.get(db=db, entity_id=db_obj["id"])
+        if type(obj_in) != dict:  # noqa
+            obj_in = dict(obj_in)
         if "email" in update_data:
             del update_data["email"]  # type: ignore
+
+        if "email" in obj_in:
+            update_data["full_name"] = obj_in["email"]
+
+        if "password" in obj_in and obj_in["password"] != "":  # type: ignore
+            hashed_password = get_password_hash(obj_in["password"])  # type: ignore
+            del obj_in["password"]  # type: ignore
+            update_data["hashed_password"] = hashed_password  # type: ignore
+
+        if "full_name" in obj_in:
+            update_data["full_name"] = obj_in["full_name"]
+
+        if "is_superuser" in obj_in:
+            update_data["is_superuser"] = obj_in["is_superuser"]
+
+        if "is_active" in obj_in:
+            update_data["is_superuser"] = obj_in["is_active"]
+
+        if "autotransfer" in obj_in:
+            update_data["autotransfer"] = obj_in["autotransfer"]
+
+        if "bal" in obj_in:
+            update_data["bal"] = obj_in["bal"]
+
+        if "commissions" in obj_in:
+            update_data["commissions"] = obj_in["commissions"]
+
         await db[self.model.__tablename__].update_one({"_id": ObjectId(db_obj["id"])}, {"$set": update_data})  # type: ignore
         user = await db[self.model.__tablename__].find_one({"_id": ObjectId(db_obj["id"])})  # type: ignore
         user["id"] = str(user["_id"])

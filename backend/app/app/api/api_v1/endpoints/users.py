@@ -22,8 +22,14 @@ def generate_random_string(length):
 
 
 @router.get("/count")
-async def count(db: Session = Depends(deps.get_db)) -> int:
-    return await crud.user.count(db=db)
+async def count(
+    db: Session = Depends(deps.get_db),
+    q: str = "",
+    current_user: models.User = Depends(deps.get_current_active_user),
+) -> int:
+    _search = _get_search(q)
+    owner_id = False if current_user["is_superuser"] else current_user["id"]
+    return await crud.user.count(db=db, owner_id=owner_id, search=_search)
 
 
 @router.get("/get_otp/{email}")

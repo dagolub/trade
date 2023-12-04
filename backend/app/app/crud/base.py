@@ -17,15 +17,10 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self.model = model
 
     async def count(self, db: Session, owner_id=False, search="") -> int:
-        if search == "":
-            search = {}
         if owner_id:
-            if search != "":
-                search.update({"owner_id": owner_id})
-        if owner_id:
-            return await db[self.model.__tablename__].count_documents(search)
-        else:
-            return await db[self.model.__tablename__].count_documents(search)  # type: ignore
+            search.update({"owner_id": owner_id})
+        result = await db[self.model.__tablename__].count_documents(search)
+        return result
 
     async def get(self, db: Session, entity_id: str) -> Optional[ModelType]:
         entity = await db[self.model.__tablename__].find_one({"_id": ObjectId(entity_id)})  # type: ignore
@@ -57,7 +52,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     ) -> List[ModelType]:
         result = []
         if search == "":
-            search = {}
+            search = {"owner_id": owner_id}
+        else:
+            search.update({"owner_id": owner_id})
 
         async for document in db[self.model.__tablename__].find(search).sort("created", -1).skip(skip).limit(limit):  # type: ignore
             document["id"] = str(document["_id"])  # noqa
@@ -99,6 +96,14 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     async def get_by_deposit(self, db, deposit_id):
         entity = await db[self.model.__tablename__].find_one({"deposit_id": deposit_id})  # type: ignore
+        if entity:
+            entity["id"] = str(entity["_id"])
+            return entity
+        else:
+            return None
+
+    async def get_by_withdraw(self, db, withdraw_id):
+        entity = await db[self.model.__tablename__].find_one({"withdraw_id": withdraw_id})  # type: ignore
         if entity:
             entity["id"] = str(entity["_id"])
             return entity

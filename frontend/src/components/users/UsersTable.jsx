@@ -1,47 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import Users from './UsersTableItem'; // Make sure to provide the correct path to UsersTableItem
+import React from 'react';
+import Users from './UsersTableItem'
 
-function UsersTable({ selectedItems, list, settingList }) {
-  const [selectAll, setSelectAll] = useState(false);
-  const [isCheck, setIsCheck] = useState([]);
-
-  const handleSelectAll = () => {
-    setSelectAll(!selectAll);
-    setIsCheck(list.map(user => user.id));
-    if (selectAll) {
-      setIsCheck([]);
-    }
-  };
-
-  const handleClick = e => {
-    const { id, checked } = e.target;
-    setSelectAll(false);
-    setIsCheck(prevIsCheck => (
-      checked ? [...prevIsCheck, id] : prevIsCheck.filter(item => item !== id)
-    ));
-  };
-
-  useEffect(() => {
-    selectedItems(isCheck);
-  }, [isCheck]);
-
+function UsersTable({list, settingList }) {
   return (
     <div className="bg-white dark:bg-slate-800 shadow-lg rounded-sm border border-slate-200 dark:border-slate-700 relative">
       <div>
-        {/* Table */}
         <div className="overflow-x-auto">
           <table className="table-auto w-full dark:text-slate-300">
-            {/* Table header */}
             <thead className="text-xs font-semibold uppercase text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/20 border-t border-b border-slate-200 dark:border-slate-700">
               <tr>
-                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
-                  <div className="flex items-center">
-                    <label className="inline-flex">
-                      <span className="sr-only">Select all</span>
-                      <input className="form-checkbox" checked={selectAll} onChange={handleSelectAll} />
-                    </label>
-                  </div>
-                </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                   <div className="font-semibold text-left">Full Name</div>
                 </th>
@@ -55,6 +22,9 @@ function UsersTable({ selectedItems, list, settingList }) {
                   <div className="font-semibold text-left">Is Superuser</div>
                 </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                  <div className="font-semibold text-left">Autotransfer</div>
+                </th>
+                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                   <div className="font-semibold text-left">Actions</div>
                 </th>
               </tr>
@@ -62,7 +32,6 @@ function UsersTable({ selectedItems, list, settingList }) {
             {/* Table body */}
             <tbody className="text-sm divide-y divide-slate-200 dark:divide-slate-700">
               {
-
                 list.map(user => {
                   return (
                     <Users
@@ -72,9 +41,9 @@ function UsersTable({ selectedItems, list, settingList }) {
                       email={user.email}
                       is_active={user.is_active}
                       is_superuser={user.is_superuser}
+                      autotransfer={user.autotransfer}
                       created={user.created}
-                      handleClick={handleClick}
-                      isChecked={isCheck.includes(user.id)}
+
                       settingList={settingList}
                     />
                   )

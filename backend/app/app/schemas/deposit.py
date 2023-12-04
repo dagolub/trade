@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 
 class DepositBase(BaseModel):
+    owner_id: Optional[str] = None
     wallet: Optional[str] = None
     type: Optional[str] = None
     status: Optional[str] = None
@@ -15,11 +16,11 @@ class DepositBase(BaseModel):
     currency: str = None  # type: ignore
     chain: str = None  # type: ignore
     paid: str = None  # type: ignore
+    fee: str = None  # type: ignore
     created: Optional[datetime]
 
 
 class DepositCreate(DepositBase):
-    owner_id: Optional[str] = None
     sub_account: Optional[str] = None
 
 

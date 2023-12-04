@@ -1,12 +1,8 @@
 from datetime import datetime, timedelta, timezone
 from typing import Any, Union
-
 from jose import jwt  # type: ignore
-from passlib.context import CryptContext  # type: ignore
-
 from app.core.config import settings
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+import hashlib
 
 
 ALGORITHM = "HS256"
@@ -27,8 +23,8 @@ def create_access_token(
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    return hashlib.md5(plain_password.encode("utf-8")).hexdigest() == hashed_password
 
 
 def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+    return hashlib.md5(password.encode("utf-8")).hexdigest()

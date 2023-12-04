@@ -1,43 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import Sidebar from '../../partials/Sidebar';
-import Header from '../../partials/Header';
-import SearchForm from '../../partials/actions/SearchForm';
-import PaginationClassic from '../../components/PaginationClassic';
-
-import CallbacksTable from '../../components/callbacks/CallbacksTable';
-import { getCallbacks, GET } from '../../services/api';
+import React from 'react'
+import Sidebar from '../../partials/Sidebar'
+import Header from '../../partials/Header'
+import SearchForm from '../../partials/actions/SearchForm'
+import PaginationClassic from '../../components/PaginationClassic'
+import CallbacksTable from '../../components/callbacks/CallbacksTable'
+import {getCallbacks} from '../../services/api'
+import {getEntities, setTot} from "../../utils"
 ;
 
 function Wallets() {
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [list, setList] = useState([]);
-  const [total, setTotal] = useState(0);
+  const [list, setList] = React.useState([]);
+  const [total, setTotal] = React.useState(0);
+    const settingList = () => {
+        getEntities(getCallbacks, setList)
+    };
 
-  const handleSelectedItems = (selectedItems) => {
-    setSelectedItems([...selectedItems]);
-  };
-
-  const settingList = (q = '', count) => {
-    setTimeout(() => {
-      const q = document.location.search.split('=')[1];
-      getWallets(q, count).then((data) => setList(data));
-    }, 500);
-  };
-
-  useEffect(() => {
-    const hash = parseInt(window.location.hash.split('#')[1]);
-    const hashValue = hash > 0 ? hash : 0;
-
-    let q = document.location.search.split('=')[1];
-    getWallets(q, hashValue * 10).then((data) => setList(data));
-
-    q = document.location.search.split('=')[1];
-    if (q) {
-        GET('/api/wallets/count?q=' + q).then((data) => setTotal(data));
-    } else {
-        GET('/api/wallets/count').then((data) => setTotal(data));
-    }
-  }, []);
+    React.useEffect(() => {
+        settingList()
+        setTot('callbacks', setTotal)
+    }, []);
 
   return (
     <div className="flex h-[100vh] overflow-hidden">
@@ -48,10 +29,10 @@ function Wallets() {
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             <div className="sm:flex sm:justify-between sm:items-center mb-5">
               <div className="mb-4 sm:mb-0">
-                <h1 className="text-2xl md:text-3xl text-slate-800 dark:text-slate-100 font-bold">Wallets ✨</h1>
+                <h1 className="text-2xl md:text-3xl text-slate-800 dark:text-slate-100 font-bold">Callbacks ✨</h1>
               </div>
               <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
-                <SearchForm placeholder="Search by user ID…" />
+                <SearchForm placeholder="Search by callback" />
               </div>
             </div>
             <div className="sm:flex sm:justify-between sm:items-center mb-5">
@@ -65,7 +46,7 @@ function Wallets() {
                 </ul>
               </div>
             </div>
-            <CallbacksTable selectedItems={handleSelectedItems} list={list} settingList={settingList} />
+            <CallbacksTable list={list} settingList={settingList} />
             <div className="mt-8">
               <PaginationClassic total={total} settingList={settingList} />
             </div>

@@ -1,41 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import Header from '../../partials/Header'; // Corrected import
-import PaginationClassic from '../../components/PaginationClassic'; // Corrected import
-import SearchForm from '../../partials/actions/SearchForm'; // Corrected import
-import Sidebar from '../../partials/Sidebar'; // Corrected import
-import TransactionsTable from '../../components/transactions/TransactionsTable'; // Corrected import
-import { getTransactions, GET } from '../../services/api'; // Corrected import
+import React from 'react'
+import Header from '../../partials/Header'
+import PaginationClassic from '../../components/PaginationClassic'
+import SearchForm from '../../partials/actions/SearchForm'
+import Sidebar from '../../partials/Sidebar'
+import TransactionsTable from '../../components/transactions/TransactionsTable'
+import {getTransactions} from '../../services/api'
+import {getEntities, setTot} from "../../utils"
 
 function Transactions() {
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [list, setList] = useState([]);
-  const [total, setTotal] = useState(0);
+  const [list, setList] = React.useState([]);
+  const [total, setTotal] = React.useState(0);
+    const settingList = () => {
+        getEntities(getTransactions, setList)
+    };
 
-  const handleSelectedItems = (selectedItems) => {
-    setSelectedItems([...selectedItems]);
-  };
-
-  const settingList = (q = '', count) => {
-    setTimeout(() => {
-      const q = document.location.search.split('=')[1];
-      getTransactions(q, count).then((data) => setList(data));
-    }, 500);
-  };
-
-  useEffect(() => {
-    let hash = parseInt(window.location.hash.split('#')[1]);
-    hash = hash > 0 ? hash : 0;
-
-    let q = document.location.search.split('=')[1];
-    getTransactions(q, hash * 10).then((data) => setList(data));
-
-    q = document.location.search.split('=')[1];
-    if (q) {
-        GET('/api/transactions/count?q=' + q).then((data) => setTotal(data));
-    } else {
-        GET('/api/transactions/count').then((data) => setTotal(data));
-    }
-  }, []);
+    React.useEffect(() => {
+        settingList()
+        setTot('transactions', setTotal)
+    }, []);
 
   return (
     <div className="flex h-[100vh] overflow-hidden">
@@ -49,7 +31,7 @@ function Transactions() {
                 <h1 className="text-2xl md:text-3xl text-slate-800 dark:text-slate-100 font-bold">Transactions ✨</h1>
               </div>
               <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
-                <SearchForm placeholder="Search by user ID…" />
+                <SearchForm placeholder="Search by from wallet" />
               </div>
             </div>
             <div className="sm:flex sm:justify-between sm:items-center mb-5">
@@ -61,7 +43,7 @@ function Transactions() {
                 </ul>
               </div>
             </div>
-            <TransactionsTable selectedItems={handleSelectedItems} list={list} settingList={settingList} />
+            <TransactionsTable list={list} settingList={settingList} />
             <div className="mt-8">
               <PaginationClassic total={total} settingList={settingList} />
             </div>

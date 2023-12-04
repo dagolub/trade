@@ -1,5 +1,4 @@
 from typing import Any, List
-
 from app import crud, models, schemas
 from app.api import deps
 from fastapi import APIRouter, Depends, HTTPException
@@ -37,9 +36,12 @@ async def read_transactions(
         )
     else:
         transactions = await crud.transaction.get_multi_by_owner(
-            db, owner_id=current_user["id"], skip=skip, limit=limit
+            db, owner_id=current_user["id"], skip=skip, limit=limit, search=_search
         )
-    return transactions
+    result = []
+    for t in transactions:
+        result.append(t)
+    return result
 
 
 @router.get("/{id}", response_model=schemas.Transaction)

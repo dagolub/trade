@@ -174,25 +174,29 @@ class OKX:
         return self.funding.get_currency()
 
     @staticmethod
-    def integer_to_fractional(amount: str, currency: str):
-        if currency.lower() in ("ltc", "bch", "btc"):
-            return float(Decimal(str(amount)) * Decimal("0.00000001"))
+    def integer_to_fractional(amount: int, currency: str) -> float:
+        if currency.lower() in ("ltc", "btc"):
+            f = Decimal(str(amount)) * Decimal("0.00000001")
+            return float(f)
         if currency.lower() == "usdt":
-            return float(Decimal(str(amount)) * Decimal("0.000001"))
-        if currency.lower() in ("eth", "etc"):
-            return float(Decimal(str(amount)) * Decimal("0.000000000000000001"))
+            f = Decimal(str(amount)) * Decimal("0.000001")
+            return float(f)
+        if currency.lower() == "eth":
+            f = Decimal(str(amount)) * Decimal("0.000000000000000001")
+            return float(f)
 
     @staticmethod
-    def fractional_to_integer(amount: str, currency: str) -> float:  # type: ignore
-        if currency.lower() in ("ltc", "bch", "btc"):
-            _amount = float(amount) * 100000000
-            return float(f"{_amount:.10f}")
+    def fractional_to_integer(amount: float, currency: str) -> int:  # type: ignore
+        if currency.lower() in ("ltc", "btc"):
+            _amount = Decimal(str(amount)) * 100000000
+            return int(_amount)
         if currency.lower() == "usdt":
-            _amount = float(amount) * 1000000
-            return float(f"{_amount:.10f}")
-        if currency.lower() in ("etc", "eth"):
-            _amount = float(amount) * 1000000000000000000
-            return float(f"{_amount:.10f}")
+            _amount = Decimal(str(amount)) * 1000000
+            return int(_amount)
+        if currency.lower() == "eth":
+            _amount = Decimal(str(amount)) * 1000000000000000000
+            return int(_amount)
+
 
     @staticmethod
     def get_currency_chain(currency: str, chain: str):
@@ -200,8 +204,6 @@ class OKX:
         chain = chain.lower()
         if currency == "ltc":
             return "LTC-Litecoin"
-        if currency == "bch":
-            return "BCH-BitcoinCash"
         if currency == "btc":
             return "BTC-Bitcoin"
         if currency == "usdt":
@@ -211,7 +213,5 @@ class OKX:
                 return "USDT-TRC20"
             elif chain == "plg":
                 return "USDT-Polygon"
-        if currency == "etc":
-            return "ETC-Ethereum Classic"
         if currency == "eth":
             return "ETH-ERC20"

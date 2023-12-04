@@ -29,3 +29,9 @@ from .exhange import (  # noqa
     ExchangeInDB,
     ExchangeUpdate,
 )  # noqa
+from .callback import (  # noqa
+    Callback,
+    CallbackCreate,
+    CallbackInDB,
+    CallbackUpdate,
+)  # noqa

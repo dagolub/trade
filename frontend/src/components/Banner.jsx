@@ -3,9 +3,8 @@ import React from 'react';
 function Banner({
   children,
   className,
-  type,
-  open,
-  setOpen
+  type
+
 }) {
 
   const typeIcon = (type) => {
@@ -49,11 +48,13 @@ function Banner({
         return 'bg-indigo-500';
     }
   };
-
+  const closeHandler = () => {
+    document.getElementById("alert").remove()
+  }
   return (
     <>
-      {open &&
-        <div className={className} role="alert">
+        <div className={className} role="alert" id="alert">
+
           <div className={`px-4 py-2 rounded-sm text-sm text-white ${typeColor(type)}`}>
             <div className="flex w-full justify-between items-start">
               <div className="flex">
@@ -62,8 +63,8 @@ function Banner({
                 {children}
                 </div>
               </div>
-              <button className="opacity-70 hover:opacity-80 ml-3 mt-[3px]" onClick={() => setOpen(false)}>
-                <div className="sr-only">Close</div>
+              <button className="opacity-70 hover:opacity-80 ml-3 mt-[3px]" onClick={closeHandler}>
+
                 <svg className="w-4 h-4 fill-current">
                   <path d="M7.95 6.536l4.242-4.243a1 1 0 111.415 1.414L9.364 7.95l4.243 4.242a1 1 0 11-1.415 1.415L7.95 9.364l-4.243 4.243a1 1 0 01-1.414-1.415L6.536 7.95 2.293 3.707a1 1 0 011.414-1.414L7.95 6.536z" />
                 </svg>
@@ -71,7 +72,6 @@ function Banner({
             </div>
           </div>
         </div>
-      }
     </>
   );
 }

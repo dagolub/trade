@@ -24,12 +24,13 @@ async def count(
 
 @router.get("/currencies", response_model=[])
 async def currencies():
-    return ["BTC", "BCH", "LTC", "USDT", "ETC", "ETH"]
+    return ["BTC", "LTC", "USDT", "ETH"]
+
 
 
 @router.get("/chains", response_model=[])
 async def chains():
-    return ["BTC", "BCH", "LTC", "ERC20", "TRC20", "PLG", "ETC", "ETH"]
+    return ["BTC", "LTC", "ERC20", "TRC20", "PLG", "ETH"]
 
 
 @router.get("/", response_model=List[schemas.Deposit])
@@ -66,20 +67,16 @@ async def create_deposit(
     """
     Currency: \n
         BTC
-        BCH
         USDT
         USDT
         USDT
-        ETC
         ETH
     Chain: \n
         BTC -> (OKX) BTC-Bitcoin
         LTC -> (OKX) LTC-Litecoin
-        BCH -> (OKX) BCH-BitcoinCash
         ETH -> (OKX) USDT-ERC20
         TRX -> (OKX) USDT-TRC20
         PLG -> (OKX) USDT-Polygon
-        ETC -> (OKX) ETC-Ethereum Classic
         ETH -> (OKX) ETH-ERC20"
     """
     try:
@@ -123,14 +120,25 @@ async def delete_deposit(
     """
     deposit = await crud.deposit.get(db=db, entity_id=entity_id)
     wallet = await crud.wallet.get_by_deposit(db=db, deposit_id=deposit["id"])  # type: ignore
-    transaction = await crud.transaction.get_by_deposit(db=db, deposit_id=deposit["id"])  # type: ignore
     if wallet:
         await crud.wallet.remove(db=db, entity_id=wallet["id"])
-    if transaction:
-        await crud.transaction.remove(db=db, entity_id=transaction["id"])
+
     transaction = await crud.transaction.get_by_deposit(db=db, deposit_id=deposit["id"])
     if transaction:
         await crud.transaction.remove(db=db, entity_id=transaction["id"])
+
+    transaction = await crud.transaction.get_by_deposit(db=db, deposit_id=deposit["id"])
+    if transaction:
+        await crud.transaction.remove(db=db, entity_id=transaction["id"])
+
+    transaction = await crud.transaction.get_by_deposit(db=db, deposit_id=deposit["id"])
+    if transaction:
+        await crud.transaction.remove(db=db, entity_id=transaction["id"])
+
+    callback = await crud.callback.get_by_deposit(db=db, deposit_id=deposit["id"])  # type: ignore
+    if callback:
+        await crud.callback.remove(db=db, entity_id=callback["id"])
+
     if not deposit:
         raise HTTPException(status_code=404, detail="Deposit doesn't exists")
 
@@ -145,6 +153,10 @@ def _deposit(deposit):
     if deposit is None:
         raise ValueError("Wrong deposit")
     result.setdefault("id", deposit["id"])
+    if "owner_id" in deposit:
+        result.setdefault("owner_id", deposit["owner_id"])
+    else:
+        result.setdefault("owner_id", "")
     result.setdefault("wallet", deposit["wallet"])
     result.setdefault("type", deposit["type"])
     if "exchange" in deposit:
@@ -154,7 +166,8 @@ def _deposit(deposit):
     result.setdefault("status", deposit["status"])
     if "paid" in deposit:
         result.setdefault(
-            "paid", okx.integer_to_fractional(deposit["paid"], deposit["currency"])
+            "paid",
+            okx.integer_to_fractional(deposit["paid"], deposit["currency"]),
         )
     else:
         result.setdefault("paid", 0)
@@ -165,6 +178,13 @@ def _deposit(deposit):
     )
     result.setdefault("currency", deposit["currency"])
     result.setdefault("chain", deposit["chain"])
+    if "fee" in deposit:
+        result.setdefault(
+            "fee",
+            okx.integer_to_fractional(deposit["fee"], deposit["currency"]),
+        )
+    else:
+        result.setdefault("fee", 0)
     result.setdefault("created", str(deposit["created"]))
     return result
 
