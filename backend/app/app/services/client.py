@@ -174,16 +174,16 @@ class OKX:
         return self.funding.get_currency()
 
     @staticmethod
-    def integer_to_fractional(amount: int, currency: str) -> str:
+    def integer_to_fractional(amount: int, currency: str) -> float:
         if currency.lower() in ("ltc", "btc"):
             f = Decimal(str(amount)) * Decimal("0.00000001")
-            return f"{f:.{abs(f.as_tuple().exponent)}f}"
+            return float(f)
         if currency.lower() == "usdt":
-            f = float(Decimal(str(amount)) * Decimal("0.000001"))
-            return f"{f:.{abs(f.as_tuple().exponent)}f}"
+            f = Decimal(str(amount)) * Decimal("0.000001")
+            return float(f)
         if currency.lower() == "eth":
-            f = float(Decimal(str(amount)) * Decimal("0.000000000000000001"))
-            return f"{f:.{abs(f.as_tuple().exponent)}f}"
+            f = Decimal(str(amount)) * Decimal("0.000000000000000001")
+            return float(f)
 
     @staticmethod
     def fractional_to_integer(amount: float, currency: str) -> int:  # type: ignore
