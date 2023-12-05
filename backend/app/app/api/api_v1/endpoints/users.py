@@ -135,6 +135,8 @@ async def read_user_me(
     """
     Get current user.
     """
+    if "bal" not in current_user:
+        current_user["bal"] = {"btc": 0.0, "ltc": 0.0, "usdt": 0.0, "eth": 0.0}
     return current_user
 
 

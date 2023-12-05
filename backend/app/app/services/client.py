@@ -131,7 +131,7 @@ class OKX:
             raise ValueError("Empty transaction")
 
         except Exception as e:
-            raise ValueError("Failed to withdraw" + e.args[0])
+            raise ValueError("Failed to withdraw" + str(e.args[0]))
 
     def get_withdrawal_history(self, ccy, wdId):
         return self.funding.get_withdrawal_history(ccy, wdId=wdId)

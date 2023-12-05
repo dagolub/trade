@@ -622,7 +622,7 @@ async def outgoing_transaction():
             else:
                 current_balance = 0
 
-            super_user_bal[currency.lower()] = (
+            super_user_bal[currency.lower()] = str(
                 Decimal(str(current_balance))
                 + Decimal(str(fee))  # noqa
                 - Decimal(str(network_fee))  # noqa
@@ -631,21 +631,25 @@ async def outgoing_transaction():
             await crud.user.update(
                 db=db,
                 db_obj={"id": super_user["id"]},
-                obj_in={"bal": str(super_user_bal)},
+                obj_in={"bal": super_user_bal},
             )
             user = await crud.user.get(db=db, entity_id=owner_id)
-            user_bal = user["bal"]
-            if "bal" in user and currency.lower() in user["bal"]:
-                user_bal[currency.lower()] = Decimal(
-                    str(user["bal"][currency.lower()])
-                ) - (Decimal(str(amount)) + Decimal(str(fee)))
+            if "bal" in user:
+                user_bal = user["bal"]
             else:
-                user_bal[currency.lower()] = user["bal"][currency.lower()] - (
+                user_bal = {"btc": 0.0, "ltc": 0.0, "usdt": 0.0, "eth": 0.0}
+            if "bal" in user and currency.lower() in user["bal"]:
+                user_bal[currency.lower()] = str(
+                    Decimal(str(user["bal"][currency.lower()]))
+                    - (Decimal(str(amount)) + Decimal(str(fee)))
+                )
+            else:
+                user_bal[currency.lower()] = float(user_bal[currency.lower()]) - float(
                     Decimal(str(amount)) + Decimal(str(fee))
                 )
 
             await crud.user.update(
-                db=db, db_obj={"id": owner_id}, obj_in={"bal": str(user_bal)}
+                db=db, db_obj={"id": owner_id}, obj_in={"bal": user_bal}
             )
 
         except ValueError as e:
