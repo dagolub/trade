@@ -457,6 +457,13 @@ async def send_callback_withdraw(withdraw):
         _status = withdraw["status"]
         if response.status_code == 200 and withdraw["status"] == "paid":
             _status = "completed"
+        else:
+            for i in (5, 10, 15, 60, 120):
+                sleep(i)
+                response = requests.post(callback, json=withdraw)
+                if response.status_code == 200 and withdraw["status"] == "paid":
+                    _status = "completed"
+                    break
         await crud.callback.create(
             db=db,
             obj_in={
@@ -498,7 +505,16 @@ async def send_callback_aex(wallet):
         else:
             _status = "c-overpayment"
     else:
-        pass
+        for i in (5, 10, 15, 60, 120):
+            sleep(i)
+            response = requests.post(wallet["callback"], json=deposit(wallet))
+            if response.status_code == 200:
+                if wallet["status"] == "paid":
+                    _status = "completed"
+                else:
+                    _status = "c-overpayment"
+                break
+
     await crud.callback.create(
         db=db,
         obj_in={
