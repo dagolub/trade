@@ -631,7 +631,7 @@ async def outgoing_transaction():
             await crud.user.update(
                 db=db,
                 db_obj={"id": super_user["id"]},
-                obj_in={"bal": super_user_bal},
+                obj_in={"bal": str(super_user_bal)},
             )
             user = await crud.user.get(db=db, entity_id=owner_id)
             user_bal = user["bal"]
@@ -645,7 +645,7 @@ async def outgoing_transaction():
                 )
 
             await crud.user.update(
-                db=db, db_obj={"id": owner_id}, obj_in={"bal": user_bal}
+                db=db, db_obj={"id": owner_id}, obj_in={"bal": str(user_bal)}
             )
 
         except ValueError as e:
