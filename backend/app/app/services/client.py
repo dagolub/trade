@@ -187,16 +187,16 @@ class OKX:
 
     @staticmethod
     def fractional_to_integer(amount: float, currency: str) -> int:  # type: ignore
-        if currency.lower() in ("ltc", "btc"):
+        currency = currency.lower()
+        if currency in ("ltc", "btc"):
             _amount = Decimal(str(amount)) * 100000000
             return int(_amount)
-        if currency.lower() == "usdt":
+        if currency == "usdt":
             _amount = Decimal(str(amount)) * 1000000
             return int(_amount)
-        if currency.lower() == "eth":
+        if currency == "eth":
             _amount = Decimal(str(amount)) * 1000000000000000000
             return int(_amount)
-
 
     @staticmethod
     def get_currency_chain(currency: str, chain: str):

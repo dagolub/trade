@@ -48,7 +48,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             del update_data["email"]  # type: ignore
 
         if "email" in obj_in:
-            update_data["full_name"] = obj_in["email"]
+            update_data["email"] = obj_in["email"]
 
         if "password" in obj_in and obj_in["password"] != "":  # type: ignore
             hashed_password = get_password_hash(obj_in["password"])  # type: ignore
@@ -62,7 +62,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             update_data["is_superuser"] = obj_in["is_superuser"]
 
         if "is_active" in obj_in:
-            update_data["is_superuser"] = obj_in["is_active"]
+            update_data["is_active"] = obj_in["is_active"]
 
         if "autotransfer" in obj_in:
             update_data["autotransfer"] = obj_in["autotransfer"]

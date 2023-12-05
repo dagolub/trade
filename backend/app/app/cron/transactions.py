@@ -34,7 +34,6 @@ async def create_transaction(
     withdraw_id="",
     fee=0.0,
 ):
-
     return await crud.transaction.create(
         db=db,
         obj_in={
@@ -50,7 +49,6 @@ async def create_transaction(
             "withdraw_id": withdraw_id,
             "created": datetime.utcnow(),
         },
-        current_user=user,
     )
 
 
@@ -112,8 +110,12 @@ async def incoming_transaction():  # noqa: 901
 
                     to_deposit = okx.fractional_to_integer(amount, wallet["currency"])
                     if int(wallet["sum"]) == 0:
-                        wallet["sum"] = dh["amt"]
-                        obj_in["sum"] = dh["amt"]
+                        wallet["sum"] = okx.fractional_to_integer(
+                            dh["amt"], wallet["currency"]
+                        )
+                        obj_in["sum"] = okx.fractional_to_integer(
+                            dh["amt"], wallet["currency"]
+                        )
                         fee = 0
                         if dh["amt"]:
                             user = await crud.user.get(
@@ -121,10 +123,10 @@ async def incoming_transaction():  # noqa: 901
                             )
                             if (
                                 "commissions" in user
-                                and obj_in.currency.lower()  # noqa
-                                in user["commissions"]
+                                and wallet["currency"].lower()
+                                in user["commissions"]  # noqa
                             ):
-                                comm = user["commissions"][obj_in.currency.lower()][
+                                comm = user["commissions"][wallet["currency"].lower()][
                                     "in"
                                 ]
                             else:
@@ -132,7 +134,7 @@ async def incoming_transaction():  # noqa: 901
                             fee = okx.fractional_to_integer(
                                 float(dh["amt"]) * 0.0100 * float(comm["percent"])
                                 + float(comm["fixed"]),  # noqa
-                                obj_in.currency.lower(),
+                                wallet["currency"].lower(),
                             )
                         obj_in["fee"] = fee
                     if "status" not in obj_in:
@@ -250,7 +252,6 @@ async def incoming_transaction():  # noqa: 901
                                 bal = {}
                             if "bal" not in user or not bal:
                                 bal = {
-
                                     "btc": 0.0,
                                     "ltc": 0.0,
                                     "usdt": 0.0,
@@ -260,7 +261,6 @@ async def incoming_transaction():  # noqa: 901
                             bal[currency.lower()] = float(
                                 bal[currency.lower()]
                             ) + float(amount)
-
 
                             await crud.user.update(
                                 db=db, db_obj=user, obj_in={"bal": bal}
@@ -336,7 +336,6 @@ async def exchange():
             db=db,
             db_obj={"id": wallet["id"]},
             obj_in={"status": wallet["status"].replace("pre", "aex")},
-
         )
 
         user = await crud.user.get(db=db, entity_id=wallet["owner_id"])
@@ -443,7 +442,6 @@ async def send_callback():  # noqa: 901
                     "status": "complete no callback",
                 },
             )
-
 
 
 async def send_callback_withdraw(withdraw):
