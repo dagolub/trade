@@ -136,6 +136,7 @@ async def incoming_transaction():  # noqa: 901
                                 + float(comm["fixed"]),  # noqa
                                 wallet["currency"].lower(),
                             )
+                            _deposit["fee"] = fee
                         obj_in["fee"] = fee
                     if "status" not in obj_in:
                         obj_in.setdefault("status", "partially")

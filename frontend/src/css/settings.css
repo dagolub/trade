@@ -1,0 +1,14 @@
+label {
+    padding: 10px;
+}
+label input[type="text"] {
+    font-size: 14px;
+    line-height: 14px;
+    padding: 2px;
+    color: black;
+    width: 350px;
+}
+div.apiKEY{
+    /*border: 1px solid red;*/
+    margin-top:20px;
+}
