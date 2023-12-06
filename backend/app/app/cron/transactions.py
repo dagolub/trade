@@ -189,7 +189,7 @@ async def incoming_transaction():  # noqa: 901
                             )
 
                             if (
-                                "commissions"
+                                "commissions" in user
                                 and currency.lower() in user["commissions"]  # noqa
                             ):
                                 comm = user["commissions"][currency.lower()]["in"]
