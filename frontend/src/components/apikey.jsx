@@ -10,7 +10,7 @@ const apiKEY = (apikey, id) => {
             </button>
 
             <a href="#">Request details</a>
-            <input type="text" value={ak} style={{"width": "95%"}}/>
+            <input type="text" className="apikey" value={ak} style={{"width": "95%"}}/>
             {
                 showWalletCopy(ak)
             }
