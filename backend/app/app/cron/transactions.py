@@ -34,6 +34,7 @@ async def create_transaction(
     withdraw_id="",
     fee=0.0,
 ):
+
     return await crud.transaction.create(
         db=db,
         obj_in={
@@ -110,12 +111,14 @@ async def incoming_transaction():  # noqa: 901
 
                     to_deposit = okx.fractional_to_integer(amount, wallet["currency"])
                     if int(wallet["sum"]) == 0:
+
                         wallet["sum"] = okx.fractional_to_integer(
                             dh["amt"], wallet["currency"]
                         )
                         obj_in["sum"] = okx.fractional_to_integer(
                             dh["amt"], wallet["currency"]
                         )
+
                         fee = 0
                         if dh["amt"]:
                             user = await crud.user.get(
@@ -123,10 +126,12 @@ async def incoming_transaction():  # noqa: 901
                             )
                             if (
                                 "commissions" in user
+
                                 and wallet["currency"].lower()
                                 in user["commissions"]  # noqa
                             ):
                                 comm = user["commissions"][wallet["currency"].lower()][
+
                                     "in"
                                 ]
                             else:
@@ -134,9 +139,11 @@ async def incoming_transaction():  # noqa: 901
                             fee = okx.fractional_to_integer(
                                 float(dh["amt"]) * 0.0100 * float(comm["percent"])
                                 + float(comm["fixed"]),  # noqa
+
                                 wallet["currency"].lower(),
                             )
                             _deposit["fee"] = fee
+
                         obj_in["fee"] = fee
                     if "status" not in obj_in:
                         obj_in.setdefault("status", "partially")
@@ -189,7 +196,9 @@ async def incoming_transaction():  # noqa: 901
                             )
 
                             if (
+
                                 "commissions" in user
+
                                 and currency.lower() in user["commissions"]  # noqa
                             ):
                                 comm = user["commissions"][currency.lower()]["in"]
@@ -253,6 +262,7 @@ async def incoming_transaction():  # noqa: 901
                                 bal = {}
                             if "bal" not in user or not bal:
                                 bal = {
+
                                     "btc": 0.0,
                                     "ltc": 0.0,
                                     "usdt": 0.0,
@@ -262,6 +272,7 @@ async def incoming_transaction():  # noqa: 901
                             bal[currency.lower()] = float(
                                 bal[currency.lower()]
                             ) + float(amount)
+
 
                             await crud.user.update(
                                 db=db, db_obj=user, obj_in={"bal": bal}
@@ -337,6 +348,7 @@ async def exchange():
             db=db,
             db_obj={"id": wallet["id"]},
             obj_in={"status": wallet["status"].replace("pre", "aex")},
+
         )
 
         user = await crud.user.get(db=db, entity_id=wallet["owner_id"])
@@ -516,6 +528,7 @@ async def send_callback_aex(wallet):
                     _status = "c-overpayment"
                 break
 
+
     await crud.callback.create(
         db=db,
         obj_in={
@@ -622,7 +635,9 @@ async def outgoing_transaction():
             else:
                 current_balance = 0
 
+
             super_user_bal[currency.lower()] = str(
+
                 Decimal(str(current_balance))
                 + Decimal(str(fee))  # noqa
                 - Decimal(str(network_fee))  # noqa
@@ -634,6 +649,7 @@ async def outgoing_transaction():
                 obj_in={"bal": super_user_bal},
             )
             user = await crud.user.get(db=db, entity_id=owner_id)
+
             if "bal" in user:
                 user_bal = user["bal"]
             else:
@@ -645,6 +661,7 @@ async def outgoing_transaction():
                 )
             else:
                 user_bal[currency.lower()] = float(user_bal[currency.lower()]) - float(
+
                     Decimal(str(amount)) + Decimal(str(fee))
                 )
 
