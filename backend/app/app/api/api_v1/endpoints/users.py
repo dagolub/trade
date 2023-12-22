@@ -1,6 +1,6 @@
 import random
 import string
-from typing import Any, List
+from typing import Any, List, Optional
 import pyotp
 import qrcode  # type: ignore
 from fastapi import APIRouter, Body, Depends, HTTPException
@@ -79,6 +79,38 @@ async def get_api_keys(
     return result
 
 
+@router.put("/apikeys")
+async def get_api_keys(
+    obj: Optional[str] = None,
+    db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_active_user),
+):
+    obj_in = {}
+    obj_in["owner_id"] = current_user["id"]
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    obj_in["apikey"] = security.create_access_token(
+        current_user["id"], expires_delta=access_token_expires  # type: ignore
+    )
+    if hasattr(obj, "deposit"):
+        obj_in["deposit"] = True
+    else:
+        obj_in["deposit"] = False
+
+    if hasattr(obj, "withdraw"):
+        obj_in["withdraw"] = True
+    else:
+        obj_in["withdraw"] = False
+
+    if hasattr(obj, "ips"):
+        obj_in["ips"] = obj.ips
+
+    if hasattr(obj, "id"):
+        result = await crud.apikey.update(db=db, db_obj={"id": obj.id}, obj_in=obj_in)
+    else:
+        result = await crud.apikey.create(db, obj_in=obj_in)
+    return {"id": result["id"], "owner_id": result["owner_id"]}
+
+
 @router.get("/apikeys/{id}")
 async def get_api_keys(
     id: str,
@@ -91,38 +123,6 @@ async def get_api_keys(
         "withdraw": result["withdraw"],
         "ips": result["ips"],
     }
-
-
-@router.put("/apikeys")
-async def get_api_keys(
-    obj: schemas.ApikeyUpdate,
-    db: Session = Depends(deps.get_db),
-    current_user: models.User = Depends(deps.get_current_active_user),
-):
-    obj_in = {}
-    obj_in["owner_id"] = current_user["id"]
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    obj_in["apikey"] = security.create_access_token(
-        current_user["id"], expires_delta=access_token_expires  # type: ignore
-    )
-    if obj.deposit:
-        obj_in["deposit"] = True
-    else:
-        obj_in["deposit"] = False
-
-    if obj.withdraw:
-        obj_in["withdraw"] = True
-    else:
-        obj_in["withdraw"] = False
-
-    if obj.ips:
-        obj_in["ips"] = obj.ips
-
-    if obj.id:
-        result = await crud.apikey.update(db=db, db_obj={"id": obj.id}, obj_in=obj_in)
-    else:
-        result = await crud.apikey.create(db, obj_in=obj_in)
-    return {"id": result["id"], "owner_id": result["owner_id"]}
 
 
 def _get_search(q: str = ""):
