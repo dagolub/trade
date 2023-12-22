@@ -1,11 +1,37 @@
 import showWalletCopy from "./showWalletCopy";
-
-const apiKEY = (apikey, id) => {
-    const ak = "12345678901234567890" //apikey["apikey"]
+import React from "react"
+import {putApikeys, getApikey} from "../services/api";
+const ApiKEY = ({apikey, id}) => {
+    const ak = apikey.apikey
+    const [deposit, setDeposit] = React.useState(false)
+    const [withdraw, setWithdraw] = React.useState(false)
+    const [ips, setIPS] = React.useState([])
+    const regenerate = () => {
+        const data = {"id": id, "deposit": deposit, "withdraw": withdraw, "ips": ips}
+        putApikeys(data).then((data)=>console.log(data))
+    }
+    const getChecked = (value, name) => {
+        if (name === "deposit") {
+            setDeposit(value)
+        }
+        if (name === "withdraw") {
+            setWithdraw(value)
+        }
+    }
+    const getIPS = (value) => {
+        setIPS(value)
+    }
+    React.useEffect(()=>{
+        getApikey(id).then((data)=>{
+            setDeposit(data["deposit"])
+            setWithdraw(data["withdraw"])
+            setIPS(data["ips"])
+        })
+    },[])
     return (
         <div className="apiKEY">
             <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white" style={{"margin": "10px"}}
-                    type="submit">
+                    type="submit" onClick={regenerate}>
                 Regenerate KEY
             </button>
 
@@ -16,16 +42,16 @@ const apiKEY = (apikey, id) => {
             }
             <br/>
             <label>
-                Deposit <input type="checkbox"/>
+                Deposit <input type="checkbox" checked={deposit} onChange={e=> getChecked(e.currentTarget.checked, "deposit")}/>
             </label>
             <label>
-                Withdraw <input type="checkbox"/>
+                Withdraw <input type="checkbox" checked={withdraw} onChange={e=> getChecked(e.currentTarget.checked, "withdraw")}/>
             </label>
             <label>
-                Allowed IP: <input type="text"/>
+                Allowed IP: <input type="text" value={ips} onChange={e=>getIPS(e.target.value)}/>
             </label>
         </div>
     )
 }
 
-export default apiKEY;
+export default ApiKEY;

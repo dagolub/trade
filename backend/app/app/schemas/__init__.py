@@ -35,3 +35,9 @@ from .callback import (  # noqa
     CallbackInDB,
     CallbackUpdate,
 )  # noqa
+from .apikey import (  # noqa
+    Apikey,
+    ApikeyCreate,
+    ApikeyInDB,
+    ApikeyUpdate,
+)  # noqa

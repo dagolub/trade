@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../../partials/Sidebar';
 import Form from '../../components/users/form';
 import Header from '../../partials/Header';
-import { getUser, getOTP } from '../../services/api';
+import { getUser } from '../../services/api';
 import { useParams } from 'react-router-dom';
 import showError from "../../components/showError";
 function UsersEdit() {

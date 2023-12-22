@@ -1,14 +1,21 @@
 from typing import Any, List
 import traceback
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 from app.services.client import OKX
 from app import crud, models, schemas
 from app.api import deps
-
+from app.core.security import validate_token, start_request, end_request
+from app.core.config import settings
+from fastapi.security import OAuth2PasswordBearer
 
 router = APIRouter()
+
+
+reusable_oauth2 = OAuth2PasswordBearer(
+    tokenUrl=f"{settings.API_V1_STR}/login/access-token"
+)
 
 
 @router.get("/count")
@@ -27,7 +34,6 @@ async def currencies():
     return ["BTC", "LTC", "USDT", "ETH"]
 
 
-
 @router.get("/chains", response_model=[])
 async def chains():
     return ["BTC", "LTC", "ERC20", "TRC20", "PLG", "ETH"]
@@ -35,12 +41,14 @@ async def chains():
 
 @router.get("/", response_model=List[schemas.Deposit])
 async def read_deposits(
+    request: Request,
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
     q: str = "",
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
+    id = await start_request(request)
     search = _get_search(q)
     if current_user["is_superuser"]:
         deposits = await crud.deposit.get_multi(
@@ -54,14 +62,15 @@ async def read_deposits(
     for deposit in deposits:
         deposit = _deposit(deposit)
         result.append(deposit)
+    await end_request(id, result)
     return result
 
 
 @router.post("/", response_model=schemas.Deposit)
 async def create_deposit(
-    *,
-    db: Session = Depends(deps.get_db),
     deposit_in: schemas.DepositBaseCreate,
+    token: str = Depends(reusable_oauth2),
+    db: Session = Depends(deps.get_db),
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
@@ -80,6 +89,7 @@ async def create_deposit(
         ETH -> (OKX) ETH-ERC20"
     """
     try:
+        await validate_token(token, "deposit")
         return _deposit(
             await crud.deposit.create(db=db, obj_in=deposit_in, owner=current_user)  # type: ignore
         )
@@ -119,6 +129,10 @@ async def delete_deposit(
     Delete an deposit.
     """
     deposit = await crud.deposit.get(db=db, entity_id=entity_id)
+
+    if not deposit:
+        raise HTTPException(status_code=404, detail="Deposit doesn't exists")
+
     wallet = await crud.wallet.get_by_deposit(db=db, deposit_id=deposit["id"])  # type: ignore
     if wallet:
         await crud.wallet.remove(db=db, entity_id=wallet["id"])
@@ -138,9 +152,6 @@ async def delete_deposit(
     callback = await crud.callback.get_by_deposit(db=db, deposit_id=deposit["id"])  # type: ignore
     if callback:
         await crud.callback.remove(db=db, entity_id=callback["id"])
-
-    if not deposit:
-        raise HTTPException(status_code=404, detail="Deposit doesn't exists")
 
     return await crud.deposit.remove(db=db, entity_id=entity_id)
 

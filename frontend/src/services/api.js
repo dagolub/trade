@@ -130,9 +130,6 @@ const deleteDeposit = (id) => {
     return DELETE('/api/deposits/' + id)
 }
 
-const callbackDeposit = (id) => {
-    return GET("/api/deposits/callback/" + id)
-}
 const getTransactions = (q = "", skip = 0, limit = 10) => {
     let url
     if (q === "") {
@@ -201,26 +198,25 @@ const getCallback = (id) => {
     return GET('/api/callbacks/' + id)
 }
 //INSERT1
-const getSetting = () => {
-    return GET("/api/settings/all")
+const getApikeys = () => {
+    return GET("/api/users/apikeys")
 }
-const putSetting = (data) => {
-    return PUT("/api/settings/all", data)
+const getApikey = (id) => {
+    return GET("/api/users/apikeys/" + id)
+}
+const putApikeys = (data) => {
+    return PUT("/api/users/apikeys", data)
 }
 
-const getOTP = (email) => {
-    return GET("/api/users/get_otp/" + email)
-}
 export {
     Login,
     GET, POST, PUT, DELETE,
     getUserMe, createUser, getUsers, getUser, updateUser, deleteUser,
-    createDeposit, getDeposits, getDeposit, deleteDeposit, callbackDeposit, getCurrencies, getChains,
+    createDeposit, getDeposits, getDeposit, deleteDeposit, getCurrencies, getChains,
     getTransactions, getTransaction,
     getWallets, getWallet,
     createWithdraw, getWithdraws, getWithdraw, deleteWithdraw,
     getCallbacks, getCallback,
-    getSetting, putSetting,
-    getOTP
+    getApikeys, putApikeys, getApikey
     // INSERT2
 };

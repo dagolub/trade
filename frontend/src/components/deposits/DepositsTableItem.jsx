@@ -5,13 +5,14 @@ import showWalletCopy from "../showWalletCopy"
 import Del from '../delete'
 import View from '../view'
 import showDate from "../showDate";
+
 function DepositTableItem(props) {
-const viewHandler = (id) => {
-    window.location.href = "/deposits/view/" + id
-}
-const deleteHandler = (id) => {
-    deleteEnt(deleteDeposit, id)
-};
+    const viewHandler = (id) => {
+        window.location.href = "/deposits/view/" + id
+    }
+    const deleteHandler = (id) => {
+        deleteEnt(deleteDeposit, id)
+    };
 
     return (
         <tr id={"tr" + props.id}>
@@ -45,8 +46,8 @@ const deleteHandler = (id) => {
             </td>
             <td className={tdClass(props.id)}>
                 <div className="space-x-1" style={{"display": "flex"}}>
-                    <button onClick={() => viewHandler(props.id)} className={buttonView}><View /></button>
-                    <button onClick={() => deleteHandler(props.id)} className={buttonDelete}><Del /></button>
+                    <button onClick={() => viewHandler(props.id)} className={buttonView}><View/></button>
+                    <button onClick={() => deleteHandler(props.id)} className={buttonDelete}><Del/></button>
                 </div>
             </td>
         </tr>

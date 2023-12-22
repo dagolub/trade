@@ -5,8 +5,15 @@ from app import crud, models, schemas
 from app.api import deps
 from starlette.responses import JSONResponse
 import traceback
+from app.core.security import validate_token
+from app.core.config import settings
+from fastapi.security import OAuth2PasswordBearer
 
 router = APIRouter()
+
+reusable_oauth2 = OAuth2PasswordBearer(
+    tokenUrl=f"{settings.API_V1_STR}/login/access-token"
+)
 
 
 @router.get("/count")
@@ -48,18 +55,18 @@ async def read_withdraws(
     return result
 
 
-
 @router.post("/", response_model=schemas.Withdraw)
 async def create_withdraw(
-    *,
-    db: Session = Depends(deps.get_db),
     withdraw_in: schemas.WithdrawBaseCreated,
+    token: str = Depends(reusable_oauth2),
+    db: Session = Depends(deps.get_db),
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Create new withdraw.
     """
     try:
+        await validate_token(token, "withdraw")
         withdraw = await crud.withdraw.create(
             db=db, obj_in=withdraw_in, current_user=current_user
         )

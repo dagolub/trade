@@ -12,6 +12,8 @@ from app import crud, models, schemas
 from app.api import deps
 from app.core.config import settings
 from app.utils import send_new_account_email
+from app.core import security
+from datetime import timedelta
 
 router = APIRouter()
 
@@ -37,7 +39,7 @@ async def get_otp(
     email: str = None, current_user: models.User = Depends(deps.get_current_active_user)  # type: ignore
 ):  # type: ignore
     url = pyotp.totp.TOTP("JBSWY3DPEHPK3PXP").provisioning_uri(
-        name=email, issuer_name="Cryptex"
+        name=email, issuer_name="RPAY"
     )
 
     qr = qrcode.QRCode(
@@ -61,6 +63,78 @@ async def get_otp(
     qr_image.save(image_url)
 
     return image_url
+
+
+@router.get("/apikeys")
+async def get_api_keys(
+    db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_active_user),
+):
+    data = await crud.apikey.get_multi_by_owner(db, owner_id=current_user["id"])
+    result = []
+    for item in data:
+        result.append(
+            {"id": item["id"], "owner_id": item["owner_id"], "apikey": item["apikey"]}
+        )
+    return result
+
+
+@router.get("/apikeys/{id}")
+async def get_api_keys(
+    id: str,
+    db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_active_user),
+):
+    result = await crud.apikey.get(db=db, entity_id=id)
+    return {
+        "deposit": result["deposit"],
+        "withdraw": result["withdraw"],
+        "ips": result["ips"],
+    }
+
+
+@router.put("/apikeys")
+async def get_api_keys(
+    obj: schemas.ApikeyUpdate,
+    db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_active_user),
+):
+    obj_in = {}
+    obj_in["owner_id"] = current_user["id"]
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    obj_in["apikey"] = security.create_access_token(
+        current_user["id"], expires_delta=access_token_expires  # type: ignore
+    )
+    if obj.deposit:
+        obj_in["deposit"] = True
+    else:
+        obj_in["deposit"] = False
+
+    if obj.withdraw:
+        obj_in["withdraw"] = True
+    else:
+        obj_in["withdraw"] = False
+
+    if obj.ips:
+        obj_in["ips"] = obj.ips
+
+    if obj.id:
+        result = await crud.apikey.update(db=db, db_obj={"id": obj.id}, obj_in=obj_in)
+    else:
+        result = await crud.apikey.create(db, obj_in=obj_in)
+    return {"id": result["id"], "owner_id": result["owner_id"]}
+
+
+def _get_search(q: str = ""):
+    search = {}
+    if q != "":
+        search = {
+            "$or": [
+                {"full_name": {"$regex": str(q)}},
+                {"email": {"$regex": str(q)}},
+            ]
+        }
+    return search
 
 
 @router.get("/", response_model=List[schemas.User])
@@ -217,15 +291,3 @@ async def create_user_open(
     user_in.autotransfer = False
     user = await crud.user.create(db, obj_in=user_in)
     return user
-
-
-def _get_search(q: str = ""):
-    search = {}
-    if q != "":
-        search = {
-            "$or": [
-                {"full_name": {"$regex": str(q)}},
-                {"email": {"$regex": str(q)}},
-            ]
-        }
-    return search

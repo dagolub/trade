@@ -11,6 +11,7 @@ from app.models.deposit import Deposit
 from app.schemas.deposit import DepositCreate, DepositUpdate
 from app.services.client import OKX
 import traceback
+from fastapi.encoders import jsonable_encoder
 
 ModelType = TypeVar("ModelType", bound=Base)
 
@@ -66,7 +67,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                 raise ValueError("OKX is not available in crud_deposit create")
             currencies = okx.get_currencies()
 
-            if obj_in.sum:
+            if obj_in.sum and not hasattr(obj_in, "fee"):
                 min_deposit = self._get_min_deposit(
                     currencies["data"],
                     str(obj_in.currency),
@@ -75,16 +76,25 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                 )
             else:
                 min_deposit = 0
-            if obj_in.sum:
+            if obj_in.sum and not hasattr(obj_in, "fee"):
                 if float(obj_in.sum) < float(min_deposit):
                     raise ValueError(
                         f"Min deposit in {obj_in.currency} {obj_in.chain} is {min_deposit}"
                     )
 
-            sub_account = (
-                owner["full_name"] + generate_random_small(3) + generate_random_big(3)
-            )
-            wallet = okx.get_address(sub_account, obj_in.currency, obj_in.chain)  # type: ignore
+            if not obj_in.sub_account:
+                sub_account = (
+                    owner["full_name"]
+                    + generate_random_small(3)
+                    + generate_random_big(3)
+                )
+            else:
+                sub_account = obj_in.sub_account
+
+            if hasattr(obj_in, "wallet"):
+                wallet = obj_in.wallet
+            else:
+                wallet = okx.get_address(sub_account, obj_in.currency, obj_in.chain)  # type: ignore
 
             if obj_in.sum:
                 if not getattr(obj_in, "sum") or not getattr(obj_in, "currency"):
@@ -98,10 +108,10 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
             else:
                 deposit_type = obj_in.type  # type: ignore
 
-            if obj_in.sum:
-                deposit_sum = okx.fractional_to_integer(obj_in.sum, obj_in.currency.lower())  # type: ignore
+            if obj_in.sum and not hasattr(obj_in, "fee"):
+                deposit_sum = str(okx.fractional_to_integer(obj_in.sum, obj_in.currency.lower()))  # type: ignore
             else:
-                deposit_sum = 0
+                deposit_sum = str(0)
             current_deposit = None
             if owner and sub_account:
                 user = await crud.user.get(db=db, entity_id=owner["id"])
@@ -112,7 +122,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                     comm = user["commissions"][obj_in.currency.lower()]["in"]
                 else:
                     comm = {"percent": 0, "fixed": 0}
-                if obj_in.sum:
+                if obj_in.sum and not hasattr(obj_in, "fee"):
                     fee = okx.fractional_to_integer(
                         float(obj_in.sum) * 0.0100 * float(comm["percent"])
                         + float(comm["fixed"]),  # noqa
@@ -121,14 +131,19 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                 else:
                     fee = 0
 
+                if hasattr(obj_in, "fee"):
+                    fee = obj_in.fee
+
+                if hasattr(obj_in, "fee") and hasattr(obj_in, "sum"):
+                    deposit_sum = obj_in.sum
                 obj_in = {
                     "owner_id": owner["id"],
                     "wallet": wallet,
                     "type": deposit_type,
-                    "sum": str(deposit_sum),
+                    "sum": deposit_sum,
                     "currency": obj_in.currency,  # type: ignore
                     "chain": obj_in.chain,  # type: ignore
-                    "status": "created",
+                    "status": obj_in.status if hasattr(obj_in, "status") else "created",
                     "callback": obj_in.callback,  # type: ignore
                     "callback_response": "",
                     "sub_account": sub_account,
@@ -136,20 +151,19 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                     "created": datetime.utcnow(),
                 }
 
-                current_deposit = await super().create(
-                    db=db, obj_in=obj_in, current_user=owner
-                )
-                await crud.wallet.create(
-                    db=db,
-                    obj_in={  # type: ignore
-                        "deposit_id": current_deposit["id"],  # type: ignore
-                        "wallet": wallet,
-                        "type": deposit_type,
-                        "created": datetime.utcnow(),
-                        "owner_id": owner["id"],
-                    },
-                    current_user=owner,
-                )
+                current_deposit = await super().create(db=db, obj_in=obj_in)
+
+                if not hasattr(obj_in, "wallet"):
+                    await crud.wallet.create(
+                        db=db,
+                        obj_in={  # type: ignore
+                            "deposit_id": current_deposit["id"],  # type: ignore
+                            "wallet": wallet,
+                            "type": deposit_type,
+                            "created": datetime.utcnow(),
+                            "owner_id": owner["id"],
+                        },
+                    )
 
             return current_deposit  # type: ignore
         except Exception as e:
@@ -157,7 +171,6 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
             traceback.print_exc()
 
             raise ValueError("Can not create deposit " + str(e.args[0]))
-
 
     def _get_type(self):
         return "OKX"
