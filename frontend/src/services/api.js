@@ -207,7 +207,10 @@ const getApikey = (id) => {
 const putApikeys = (data) => {
     return PUT("/api/users/apikeys", data)
 }
-
+const deleteApikey = (id) => {
+    console.log(id)
+    return DELETE("/api/users/apikeys/" + id)
+}
 export {
     Login,
     GET, POST, PUT, DELETE,
@@ -217,6 +220,6 @@ export {
     getWallets, getWallet,
     createWithdraw, getWithdraws, getWithdraw, deleteWithdraw,
     getCallbacks, getCallback,
-    getApikeys, putApikeys, getApikey
+    getApikeys, putApikeys, getApikey, deleteApikey
     // INSERT2
 };

@@ -35,6 +35,8 @@ async def validate_token(token: str, type: str):
     apikey = await crud.apikey.get_by_apikey(db=db, token=token)
     if not apikey:
         raise ValueError("Key not found")
+    if type not in apikey:
+        raise ValueError("You do not have " + type)
     if not apikey[type]:
         raise ValueError("This key not for " + type)
 

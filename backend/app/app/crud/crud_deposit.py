@@ -67,7 +67,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                 raise ValueError("OKX is not available in crud_deposit create")
             currencies = okx.get_currencies()
 
-            if obj_in.sum and not hasattr(obj_in, "fee"):
+            if obj_in.sum and obj_in.currency and obj_in.chain:
                 min_deposit = self._get_min_deposit(
                     currencies["data"],
                     str(obj_in.currency),
@@ -76,13 +76,13 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                 )
             else:
                 min_deposit = 0
-            if obj_in.sum and not hasattr(obj_in, "fee"):
+            if obj_in.sum:
                 if float(obj_in.sum) < float(min_deposit):
                     raise ValueError(
                         f"Min deposit in {obj_in.currency} {obj_in.chain} is {min_deposit}"
                     )
 
-            if not obj_in.sub_account:
+            if not hasattr(obj_in, "sub_account"):
                 sub_account = (
                     owner["full_name"]
                     + generate_random_small(3)
@@ -91,7 +91,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
             else:
                 sub_account = obj_in.sub_account
 
-            if hasattr(obj_in, "wallet"):
+            if hasattr(obj_in, "wallet") and obj_in.wallet != "":
                 wallet = obj_in.wallet
             else:
                 wallet = okx.get_address(sub_account, obj_in.currency, obj_in.chain)  # type: ignore
@@ -108,7 +108,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
             else:
                 deposit_type = obj_in.type  # type: ignore
 
-            if obj_in.sum and not hasattr(obj_in, "fee"):
+            if obj_in.sum and obj_in.fee == "":
                 deposit_sum = str(okx.fractional_to_integer(obj_in.sum, obj_in.currency.lower()))  # type: ignore
             else:
                 deposit_sum = str(0)
@@ -122,7 +122,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                     comm = user["commissions"][obj_in.currency.lower()]["in"]
                 else:
                     comm = {"percent": 0, "fixed": 0}
-                if obj_in.sum and not hasattr(obj_in, "fee"):
+                if obj_in.sum and obj_in.fee == "":
                     fee = okx.fractional_to_integer(
                         float(obj_in.sum) * 0.0100 * float(comm["percent"])
                         + float(comm["fixed"]),  # noqa
@@ -131,10 +131,15 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                 else:
                     fee = 0
 
-                if hasattr(obj_in, "fee"):
+                if hasattr(obj_in, "fee") and obj_in.fee != "":
                     fee = obj_in.fee
 
-                if hasattr(obj_in, "fee") and hasattr(obj_in, "sum"):
+                if (
+                    hasattr(obj_in, "fee")
+                    and obj_in.fee != ""
+                    and hasattr(obj_in, "sum")
+                    and obj_in.sum != ""
+                ):
                     deposit_sum = obj_in.sum
                 obj_in = {
                     "owner_id": owner["id"],
@@ -143,7 +148,9 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
                     "sum": deposit_sum,
                     "currency": obj_in.currency,  # type: ignore
                     "chain": obj_in.chain,  # type: ignore
-                    "status": obj_in.status if hasattr(obj_in, "status") else "created",
+                    "status": obj_in.status
+                    if hasattr(obj_in, "status") and obj_in.status != ""
+                    else "created",
                     "callback": obj_in.callback,  # type: ignore
                     "callback_response": "",
                     "sub_account": sub_account,

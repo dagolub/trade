@@ -87,7 +87,7 @@ async def get_api_keys(
 ):
     obj_in = {}
     obj_in["owner_id"] = current_user["id"]
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(minutes=(60 * 24 * 365))
     obj_in["apikey"] = security.create_access_token(
         current_user["id"], expires_delta=access_token_expires  # type: ignore
     )
@@ -118,11 +118,27 @@ async def get_api_keys(
     current_user: models.User = Depends(deps.get_current_active_user),
 ):
     result = await crud.apikey.get(db=db, entity_id=id)
+    if "ips" not in result:
+        result["ips"] = ""
+    if "deposit" not in result:
+        result["deposit"] = False
+    if "withdraw" not in result:
+        result["withdraw"] = False
     return {
         "deposit": result["deposit"],
         "withdraw": result["withdraw"],
         "ips": result["ips"],
     }
+
+
+@router.delete("/apikeys/{id}")
+async def get_api_keys(
+    id: str,
+    db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_active_user),
+):
+    result = await crud.apikey.remove(db=db, entity_id=id)
+    return result
 
 
 def _get_search(q: str = ""):

@@ -89,6 +89,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         )
         if entity:
             entity["id"] = str(entity["_id"])
+        del entity["_id"]
         await db[self.model.__tablename__].delete_one({"_id": ObjectId(entity_id)})
         return entity
 

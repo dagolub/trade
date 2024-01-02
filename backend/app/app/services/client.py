@@ -198,7 +198,6 @@ class OKX:
             _amount = Decimal(str(amount)) * 1000000000000000000
             return int(_amount)
 
-
     @staticmethod
     def get_currency_chain(currency: str, chain: str):
         currency = currency.lower()
@@ -216,3 +215,10 @@ class OKX:
                 return "USDT-Polygon"
         if currency == "eth":
             return "ETH-ERC20"
+        if currency == "USDC":
+            if chain == "eth" or chain == "erc20":
+                return "USDC-ERC20"
+            elif chain == "trx" or chain == "trc20":
+                return "USDC-TRC20"
+            elif chain == "plg":
+                return "USDC-Polygon"

@@ -44,9 +44,6 @@ const showWallet = (wallet) => {
     return wallet.length > 12 ? wallet.substring(0, 5) + " ... " + wallet.substring(wallet.length - 5) : wallet
 }
 
-const copyMe = (copy) => {
-    alert(copy)
-}
 const divClass = "font-medium text-slate-800 dark:text-slate-100"
 const buttonView = "text-slate-400 hover:text-slate-500 dark:text-slate-500 dark:hover:text-slate-400 rounded-full"
 const buttonDelete = "text-rose-500 hover:text-rose-600 rounded-full"
@@ -94,7 +91,6 @@ const deleteEnt = (deleteEntity, entity_id) => {
 export {
     populateSelect,
     convertList,
-    copyMe,
     deleteRow,
     showWallet,
     divClass,

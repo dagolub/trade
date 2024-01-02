@@ -5,19 +5,19 @@ from pydantic import BaseModel
 
 
 class DepositBase(BaseModel):
-    owner_id: Optional[str] = None
-    wallet: Optional[str] = None
-    type: Optional[str] = None
-    status: Optional[str] = None
-    exchange: dict = {}
-    callback: Optional[str] = None
+    owner_id: str = None
+    wallet: str = ""
+    type: Optional[str] = ""
+    status: Optional[str] = ""
+    exchange: Optional[dict] = {}
+    callback: Optional[str] = ""
     callback_response: Optional[str] = ""
     sum: float = None  # type: ignore
     currency: str = None  # type: ignore
     chain: str = None  # type: ignore
-    paid: str = None  # type: ignore
-    fee: str = None  # type: ignore
-    created: Optional[datetime]
+    paid: Optional[str] = ""  # type: ignore
+    fee: Optional[str] = ""  # type: ignore
+    created: Optional[datetime] = ""
 
 
 class DepositCreate(DepositBase):
@@ -44,7 +44,7 @@ class DepositInDB(DepositInDBBase):
     pass
 
 
-class DepositBaseCreate(BaseModel):
+class DepositBaseCreate(DepositBase):
     sum: float = None
     currency: str = None
     chain: str = None

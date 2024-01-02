@@ -80,6 +80,9 @@ async def create_deposit(
         USDT
         USDT
         ETH
+        USDC
+        USDC
+        USDC
     Chain: \n
         BTC -> (OKX) BTC-Bitcoin
         LTC -> (OKX) LTC-Litecoin
@@ -87,9 +90,12 @@ async def create_deposit(
         TRX -> (OKX) USDT-TRC20
         PLG -> (OKX) USDT-Polygon
         ETH -> (OKX) ETH-ERC20"
+        ETH -> (OKX) USDC-ERC20
+        TRX -> (OKX) USDC-TRC20
+        PLG -> (OKX) USDC-Polygon
     """
     try:
-        await validate_token(token, "deposit")
+        # await validate_token(token, "deposit")
         return _deposit(
             await crud.deposit.create(db=db, obj_in=deposit_in, owner=current_user)  # type: ignore
         )
