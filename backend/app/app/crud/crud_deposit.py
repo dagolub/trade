@@ -63,6 +63,7 @@ class CRUDDeposit(CRUDBase[Deposit, DepositCreate, DepositUpdate]):
     ) -> Optional[ModelType]:
         try:
             okx = OKX()
+            currencies = okx.get_currencies()
             if not okx:
                 raise ValueError("OKX is not available in crud_deposit create")
             currencies = okx.get_currencies()

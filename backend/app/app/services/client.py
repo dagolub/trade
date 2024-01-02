@@ -175,13 +175,14 @@ class OKX:
 
     @staticmethod
     def integer_to_fractional(amount: int, currency: str) -> float:
-        if currency.lower() in ("ltc", "btc"):
+        currency = currency.lower()
+        if currency in ("ltc", "btc"):
             f = Decimal(str(amount)) * Decimal("0.00000001")
             return float(f)
-        if currency.lower() == "usdt":
+        if currency in ("usdt", "usdc"):
             f = Decimal(str(amount)) * Decimal("0.000001")
             return float(f)
-        if currency.lower() == "eth":
+        if currency in ("eth", "matic", "xrp", "solana", "trx", "ton"):
             f = Decimal(str(amount)) * Decimal("0.000000000000000001")
             return float(f)
 
@@ -191,10 +192,10 @@ class OKX:
         if currency in ("ltc", "btc"):
             _amount = Decimal(str(amount)) * 100000000
             return int(_amount)
-        if currency == "usdt":
+        if currency in ("usdt", "usdc"):
             _amount = Decimal(str(amount)) * 1000000
             return int(_amount)
-        if currency == "eth":
+        if currency in ("eth", "matic", "xrp", "solana", "trx", "ton"):
             _amount = Decimal(str(amount)) * 1000000000000000000
             return int(_amount)
 
@@ -207,18 +208,36 @@ class OKX:
         if currency == "btc":
             return "BTC-Bitcoin"
         if currency == "usdt":
-            if chain == "eth" or chain == "erc20":
+            if chain in ("eth", "erc20", "erc"):
                 return "USDT-ERC20"
-            elif chain == "trx" or chain == "trc20":
+            elif chain in ("trx", "trc20", "trc"):
                 return "USDT-TRC20"
             elif chain == "plg":
                 return "USDT-Polygon"
         if currency == "eth":
             return "ETH-ERC20"
-        if currency == "USDC":
-            if chain == "eth" or chain == "erc20":
+        if currency == "usdc":
+            if chain in ("eth", "erc20"):
                 return "USDC-ERC20"
-            elif chain == "trx" or chain == "trc20":
+            elif chain in ("trx", "trc20"):
                 return "USDC-TRC20"
             elif chain == "plg":
                 return "USDC-Polygon"
+        if currency == "xrp":
+            if chain == "ripple":
+                return "XRP-Ripplse"
+        if currency == "matic":
+            if chain in ("erc", "erc20", "eth"):
+                return "MATIC-ERC20"
+        if currency == "matic":
+            if chain in ("polygon"):
+                return "MATIC-Polygon"
+        if currency == "sol":
+            if chain in ("solana"):
+                return "SOL-Solana"
+        if currency == "trx":
+            if chain in ("trx", "trc20"):
+                return "TRX-TRC20"
+        if currency == "ton":
+            if chain in ("ton"):
+                return "TON-TON"
