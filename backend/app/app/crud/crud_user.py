@@ -10,6 +10,10 @@ from app.crud.base import CRUDBase
 from app.db.base_class import Base
 from app.models.user import User
 from app.schemas.user import UserCreate, UserUpdate
+from app import schemas
+from app import models
+from fastapi import HTTPException, Depends
+from app.api import deps
 
 ModelType = TypeVar("ModelType", bound=Base)
 
@@ -50,7 +54,6 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         if "email" in obj_in:
             update_data["email"] = obj_in["email"]
 
-
         if "password" in obj_in and obj_in["password"] != "":  # type: ignore
             hashed_password = get_password_hash(obj_in["password"])  # type: ignore
             del obj_in["password"]  # type: ignore
@@ -64,7 +67,6 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
         if "is_active" in obj_in:
             update_data["is_active"] = obj_in["is_active"]
-
 
         if "autotransfer" in obj_in:
             update_data["autotransfer"] = obj_in["autotransfer"]

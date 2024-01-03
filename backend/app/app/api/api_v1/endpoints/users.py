@@ -15,6 +15,7 @@ from app.utils import send_new_account_email
 from app.core import security
 from datetime import timedelta
 
+
 router = APIRouter()
 
 
@@ -32,6 +33,29 @@ async def count(
     _search = _get_search(q)
     owner_id = False if current_user["is_superuser"] else current_user["id"]
     return await crud.user.count(db=db, owner_id=owner_id, search=_search)
+
+
+@router.get("/me", response_model=schemas.User)
+async def read_user_me(
+    current_user: models.User = Depends(deps.get_current_active_user),
+) -> Any:
+    """
+    Get current user.
+    """
+    if "bal" not in current_user:
+        current_user["bal"] = {
+            "btc": 0.0,
+            "ltc": 0.0,
+            "usdt": 0.0,
+            "eth": 0.0,
+            "usdc": 0.0,
+            "xrp": 0.0,
+            "matic": 0.0,
+            "sol": 0.0,
+            "trx": 0.0,
+            "ton": 0.0,
+        }
+    return current_user
 
 
 # @router.get("/get_otp/{email}")
@@ -196,7 +220,7 @@ async def create_user(
 
 @router.get("/{entity_id}", response_model=schemas.User)
 async def read_user_by_id(
-    user_id: str,
+    entity_id: str,
     current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
 ) -> Any:
@@ -217,7 +241,7 @@ async def read_user_by_id(
 async def update_user(
     *,
     db: Session = Depends(deps.get_db),
-    user_id: str,
+    entity_id: str,
     user_in: schemas.UserUpdate,
     current_user: models.User = Depends(deps.get_current_active_superuser),  # noqa
 ) -> Any:
@@ -230,7 +254,7 @@ async def update_user(
             status_code=404,
             detail="The user with this username does not exist in the system",
         )
-    user = await crud.user.update(db, db_obj=user, obj_in=entity_id)  # type: ignore
+    user = await crud.user.update(db, db_obj=user, obj_in=user_in)  # type: ignore
     return user
 
 
