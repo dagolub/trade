@@ -17,6 +17,7 @@ class DepositBase(BaseModel):
     chain: str = None  # type: ignore
     paid: Optional[str] = ""  # type: ignore
     fee: Optional[str] = ""  # type: ignore
+    tx: Optional[str] = ""  # type: ignore
     created: Optional[datetime] = ""
 
 

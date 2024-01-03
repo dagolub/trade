@@ -8,6 +8,12 @@ function Dashboard() {
   const [ltc, setLTC] = React.useState(0)
   const [usdt, setUSDT] = React.useState(0)
   const [eth, setETH] = React.useState(0)
+  const [usdc, setUSDC] = React.useState(0)
+  const [xrp, setXRP] = React.useState(0)
+  const [matic, setMATIC] = React.useState(0)
+  const [sol, setSOL] = React.useState(0)
+  const [trx, setTRX] = React.useState(0)
+  const [ton, setTON] = React.useState(0)
 
   React.useEffect(() => {
     getUserMe().then((data)=>{
@@ -16,6 +22,12 @@ function Dashboard() {
         setLTC(data.bal["ltc"])
         setUSDT(data.bal["usdt"])
         setETH(data.bal["eth"])
+        setUSDC(data.bal["usdc"])
+        setXRP(data.bal["xrp"])
+        setMATIC(data.bal["matic"])
+        setSOL(data.bal["sol"])
+        setTRX(data.bal["trx"])
+        setTON(data.bal["ton"])
       }
     })
   },[])
@@ -33,6 +45,12 @@ function Dashboard() {
               <Currency currency="LTC" amount={ltc} />
               <Currency currency="USDT" amount={usdt} />
               <Currency currency="ETH" amount={eth} />
+              <Currency currency="USDC" amount={usdc} />
+              <Currency currency="XRP" amount={xrp} />
+              <Currency currency="MATIC" amount={matic} />
+              <Currency currency="SOL" amount={sol} />
+              <Currency currency="TRX" amount={trx} />
+              <Currency currency="TON" amount={ton} />
             </div>
           </div>
         </main>

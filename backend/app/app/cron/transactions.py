@@ -34,7 +34,6 @@ async def create_transaction(
     withdraw_id="",
     fee=0.0,
 ):
-
     return await crud.transaction.create(
         db=db,
         obj_in={
@@ -260,6 +259,12 @@ async def incoming_transaction():  # noqa: 901
                                     "ltc": 0.0,
                                     "usdt": 0.0,
                                     "eth": 0.0,
+                                    "usdc": 0.0,
+                                    "xrp": 0.0,
+                                    "matic": 0.0,
+                                    "sol": 0.0,
+                                    "trx": 0.0,
+                                    "ton": 0.0,
                                 }
 
                             bal[currency.lower()] = float(
@@ -486,12 +491,22 @@ async def send_callback_withdraw(withdraw):
         return True
 
 
+async def populate_tx(wallet):
+    transactions = await crud.transaction.get_by_deposit(wallet=wallet["id"])
+    wallet["tx"] = transactions[2]["tx"]
+    await crud.transaction.update(
+        db=db, db_obj=wallet, obj_in={"tx": transactions[2]["tx"]}
+    )
+    return wallet
+
+
 async def send_callback_aex(wallet):
     print("Aex status", wallet["status"])
     wallet["status"] = (
         "paid" if wallet["status"] == "aex paid" else "overpayment"  # noqa  # noqa
     )
     exchange = await crud.exchange.get_by_deposit(db=db, deposit_id=wallet["id"])
+    wallet = await populate_tx(wallet)
     if exchange:
         print("Exchange", exchange)
         del exchange["_id"]

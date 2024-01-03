@@ -31,8 +31,37 @@ function Form({
     const refETHinFixed = React.useRef('');
     const refETHoutPercent = React.useRef('');
     const refETHoutFixed = React.useRef('');
-
-
+    
+    const refUSDCinPercent = React.useRef('');
+    const refUSDCinFixed = React.useRef('');
+    const refUSDCoutPercent = React.useRef('');
+    const refUSDCoutFixed = React.useRef('');
+    
+    const refXRPinPercent = React.useRef('');
+    const refXRPinFixed = React.useRef('');
+    const refXRPoutPercent = React.useRef('');
+    const refXRPoutFixed = React.useRef('');
+        
+    const refMATICinPercent = React.useRef('');
+    const refMATICinFixed = React.useRef('');
+    const refMATICoutPercent = React.useRef('');
+    const refMATICoutFixed = React.useRef('');
+    
+    const refSOLinPercent = React.useRef('');
+    const refSOLinFixed = React.useRef('');
+    const refSOLoutPercent = React.useRef('');
+    const refSOLoutFixed = React.useRef('');
+    
+    const refTRXinPercent = React.useRef('');
+    const refTRXinFixed = React.useRef('');
+    const refTRXoutPercent = React.useRef('');
+    const refTRXoutFixed = React.useRef('');
+    
+    const refTONinPercent = React.useRef('');
+    const refTONinFixed = React.useRef('');
+    const refTONoutPercent = React.useRef('');
+    const refTONoutFixed = React.useRef('');
+    
     const refName = React.useRef('');
     const refEmail = React.useRef('');
     const refPassword = React.useRef('');
@@ -68,8 +97,31 @@ function Form({
             "in": {"percent": refETHinPercent.current.value, "fixed": refETHinFixed.current.value},
             "out": {"percent": refETHoutPercent.current.value, "fixed": refETHoutFixed.current.value}
         }
-
-        return {"btc": btc, "ltc": ltc, "usdt": usdt, "eth": eth}
+        let usdc = {
+            "in": {"percent": refUSDCinPercent.current.value, "fixed": refUSDCinFixed.current.value},
+            "out": {"percent": refUSDCoutPercent.current.value, "fixed": refUSDCoutFixed.current.value}
+        }
+        let xrp = {
+            "in": {"percent": refXRPinPercent.current.value, "fixed": refXRPinFixed.current.value},
+            "out": {"percent": refXRPoutPercent.current.value, "fixed": refXRPoutFixed.current.value}
+        }
+        let matic = {
+            "in": {"percent": refMATICinPercent.current.value, "fixed": refMATICinFixed.current.value},
+            "out": {"percent": refMATICoutPercent.current.value, "fixed": refMATICoutFixed.current.value}
+        }
+        let sol = {
+            "in": {"percent": refSOLinPercent.current.value, "fixed": refSOLinFixed.current.value},
+            "out": {"percent": refSOLoutPercent.current.value, "fixed": refSOLoutFixed.current.value}
+        }
+        let trx = {
+            "in": {"percent": refTRXinPercent.current.value, "fixed": refTRXinFixed.current.value},
+            "out": {"percent": refTRXoutPercent.current.value, "fixed": refTRXoutFixed.current.value}
+        }
+        let ton = {
+            "in": {"percent": refTONinPercent.current.value, "fixed": refTONinFixed.current.value},
+            "out": {"percent": refTONoutPercent.current.value, "fixed": refTONoutFixed.current.value}
+        }
+        return {"btc": btc, "ltc": ltc, "usdt": usdt, "eth": eth, "usdc": usdc, "xrp": xrp, "matic": matic, "sol": sol, "trx": trx, "ton": ton}
     }
     const submitHandler = async (e) => {
         e.preventDefault();
@@ -103,9 +155,9 @@ function Form({
         }
     };
     React.useEffect(() => {
-        getCurrencies().then((data) => {
-            setCurrencies(data)
-        })
+        // getCurrencies().then((data) => {
+        //     setCurrencies(data)
+        // })
         if (name || email || is_active || is_superuser || auto || commissions) {
             refName.current.value = name;
             refEmail.current.value = email;
@@ -137,6 +189,42 @@ function Form({
                     refETHinFixed.current.value = commissions["eth"]["in"]["fixed"]
                     refETHoutPercent.current.value = commissions["eth"]["out"]["percent"]
                     refETHoutFixed.current.value = commissions["eth"]["out"]["fixed"]
+                }
+                if (commissions.hasOwnProperty("usdc") && commissions.usdc.hasOwnProperty("in")) {
+                    refUSDCinPercent.current.value = commissions["usdc"]["in"]["percent"]
+                    refUSDCinFixed.current.value = commissions["usdc"]["in"]["fixed"]
+                    refUSDCoutPercent.current.value = commissions["usdc"]["out"]["percent"]
+                    refUSDCoutFixed.current.value = commissions["usdc"]["out"]["fixed"]
+                }
+                if (commissions.hasOwnProperty("xrp") && commissions.xrp.hasOwnProperty("in")) {
+                    refXRPinPercent.current.value = commissions["xrp"]["in"]["percent"]
+                    refXRPinFixed.current.value = commissions["xrp"]["in"]["fixed"]
+                    refXRPoutPercent.current.value = commissions["xrp"]["out"]["percent"]
+                    refXRPoutFixed.current.value = commissions["xrp"]["out"]["fixed"]
+                }
+                if (commissions.hasOwnProperty("matic") && commissions.matic.hasOwnProperty("in")) {
+                    refMATICinPercent.current.value = commissions["matic"]["in"]["percent"]
+                    refMATICinFixed.current.value = commissions["matic"]["in"]["fixed"]
+                    refMATICoutPercent.current.value = commissions["matic"]["out"]["percent"]
+                    refMATICoutFixed.current.value = commissions["matic"]["out"]["fixed"]
+                }
+                if (commissions.hasOwnProperty("sol") && commissions.sol.hasOwnProperty("in")) {
+                    refSOLinPercent.current.value = commissions["sol"]["in"]["percent"]
+                    refSOLinFixed.current.value = commissions["sol"]["in"]["fixed"]
+                    refSOLoutPercent.current.value = commissions["sol"]["out"]["percent"]
+                    refSOLoutFixed.current.value = commissions["sol"]["out"]["fixed"]
+                }
+                if (commissions.hasOwnProperty("trx") && commissions.trx.hasOwnProperty("in")) {
+                    refTRXinPercent.current.value = commissions["trx"]["in"]["percent"]
+                    refTRXinFixed.current.value = commissions["trx"]["in"]["fixed"]
+                    refTRXoutPercent.current.value = commissions["trx"]["out"]["percent"]
+                    refTRXoutFixed.current.value = commissions["trx"]["out"]["fixed"]
+                }
+                if (commissions.hasOwnProperty("ton") && commissions.ton.hasOwnProperty("in")) {
+                    refTONinPercent.current.value = commissions["ton"]["in"]["percent"]
+                    refTONinFixed.current.value = commissions["ton"]["in"]["fixed"]
+                    refTONoutPercent.current.value = commissions["ton"]["out"]["percent"]
+                    refTONoutFixed.current.value = commissions["ton"]["out"]["fixed"]
                 }
             }
         }
@@ -265,6 +353,48 @@ function Form({
                                 <td><input type="text" ref={refETHinFixed} style={{"width": "80px"}}/></td>
                                 <td><input type="text" ref={refETHoutPercent} style={{"width": "80px"}}/></td>
                                 <td><input type="text" ref={refETHoutFixed} style={{"width": "80px"}}/></td>
+                            </tr>
+                            <tr>
+                                <th>USDC</th>
+                                <td><input type="text" ref={refUSDCinPercent} style={{"width": "80px"}}/></td>
+                                <td><input type="text" ref={refUSDCinFixed} style={{"width": "80px"}}/></td>
+                                <td><input type="text" ref={refUSDCoutPercent} style={{"width": "80px"}}/></td>
+                                <td><input type="text" ref={refUSDCoutFixed} style={{"width": "80px"}}/></td>
+                            </tr>
+                            <tr>
+                                <th>XRP</th>
+                                <td><input type="text" ref={refXRPinPercent} style={{"width": "80px"}}/></td>
+                                <td><input type="text" ref={refXRPinFixed} style={{"width": "80px"}}/></td>
+                                <td><input type="text" ref={refXRPoutPercent} style={{"width": "80px"}}/></td>
+                                <td><input type="text" ref={refXRPoutFixed} style={{"width": "80px"}}/></td>
+                            </tr>
+                            <tr>
+                                <th>MATIC</th>
+                                <td><input type="text" ref={refMATICinPercent} style={{"width": "80px"}}/></td>
+                                <td><input type="text" ref={refMATICinFixed} style={{"width": "80px"}}/></td>
+                                <td><input type="text" ref={refMATICoutPercent} style={{"width": "80px"}}/></td>
+                                <td><input type="text" ref={refMATICoutFixed} style={{"width": "80px"}}/></td>
+                            </tr>
+                            <tr>
+                                <th>SOL</th>
+                                <td><input type="text" ref={refSOLinPercent} style={{"width": "80px"}}/></td>
+                                <td><input type="text" ref={refSOLinFixed} style={{"width": "80px"}}/></td>
+                                <td><input type="text" ref={refSOLoutPercent} style={{"width": "80px"}}/></td>
+                                <td><input type="text" ref={refSOLoutFixed} style={{"width": "80px"}}/></td>
+                            </tr>
+                            <tr>
+                                <th>TRX</th>
+                                <td><input type="text" ref={refTRXinPercent} style={{"width": "80px"}}/></td>
+                                <td><input type="text" ref={refTRXinFixed} style={{"width": "80px"}}/></td>
+                                <td><input type="text" ref={refTRXoutPercent} style={{"width": "80px"}}/></td>
+                                <td><input type="text" ref={refTRXoutFixed} style={{"width": "80px"}}/></td>
+                            </tr>
+                            <tr>
+                                <th>TON</th>
+                                <td><input type="text" ref={refTONinPercent} style={{"width": "80px"}}/></td>
+                                <td><input type="text" ref={refTONinFixed} style={{"width": "80px"}}/></td>
+                                <td><input type="text" ref={refTONoutPercent} style={{"width": "80px"}}/></td>
+                                <td><input type="text" ref={refTONoutFixed} style={{"width": "80px"}}/></td>
                             </tr>
                             </tbody>
                         </table>

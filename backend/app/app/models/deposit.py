@@ -18,4 +18,5 @@ class Deposit(Base):
     fee = Column(String)
     callback = Column(String)
     callback_response = Column(String)
+    tx = Column(String)
     created = Column(DateTime)
