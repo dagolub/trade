@@ -59,7 +59,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             del obj_in["password"]  # type: ignore
             update_data["hashed_password"] = hashed_password  # type: ignore
 
-        if "full_name" in obj_in:
+        if "full_name" in obj_in and obj_in["full_name"] != "":
             update_data["full_name"] = obj_in["full_name"]
 
         if "is_superuser" in obj_in and obj_in["is_superuser"] != False:
