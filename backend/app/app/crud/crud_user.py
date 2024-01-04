@@ -51,7 +51,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         if "email" in update_data:
             del update_data["email"]  # type: ignore
 
-        if "email" in obj_in:
+        if "email" in obj_in and obj_in["email"] != "":
             update_data["email"] = obj_in["email"]
 
         if "password" in obj_in and obj_in["password"] != "":  # type: ignore
@@ -62,19 +62,16 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         if "full_name" in obj_in:
             update_data["full_name"] = obj_in["full_name"]
 
-        if "is_superuser" in obj_in:
+        if "is_superuser" in obj_in and obj_in["is_superuser"] != False:
             update_data["is_superuser"] = obj_in["is_superuser"]
 
-        if "is_active" in obj_in:
-            update_data["is_active"] = obj_in["is_active"]
-
-        if "autotransfer" in obj_in:
+        if "autotransfer" in obj_in and obj_in["autotransfer"] != False:
             update_data["autotransfer"] = obj_in["autotransfer"]
 
-        if "bal" in obj_in:
+        if "bal" in obj_in and obj_in["bal"] != []:
             update_data["bal"] = obj_in["bal"]
 
-        if "commissions" in obj_in:
+        if "commissions" in obj_in and obj_in["commissions"] != []:
             update_data["commissions"] = obj_in["commissions"]
 
         await db[self.model.__tablename__].update_one({"_id": ObjectId(db_obj["id"])}, {"$set": update_data})  # type: ignore
