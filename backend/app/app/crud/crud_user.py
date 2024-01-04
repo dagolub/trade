@@ -62,10 +62,10 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         if "full_name" in obj_in and obj_in["full_name"] != "":
             update_data["full_name"] = obj_in["full_name"]
 
-        if "is_superuser" in obj_in and obj_in["is_superuser"] != False:
+        if "is_superuser" in obj_in and obj_in["is_superuser"] != None:
             update_data["is_superuser"] = obj_in["is_superuser"]
 
-        if "autotransfer" in obj_in and obj_in["autotransfer"] != False:
+        if "autotransfer" in obj_in and obj_in["autotransfer"] != None:
             update_data["autotransfer"] = obj_in["autotransfer"]
 
         if "bal" in obj_in and obj_in["bal"] != []:

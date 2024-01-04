@@ -7,8 +7,8 @@ from pydantic import BaseModel, EmailStr
 class UserBase(BaseModel):
     email: Optional[EmailStr] = ""
     is_active: Optional[bool] = True
-    is_superuser: bool = False
-    autotransfer: bool = False
+    is_superuser: bool = None
+    autotransfer: bool = None
     full_name: Optional[str] = ""
     created: Optional[datetime]
     bal: Optional[dict] = []
