@@ -24,7 +24,7 @@ const ApiKEY = ({apikey, id}) => {
     }
     const deleteHandler = (id) => {
         deleteApikey(id).then((data)=>console.log(data))
-        window.document.d
+        window.document.location = window.location.href
     }
     React.useEffect(()=>{
         getApikey(id).then((data)=>{
@@ -45,7 +45,7 @@ const ApiKEY = ({apikey, id}) => {
             {
                 showWalletCopy(ak)
             }
-            <button onClick={()=>deleteHandler(id)}><Delete /></button>
+            <button onClick={()=>deleteHandler(id)} className="delete"><Delete /></button>
 
             <br/>
             <label>

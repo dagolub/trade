@@ -105,34 +105,36 @@ async def get_api_keys(
 
 @router.put("/apikeys")
 async def get_api_keys(
-    obj: Optional[str] = None,
+    obj: schemas.ApikeyCreate,
     db: Session = Depends(deps.get_db),
     current_user: models.User = Depends(deps.get_current_active_user),
 ):
     obj_in = {}
     obj_in["owner_id"] = current_user["id"]
-    access_token_expires = timedelta(minutes=(60 * 24 * 365))
+    access_token_expires = timedelta(minutes=60 * 24 * 360)
     obj_in["apikey"] = security.create_access_token(
         current_user["id"], expires_delta=access_token_expires  # type: ignore
     )
     if hasattr(obj, "deposit"):
-        obj_in["deposit"] = True
+        obj_in["deposit"] = obj.deposit
     else:
         obj_in["deposit"] = False
 
     if hasattr(obj, "withdraw"):
-        obj_in["withdraw"] = True
+        obj_in["withdraw"] = obj.withdraw
     else:
         obj_in["withdraw"] = False
 
     if hasattr(obj, "ips"):
         obj_in["ips"] = obj.ips
+    else:
+        obj_in["ips"] = ""
 
-    if hasattr(obj, "id"):
+    if hasattr(obj, "id") and obj.id != None:
         result = await crud.apikey.update(db=db, db_obj={"id": obj.id}, obj_in=obj_in)
     else:
         result = await crud.apikey.create(db, obj_in=obj_in)
-    return {"id": result["id"], "owner_id": result["owner_id"]}
+    return {"id": result["id"]}
 
 
 @router.get("/apikeys/{id}")

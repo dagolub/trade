@@ -146,7 +146,7 @@ async def incoming_transaction():  # noqa: 901
                     if "paid" not in obj_in:
                         obj_in.setdefault("paid", to_deposit)
                     if "paid" in obj_in:
-                        obj_in["paid"] = int(obj_in["paid"]) + int(to_deposit)
+                        obj_in["paid"] = str(int(obj_in["paid"]) + int(to_deposit))
 
                     if float(obj_in["paid"]) < float(_deposit["sum"]):
                         if "status" in obj_in:
@@ -171,6 +171,7 @@ async def incoming_transaction():  # noqa: 901
                         print("Currency", currency)
                         print("tx_id", tx_id)
                         print("obj_in", obj_in)
+                        await populate_tx(_deposit, tx_id)
                         transaction = await create_corresponded_transactions(
                             okx=okx,
                             currency=currency,
@@ -491,13 +492,8 @@ async def send_callback_withdraw(withdraw):
         return True
 
 
-async def populate_tx(wallet):
-    transactions = await crud.transaction.get_by_deposit(wallet=wallet["id"])
-    wallet["tx"] = transactions[2]["tx"]
-    await crud.transaction.update(
-        db=db, db_obj=wallet, obj_in={"tx": transactions[2]["tx"]}
-    )
-    return wallet
+async def populate_tx(wallet, tx_id):
+    crud.deposit.update(db=db, db_obj=wallet, obj_in={"tx": tx_id})
 
 
 async def send_callback_aex(wallet):
@@ -506,7 +502,7 @@ async def send_callback_aex(wallet):
         "paid" if wallet["status"] == "aex paid" else "overpayment"  # noqa  # noqa
     )
     exchange = await crud.exchange.get_by_deposit(db=db, deposit_id=wallet["id"])
-    wallet = await populate_tx(wallet)
+
     if exchange:
         print("Exchange", exchange)
         del exchange["_id"]

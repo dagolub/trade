@@ -13,7 +13,7 @@ class ApikeyBase(BaseModel):
 
 
 class ApikeyCreate(ApikeyBase):
-    pass
+    id: Optional[str]
 
 
 class ApikeyUpdate(ApikeyBase):

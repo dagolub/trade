@@ -95,7 +95,7 @@ async def create_deposit(
         PLG -> (OKX) USDC-Polygon
     """
     try:
-        # await validate_token(token, "deposit")
+        await validate_token(token, "deposit")
         return _deposit(
             await crud.deposit.create(db=db, obj_in=deposit_in, owner=current_user)  # type: ignore
         )

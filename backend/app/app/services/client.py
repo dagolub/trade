@@ -225,7 +225,7 @@ class OKX:
                 return "USDC-Polygon"
         if currency == "xrp":
             if chain == "ripple":
-                return "XRP-Ripplse"
+                return "XRP-Ripple"
         if currency == "matic":
             if chain in ("erc", "erc20", "eth"):
                 return "MATIC-ERC20"

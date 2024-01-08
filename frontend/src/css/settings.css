@@ -18,3 +18,10 @@ input.apikey {
     margin-top: 10px;
     color: black;
 }
+.delete {
+    display: inline-flex;
+    vertical-align: middle;
+}
+.delete svg{
+    fill: #64748b;
+}
