@@ -11,13 +11,10 @@ router = APIRouter()
 
 
 @router.get("/all", response_model=schemas.Setting)
-async def read_deposit(
+async def read_setting(
     current_user: models.User = Depends(deps.get_current_active_user),
     mongo_db: Session = Depends(deps.get_db),
 ) -> Any:
-    """
-    Get a deposit.
-    """
     setting = await crud.setting.get_multi(db=mongo_db)
     if not setting:
         raise HTTPException(status_code=400, detail="Settings doesn't exists")
@@ -25,7 +22,7 @@ async def read_deposit(
 
 
 @router.put("/all", response_model=schemas.Setting)
-async def update_deposit(
+async def update_setting(
     setting_in: schemas.SettingUpdate,
     mongo_db: Session = Depends(deps.get_db),
     current_user: models.User = Depends(deps.get_current_active_user),

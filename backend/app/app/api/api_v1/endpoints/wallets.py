@@ -28,9 +28,6 @@ async def read_wallets(
     q: str = "",
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    """
-    Retrieve wallet.
-    """
     search = _get_search(q)
     if current_user["is_superuser"]:
         wallets = await crud.wallet.get_multi(db, skip=skip, limit=limit, search=search)
@@ -47,9 +44,6 @@ async def read_wallet(
     current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
 ) -> Any:
-    """
-    Get a wallet.
-    """
     wallet = await crud.wallet.get(db=db, entity_id=id)
     if not wallet:
         raise HTTPException(status_code=400, detail="Wallet doesn't exists")

@@ -31,7 +31,7 @@ async def count(
 
 @router.get("/currencies", response_model=[])
 async def currencies():
-    return ["BTC", "LTC", "USDT", "ETH"]
+    return ["BTC", "LTC", "USDT", "ETH", "USDC", "XRP", "MATIC", "SOL", "TRX", "TON"]
 
 
 @router.get("/chains", response_model=[])
@@ -113,9 +113,6 @@ async def read_deposit(
     current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
 ) -> Any:
-    """
-    Get a deposit.
-    """
     deposit = await crud.deposit.get(db=db, entity_id=entity_id)
     if not _deposit:
         raise HTTPException(status_code=400, detail="Deposit doesn't exists")
@@ -131,9 +128,6 @@ async def delete_deposit(
     entity_id: str,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    """
-    Delete an deposit.
-    """
     deposit = await crud.deposit.get(db=db, entity_id=entity_id)
 
     if not deposit:

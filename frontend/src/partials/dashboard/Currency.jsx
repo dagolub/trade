@@ -7,7 +7,7 @@ function Currency({currency, amount}) {
         <div style={{"height": "120px"}}
              className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 bg-white dark:bg-slate-800 shadow-lg rounded-sm border border-slate-200 dark:border-slate-700">
             <div className="px-5 pt-5">
-                <a href={"/withdraws/new?sum="+amount + "&currency=" + currency}>
+                <a href={"/exchange/?sum="+amount + "&currency=" + currency}>
                     <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">{currency}</h2>
 
                     <div className="flex items-start">

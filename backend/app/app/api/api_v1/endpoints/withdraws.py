@@ -35,9 +35,6 @@ async def read_withdraws(
     q: str = "",
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    """
-    Retrieve withdraw.
-    """
     search = _get_search(q)
     result = []
 
@@ -62,9 +59,6 @@ async def create_withdraw(
     db: Session = Depends(deps.get_db),
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    """
-    Create new withdraw.
-    """
     try:
         await validate_token(token, "withdraw")
         withdraw = await crud.withdraw.create(
@@ -85,9 +79,6 @@ async def read_withdraw(
     current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
 ) -> Any:
-    """
-    Get a withdraw.
-    """
     withdraw = await crud.withdraw.get(db=db, entity_id=id)
     if not withdraw:
         raise HTTPException(status_code=400, detail="Withdraw doesn't exists")
@@ -96,21 +87,18 @@ async def read_withdraw(
 
 @router.delete("/{id}", response_model=schemas.Withdraw)
 async def delete_withdraw(
-    *,
-    db: Session = Depends(deps.get_db),
     id: str,
+    db: Session = Depends(deps.get_db),
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    """
-    Delete withdraw.
-    """
+    withdraw = await crud.withdraw.get(db=db, entity_id=id)
+    if not withdraw:
+        raise HTTPException(status_code=404, detail="Withdraw doesn't exists")
+
     transaction = await crud.transaction.get_by_withdraw(db=db, withdraw_id=id)
     while transaction:
         await crud.transaction.remove(db=db, entity_id=transaction["id"])
         transaction = await crud.transaction.get_by_withdraw(db=db, withdraw_id=id)
-    withdraw = await crud.withdraw.get(db=db, entity_id=id)
-    if not withdraw:
-        raise HTTPException(status_code=404, detail="Withdraw doesn't exists")
 
     withdraw = await crud.withdraw.remove(db=db, entity_id=id)
     return withdraw

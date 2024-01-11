@@ -28,9 +28,6 @@ async def read_callbacks(
     q: str = "",
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    """
-    Retrieve wallet.
-    """
     search = _get_search(q)
     if current_user["is_superuser"]:
         wallets = await crud.callback.get_multi(
@@ -49,9 +46,6 @@ async def read_callback(
     current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
 ) -> Any:
-    """
-    Get a wallet.
-    """
     wallet = await crud.callback.get(db=db, entity_id=id)
     if not wallet:
         raise HTTPException(status_code=400, detail="Callback doesn't exists")

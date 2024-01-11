@@ -23,6 +23,7 @@ import WithdrawsView from './pages/withdraws/view'; // Import WalletsNew properl
 import Callbacks from './pages/callbacks/list'; // Import Wallets properly
 import CallbacksView from './pages/callbacks/view'; // Import WalletsNew properly
 import Signin from './pages/Signin'; // Import Signin properly
+import Exchange from './pages/exchange'; // Import Signin properly
 import './css/style.css';
 
 function App() {
@@ -64,6 +65,8 @@ function App() {
 
         <Route path="/settings" element={<Settings />} />
         <Route path="/signin" element={<Signin />} />
+
+        <Route path="/exchange" element={<Exchange />} />
       </Routes>
     </>
   );

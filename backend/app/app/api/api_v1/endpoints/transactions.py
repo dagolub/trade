@@ -26,9 +26,6 @@ async def read_transactions(
     q: str = "",
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    """
-    Retrieve transaction.
-    """
     _search = _get_search(q)
     if current_user["is_superuser"]:
         transactions = await crud.transaction.get_multi(
@@ -50,9 +47,6 @@ async def read_transaction(
     current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
 ) -> Any:
-    """
-    Get a transaction.
-    """
     transaction = await crud.transaction.get(db=db, entity_id=id)
     if not transaction:
         raise HTTPException(status_code=400, detail="Transaction doesn't exists")

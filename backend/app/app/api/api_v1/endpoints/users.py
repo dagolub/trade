@@ -39,9 +39,6 @@ async def count(
 async def read_user_me(
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    """
-    Get current user.
-    """
     if "bal" not in current_user:
         current_user["bal"] = {
             "btc": 0.0,
@@ -111,7 +108,7 @@ async def get_api_keys(
 ):
     obj_in = {}
     obj_in["owner_id"] = current_user["id"]
-    access_token_expires = timedelta(minutes=60 * 24 * 360)
+    access_token_expires = timedelta(minutes=60 * 24 * 365)
     obj_in["apikey"] = security.create_access_token(
         current_user["id"], expires_delta=access_token_expires  # type: ignore
     )
@@ -187,9 +184,6 @@ async def read_users(
     q: str = "",
     current_user: models.User = Depends(deps.get_current_active_superuser),  # noqa
 ) -> Any:
-    """
-    Retrieve users.
-    """
     _search = _get_search(q)
     users = await crud.user.get_multi(db, skip=skip, limit=limit, search=_search)  # type: ignore
     return users
@@ -202,9 +196,6 @@ async def create_user(
     user_in: schemas.UserCreate,
     current_user: models.User = Depends(deps.get_current_active_superuser),  # noqa
 ) -> Any:
-    """
-    Create new user.
-    """
     user = await crud.user.get_by_email(db, email=user_in.email)
     if user:
         raise HTTPException(
@@ -226,9 +217,6 @@ async def read_user_by_id(
     current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
 ) -> Any:
-    """
-    Get a specific user by id.
-    """
     user = await crud.user.get(db, entity_id=entity_id)  # type: ignore
     if user["email"] == current_user["email"]:  # type: ignore
         return user
@@ -247,9 +235,6 @@ async def update_user(
     user_in: schemas.UserUpdate,
     current_user: models.User = Depends(deps.get_current_active_superuser),  # noqa
 ) -> Any:
-    """
-    Update a user.
-    """
     user = await crud.user.get(db, entity_id=entity_id)  # type: ignore
     if not user:
         raise HTTPException(
@@ -281,9 +266,6 @@ async def create_user_open(
     email: EmailStr = Body(...),
     full_name: str = Body(None),
 ) -> Any:
-    """
-    Create new user without the need to be logged in.
-    """
     user = await crud.user.get_by_email(db, email=email)
     if user:
         raise HTTPException(

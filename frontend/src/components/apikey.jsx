@@ -9,7 +9,8 @@ const ApiKEY = ({apikey, id}) => {
     const [ips, setIPS] = React.useState([])
     const regenerate = () => {
         const data = {"id": id, "deposit": deposit, "withdraw": withdraw, "ips": ips}
-        putApikeys(data).then((data)=>console.log(data))
+        putApikeys(data).then((data)=>window.document.location = window.location.href)
+
     }
     const getChecked = (value, name) => {
         if (name === "deposit") {

@@ -1,8 +1,5 @@
 import {deleteDeposit, GET} from "./services/api";
 import React from "react";
-
-
-
 const populateSelect = (data, label_field) => {
     let result = []
     for (const i in data) {
@@ -14,21 +11,6 @@ const populateSelect = (data, label_field) => {
     }
     return result
 }
-
-const convertList = (list, field) => {
-    let result = []
-    for (const i in list) {
-        if (list[i].created) {
-            result[list[i].id] = list[i].created
-        }
-        if (list[i].full_name) {
-            result[list[i].id] = list[i].full_name
-        }
-
-    }
-    return result
-}
-
 const deleteRow = (id) => {
     const elements = document.getElementsByClassName("td" + id)
     for (const el in elements) {
@@ -38,16 +20,12 @@ const deleteRow = (id) => {
         }
     }
 }
-
-
 const showWallet = (wallet) => {
     return wallet.length > 12 ? wallet.substring(0, 5) + " ... " + wallet.substring(wallet.length - 5) : wallet
 }
-
 const divClass = "font-medium text-slate-800 dark:text-slate-100"
 const buttonView = "text-slate-400 hover:text-slate-500 dark:text-slate-500 dark:hover:text-slate-400 rounded-full"
 const buttonDelete = "text-rose-500 hover:text-rose-600 rounded-full"
-
 const tdClass = (id) => {
     return "px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap td" + id
 }
@@ -87,10 +65,8 @@ const deleteEnt = (deleteEntity, entity_id) => {
         });
     }, 200);
 }
-
 export {
     populateSelect,
-    convertList,
     deleteRow,
     showWallet,
     divClass,

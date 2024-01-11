@@ -493,7 +493,7 @@ async def send_callback_withdraw(withdraw):
 
 
 async def populate_tx(wallet, tx_id):
-    crud.deposit.update(db=db, db_obj=wallet, obj_in={"tx": tx_id})
+    await crud.deposit.update(db=db, db_obj=wallet, obj_in={"tx": tx_id})
 
 
 async def send_callback_aex(wallet):
