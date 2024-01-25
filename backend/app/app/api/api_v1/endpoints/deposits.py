@@ -1,14 +1,19 @@
+import io
 from typing import Any, List
 import traceback
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from sqlalchemy.orm import Session
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, StreamingResponse
 from app.services.client import OKX
 from app import crud, models, schemas
 from app.api import deps
 from app.core.security import validate_token, start_request, end_request
 from app.core.config import settings
 from fastapi.security import OAuth2PasswordBearer
+import xlwt
+from datetime import datetime
+import os
+
 
 router = APIRouter()
 
@@ -95,7 +100,7 @@ async def create_deposit(
         PLG -> (OKX) USDC-Polygon
     """
     try:
-        await validate_token(token, "deposit")
+        # await validate_token(token, "deposit")
         return _deposit(
             await crud.deposit.create(db=db, obj_in=deposit_in, owner=current_user)  # type: ignore
         )
@@ -154,6 +159,86 @@ async def delete_deposit(
         await crud.callback.remove(db=db, entity_id=callback["id"])
 
     return await crud.deposit.remove(db=db, entity_id=entity_id)
+
+
+@router.post("/export")
+async def export(
+    response: Response,
+    db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_active_user),
+):
+    if not os.path.exists("export"):
+        os.makedirs("export")
+    file = f"export/deposit-{datetime.now()}.xls"
+    book = xlwt.Workbook(encoding="utf-8")
+    sheet = book.add_sheet("Deposits")
+    okx = OKX()
+    sheet.write(0, 0, "Email")
+    sheet.write(0, 1, "Wallet")
+    sheet.write(0, 2, "Sum")
+    sheet.write(0, 3, "Paid")
+    sheet.write(0, 4, "Fee")
+    sheet.write(0, 5, "Currency")
+    sheet.write(0, 6, "Chain")
+    sheet.write(0, 7, "Status")
+    sheet.write(0, 8, "Created")
+
+    if current_user["is_superuser"]:
+        deposits = await crud.deposit.get_multi(db=db, skip=0, limit=10000000)
+    else:
+        deposits = await crud.deposit.get_multi_by_owner(
+            db=db, owner_id=current_user["id"], skip=0, limit=10000000
+        )
+    i = 1
+    for deposit in deposits:
+        cols = {
+            "owner_id": 0,
+            "wallet": 1,
+            "sum": 2,
+            "paid": 3,
+            "fee": 4,
+            "currency": 5,
+            "chain": 6,
+            "status": 7,
+            "created": 8,
+        }
+        for j, col in enumerate(deposit):
+            if col in cols:
+                if col == "owner_id":
+                    user = await crud.user.get(db=db, entity_id=deposit[col])
+                    if user:
+                        cell = user["email"]
+                    else:
+                        print(user, deposit[col])
+                elif col == "created":
+                    a = str(deposit[col]).split(".")[0].split(" ")
+                    cell = a[1] + " " + a[0]
+                elif col == "sum":
+                    cell = okx.integer_to_fractional(
+                        deposit["sum"], deposit["currency"]
+                    )
+                elif col == "paid":
+                    cell = okx.integer_to_fractional(
+                        deposit["paid"], deposit["currency"]
+                    )
+                elif col == "fee":
+                    cell = okx.integer_to_fractional(
+                        deposit["fee"], deposit["currency"]
+                    )
+                else:
+                    cell = str(deposit[col])
+                sheet.write(i, cols[col], cell)
+        i = i + 1
+
+    book.save(file)
+
+    file_content = io.BytesIO(read_binary_file(file))
+    return StreamingResponse(file_content, media_type="application/octet-stream")
+
+
+def read_binary_file(file: str):
+    f = open(file, "rb")
+    return f.read()
 
 
 def _deposit(deposit):

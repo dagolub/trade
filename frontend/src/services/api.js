@@ -32,14 +32,18 @@ const GET = (url) => {
         })
 }
 const POST = (url, payload) => {
+    console.log("POST " + url)
+    console.log(payload)
     const token = getToken()
     return axios.post(getUrl(url), payload, {
         headers: {'Authorization': 'Bearer ' + token}
     })
         .then(function (response) {
+            console.log("POST response " + response.data)
             return response.data
         })
         .catch(function (error) {
+            console.log("POST error " + error)
             return error
         })
 }
@@ -129,7 +133,9 @@ const getDeposit = (id) => {
 const deleteDeposit = (id) => {
     return DELETE('/api/deposits/' + id)
 }
-
+const exportDeposits = () => {
+    return POST("/api/deposits/export")
+}
 const getTransactions = (q = "", skip = 0, limit = 10) => {
     let url
     if (q === "") {
@@ -208,14 +214,29 @@ const putApikeys = (data) => {
     return PUT("/api/users/apikeys", data)
 }
 const deleteApikey = (id) => {
-    console.log(id)
     return DELETE("/api/users/apikeys/" + id)
+}
+const estimateExchange = (_from, _to, amount) => {
+        return POST('/api/exchange/estimate', {
+        "_from": _from,
+        "_to": _to,
+        "amount": amount,
+    })
+}
+const exchange = (_id, s) => {
+        console.log("Exchange " + _id + " " + s)
+        return POST('/api/exchange/exchange', {
+        "_id": _id,
+        "_s": s
+    })
 }
 export {
     Login,
     GET, POST, PUT, DELETE,
     getUserMe, createUser, getUsers, getUser, updateUser, deleteUser,
-    createDeposit, getDeposits, getDeposit, deleteDeposit, getCurrencies, getChains,
+    createDeposit, getDeposits, getDeposit, deleteDeposit, exportDeposits,
+    estimateExchange, exchange,
+    getCurrencies, getChains,
     getTransactions, getTransaction,
     getWallets, getWallet,
     createWithdraw, getWithdraws, getWithdraw, deleteWithdraw,

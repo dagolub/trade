@@ -4,16 +4,19 @@ import PaginationClassic from '../../components/PaginationClassic'
 import SearchForm from '../../partials/actions/SearchForm'
 import Sidebar from '../../partials/Sidebar'
 import DepositsTable from '../../components/deposits/DepositsTable'
-import {getDeposits} from '../../services/api'
+import {getDeposits, exportDeposits} from '../../services/api'
 import {getEntities, setTot} from '../../utils'
-
+import Excel from "../../components/excel"
+import {saveAs} from "file-saver"
 function Deposits() {
     const [list, setList] = React.useState([]);
     const [total, setTotal] = React.useState(0);
     const settingList = () => {
         getEntities(getDeposits, setList)
     };
-
+    const excel = () => {
+        exportDeposits().then((file) => {saveAs(file, "deposits.xls")})
+    }
     React.useEffect(() => {
         settingList()
         setTot('deposits', setTotal)
@@ -32,6 +35,9 @@ function Deposits() {
                                     ✨</h1>
                             </div>
                             <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
+                                <button onClick={() => excel()}>
+                                    <Excel/>
+                                </button>
                                 <SearchForm placeholder="Search by wallet …"/>
                                 <a href="/deposits/new">
                                     <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white">

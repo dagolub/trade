@@ -1,7 +1,7 @@
 import React from 'react';
 import Sidebar from '../partials/Sidebar';
 import Header from '../partials/Header';
-import {getChains, getCurrencies} from "../services/api";
+import {getCurrencies, estimateExchange, exchange} from "../services/api";
 import {populateSelect} from "../utils";
 import {useSearchParams} from "react-router-dom";
 import load from '../images/load.svg'
@@ -23,6 +23,7 @@ function Exchange() {
     const [fromChains, setFromChains] = React.useState([])
     const [toCurrencies, setToCurrencies] = React.useState([])
     const [toChains, setToChains] = React.useState([])
+    const [quoteID, setQuoteID] = React.useState("")
 
     const [loading, setLoading] = React.useState(false)
     const submitHandler = (e) => {
@@ -30,7 +31,30 @@ function Exchange() {
 
 
     }
+    const estimate = () => {
+        const from_currency = selectedFromCurrency[0]
+        const to_currency = selectedToCurrency[0]
+        const from_sum = fromSum
+        estimateExchange(from_currency, to_currency, from_sum).then((result)=>{
+            console.log("Before")
+            console.log(result["sec"])
+            if(confirm(result["sec"])){
+                console.log("Exchange")
+                console.log(result["id"])
+                console.log(result["sec"])
+                exchange(result["id"], result["sec"]).then(window.location.href = "/")
+            } else {
+                console.log("No exchange")
+                window.location.href = "/"
+            }
+            console.log("After")
+        })
 
+
+    };
+    const changeSum = (value) =>{
+        setFromSUM(value.target.value)
+    }
     React.useEffect(() => {
 
         const sum = searchParams.get("sum")
@@ -46,6 +70,7 @@ function Exchange() {
             setFromCurrencies(populateSelect(data, "fromCurrency"))
             setToCurrencies(populateSelect(data, "toCurrency"))
         })
+
     }, [])
     return (
         <div className="flex h-[100vh] overflow-hidden"> {/* Fixed typo in height */}
@@ -66,7 +91,7 @@ function Exchange() {
                                                 Sum
                                             </label>
                                             <input id="supporting-text" className="form-input w-full" type="text"
-                                                   style={{"width": "100px"}} value={fromSum}/>
+                                                   style={{"width": "100px"}} value={fromSum}  onChange={(value)=>changeSum(value)} />
                                         </div>
                                     </div>
                                     <div>
@@ -129,7 +154,7 @@ function Exchange() {
                                 "marginTop": "30px"
                             }}>
                                 <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white"
-                                        type="submit">
+                                        type="submit" onClick={()=>estimate()}>
                                     {loading ? <img src={load} width="24" height="24"/> : ''}
                                     Exchange
                                 </button>

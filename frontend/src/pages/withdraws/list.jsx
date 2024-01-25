@@ -6,7 +6,7 @@ import PaginationClassic from '../../components/PaginationClassic'
 import WithdrawsTable from '../../components/withdraws/WithdrawsTable'
 import {getWithdraws} from '../../services/api'
 import {getEntities, setTot} from "../../utils"
-
+import Excel from "../../components/excel"
 
 function Withdraws() {
     const [list, setList] = React.useState([]);
@@ -15,7 +15,9 @@ function Withdraws() {
     const settingList = () => {
         getEntities(getWithdraws, setList)
     };
-
+    const excel = () => {
+        console.log("Export")
+    }
     React.useEffect(() => {
         settingList()
         setTot('withdraws', setTotal)
@@ -34,6 +36,9 @@ function Withdraws() {
                                     ✨</h1>
                             </div>
                             <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
+                                <button onClick={() => excel()}>
+                                    <Excel/>
+                                </button>
                                 <SearchForm placeholder="Search by SUM"/>
                                 <a href="/withdraws/new">
                                     <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white">

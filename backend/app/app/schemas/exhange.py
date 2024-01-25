@@ -1,13 +1,19 @@
 from datetime import datetime
-
+from typing import Optional
 from pydantic import BaseModel
 
 
 class ExchangeBase(BaseModel):
-    deposit_id: str
-    currency: str
-    rate: float
-    usdt: float
+    deposit_id: Optional[str]
+    owner_id: Optional[str]
+    currency: Optional[str]
+    rate: Optional[float]
+    usdt: Optional[float]
+    _from: Optional[str]
+    _to: Optional[str]
+    amount: Optional[float]
+    result: Optional[float]
+    quoteId: Optional[str]
     created: datetime
 
 

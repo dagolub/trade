@@ -9,6 +9,7 @@ from app.api.api_v1.endpoints import (
     wallets,
     withdraws,
     callbacks,
+    exchange,
 )
 
 api_router = APIRouter()
@@ -22,3 +23,4 @@ api_router.include_router(
 api_router.include_router(wallets.router, prefix="/wallets", tags=["wallets"])
 api_router.include_router(callbacks.router, prefix="/callbacks", tags=["callbacks"])
 api_router.include_router(settings.router, prefix="/settings", tags=["settings"])
+api_router.include_router(exchange.router, prefix="/exchange", tags=["exchange"])
