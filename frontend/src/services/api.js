@@ -31,19 +31,20 @@ const GET = (url) => {
             return error
         })
 }
-const POST = (url, payload) => {
-    console.log("POST " + url)
-    console.log(payload)
+const POST = (url, payload, headers = []) => {
     const token = getToken()
+    let headers_list = {'Authorization': 'Bearer ' + token}
+    for (let h in headers) {
+        headers_list[h] = headers[h]
+    }
+    console.log(headers_list)
     return axios.post(getUrl(url), payload, {
-        headers: {'Authorization': 'Bearer ' + token}
+        headers: headers_list
     })
         .then(function (response) {
-            console.log("POST response " + response.data)
             return response.data
         })
         .catch(function (error) {
-            console.log("POST error " + error)
             return error
         })
 }
@@ -76,15 +77,13 @@ const getUserMe = () => {
     return GET('/api/users/me')
 }
 // USERS
-const createUser = (full_name, email, password, is_active, is_superuser, autotransfer, commission) => {
+const createUser = (full_name, email, password, is_active, is_superuser) => {
     return POST('/api/users/', {
         "email": email,
         "is_active": is_active,
         "is_superuser": is_superuser,
         "full_name": full_name,
-        "password": password,
-        "autotransfer": autotransfer,
-        "commission": commission
+        "password": password
     })
 }
 const getUsers = (q = "", skip = 0, limit = 10) => {
@@ -93,15 +92,13 @@ const getUsers = (q = "", skip = 0, limit = 10) => {
 const getUser = (id) => {
     return GET('/api/users/' + id)
 }
-const updateUser = (id, full_name, email, password, is_active, is_superuser, autotransfer, commission) => {
+const updateUser = (id, full_name, email, password, is_active, is_superuser) => {
     return PUT('/api/users/' + id, {
         "email": email,
         "is_active": is_active,
         "is_superuser": is_superuser,
         "full_name": full_name,
-        "password": password,
-        "autotransfer": autotransfer,
-        "commissions": commission
+        "password": password
     })
 }
 const deleteUser = (id) => {
@@ -110,137 +107,67 @@ const deleteUser = (id) => {
 }
 
 
-const createDeposit = (sum, currency, chain, callback) => {
-    return POST('/api/deposits/', {
-        "sum": sum,
-        "currency": currency,
-        "chain": chain,
-        "callback": callback
-    })
+const createDocument = (document) => {
+    return POST('/api/documents/', {
+        document
+    }, {"Content-Type": "multipart/form-data",}
+    )
 }
-const getDeposits = (q = "", skip = 0, limit = 10) => {
+const updateDocument = (document) => {
+    return POST('/api/documents/', {
+        document
+    }, {"Content-Type": "multipart/form-data",}
+    )
+}
+const getDocuments = (q = "", skip = 0, limit = 10) => {
     let url
     if (q === "") {
-        url = '/api/deposits/?skip=' + skip + '&limit=' + limit
+        url = '/api/documents/?skip=' + skip + '&limit=' + limit
     } else {
-        url = '/api/deposits/?skip=' + skip + '&limit=' + limit + '&q=' + q
+        url = '/api/documents/?skip=' + skip + '&limit=' + limit + '&q=' + q
     }
     return GET(url)
 }
-const getDeposit = (id) => {
-    return GET('/api/deposits/' + id)
+const getDocument = (id) => {
+    return GET('/api/documents/' + id)
 }
-const deleteDeposit = (id) => {
-    return DELETE('/api/deposits/' + id)
-}
-const exportDeposits = () => {
-    return POST("/api/deposits/export")
-}
-const getTransactions = (q = "", skip = 0, limit = 10) => {
-    let url
-    if (q === "") {
-        url = '/api/transactions/?skip=' + skip + '&limit=' + limit
-    } else {
-        url = '/api/transactions/?skip=' + skip + '&limit=' + limit + '&q=' + q
-    }
-    return GET(url)
-}
-const getTransaction = (id) => {
-    return GET('/api/transactions/' + id)
-}
-const getWallets = (q = "", skip = 0, limit = 10) => {
-    let url
-    if (q === "") {
-        url = '/api/wallets/?skip=' + skip + '&limit=' + limit
-    } else {
-        url = '/api/wallets/?skip=' + skip + '&limit=' + limit + '&q=' + q
-    }
-    return GET(url)
-}
-const getWallet = (id) => {
-    return GET('/api/wallets/' + id)
-}
-const createWithdraw = (sum, to, currency, chain, callback) => {
-    return POST('/api/withdraws/', {
-        "sum": sum,
-        "to": to,
-        "currency": currency,
-        "chain": chain,
-        "callback": callback
-    })
-}
-const getWithdraws = (q = "", skip = 0, limit = 10) => {
-    let url
-    if (q === "") {
-        url = '/api/withdraws/?skip=' + skip + '&limit=' + limit
-    } else {
-        url = '/api/withdraws/?skip=' + skip + '&limit=' + limit + '&q=' + q
-    }
-    return GET(url)
-}
-const getWithdraw = (id) => {
-    return GET('/api/withdraws/' + id)
-}
-const deleteWithdraw = (id) => {
-    return DELETE('/api/withdraws/' + id)
+const deleteDocument = (id) => {
+    return DELETE('/api/documents/' + id)
 }
 
-const getCurrencies = () => {
-    return GET("/api/deposits/currencies")
+const createFolder = (name, folder_id) => {
+    return POST('/api/folders/', {
+        "name": name,
+        "folder_id": folder_id
+    })
 }
-const getChains = () => {
-    return GET("/api/deposits/chains")
+const updateFolder = (name, folder_id) => {
+    return POST('/api/folders/', {
+        "name": name,
+        "folder_id": folder_id
+    })
 }
-const getCallbacks = (q = "", skip = 0, limit = 10) => {
+const getFolders = (q = "", skip = 0, limit = 10) => {
     let url
     if (q === "") {
-        url = '/api/callbacks/?skip=' + skip + '&limit=' + limit
+        url = '/api/folders/?skip=' + skip + '&limit=' + limit
     } else {
-        url = '/api/callbacks/?skip=' + skip + '&limit=' + limit + '&q=' + q
+        url = '/api/folders/?skip=' + skip + '&limit=' + limit + '&q=' + q
     }
     return GET(url)
 }
-const getCallback = (id) => {
-    return GET('/api/callbacks/' + id)
+const getFolder = (id) => {
+    return GET('/api/folders/' + id)
 }
-//INSERT1
-const getApikeys = () => {
-    return GET("/api/users/apikeys")
+const deleteFolder = (id) => {
+    return DELETE('/api/folders/' + id)
 }
-const getApikey = (id) => {
-    return GET("/api/users/apikeys/" + id)
-}
-const putApikeys = (data) => {
-    return PUT("/api/users/apikeys", data)
-}
-const deleteApikey = (id) => {
-    return DELETE("/api/users/apikeys/" + id)
-}
-const estimateExchange = (_from, _to, amount) => {
-        return POST('/api/exchange/estimate', {
-        "_from": _from,
-        "_to": _to,
-        "amount": amount,
-    })
-}
-const exchange = (_id, s) => {
-        console.log("Exchange " + _id + " " + s)
-        return POST('/api/exchange/exchange', {
-        "_id": _id,
-        "_s": s
-    })
-}
+
 export {
     Login,
     GET, POST, PUT, DELETE,
     getUserMe, createUser, getUsers, getUser, updateUser, deleteUser,
-    createDeposit, getDeposits, getDeposit, deleteDeposit, exportDeposits,
-    estimateExchange, exchange,
-    getCurrencies, getChains,
-    getTransactions, getTransaction,
-    getWallets, getWallet,
-    createWithdraw, getWithdraws, getWithdraw, deleteWithdraw,
-    getCallbacks, getCallback,
-    getApikeys, putApikeys, getApikey, deleteApikey
+    createDocument, updateDocument, getDocuments, getDocument, deleteDocument,
+    createFolder, updateFolder, getFolders, getFolder, deleteFolder
     // INSERT2
 };

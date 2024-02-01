@@ -27,7 +27,7 @@ function Sidebar() {
                     <table width="100px">
                         <tbody>
                         <tr>
-                            <td>RPAY</td>
+                            <td>PDF MAX</td>
                             <td>
                                 <img
                                     src="/imgs/cp.svg"
@@ -49,30 +49,16 @@ function Sidebar() {
                                 </NavLink>
                             </li>}
                         <li className={li_class}>
-                            <NavLink to="/deposits/list" className={a_class}>
-                                <span className={span_class}>Deposits</span>
+                            <NavLink to="/documents/list" className={a_class}>
+                                <span className={span_class}>Documents</span>
                             </NavLink>
                         </li>
                         <li className={li_class}>
-                            <NavLink to="/withdraws/list" className={a_class}>
-                                <span className={span_class}>Withdraws</span>
+                            <NavLink to="/folders/list" className={a_class}>
+                                <span className={span_class}>Folders</span>
                             </NavLink>
                         </li>
-                        <li className={li_class}>
-                            <NavLink to="/wallets/list" className={a_class}>
-                                <span className={span_class}>Wallets</span>
-                            </NavLink>
-                        </li>
-                        <li className={li_class}>
-                            <NavLink to="/transactions/list" className={a_class}>
-                                <span className={span_class}>Transactions</span>
-                            </NavLink>
-                        </li>
-                        <li className={li_class}>
-                          <NavLink to="/callbacks/list" className={a_class}>
-                            <span className={span_class}>Callbacks</span>
-                          </NavLink>
-                        </li>
+
                     </ul>
                 </div>
             </div>

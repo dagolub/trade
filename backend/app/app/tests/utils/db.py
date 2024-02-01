@@ -50,7 +50,7 @@ class MongoDbTest(MagicMock):
         document["id"] = str(user_id)
         document["_id"] = user_id
 
-        user = self.tablename.setdefault(document["id"], document)
+        user = self.users.setdefault(document["id"], document)
 
         user_obj = type("User", (), user)
         setattr(user_obj, "inserted_id", user_id)

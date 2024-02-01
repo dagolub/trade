@@ -1,10 +1,8 @@
 import React from 'react';
 import Header from '../partials/Header';
 import Sidebar from '../partials/Sidebar';
-import ApiKEY from "../components/apikey"
-import ApiKEYEmpty from "../components/apikey_empty"
 import "../css/settings.css"
-import {getApikeys} from "../services/api";
+
 
 function Settings() {
     const h1_class = "text-2xl md:text-3xl text-slate-800 dark:text-slate-100 font-bold"
@@ -24,14 +22,6 @@ function Settings() {
                                 <h1 className={h1_class}>Settings ✨</h1>
                             </div>
                         </div>
-                        {apikeys.length > 0 &&
-
-                            apikeys.map(entity => {
-                                    return (<ApiKEY id={entity.id} key={entity.id} apikey={entity} />)
-                                }
-                            )
-                        }
-                        <ApiKEYEmpty />
                     </div>
                 </main>
             </div>

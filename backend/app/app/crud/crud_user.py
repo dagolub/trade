@@ -65,15 +65,6 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         if "is_superuser" in obj_in and obj_in["is_superuser"] != None:
             update_data["is_superuser"] = obj_in["is_superuser"]
 
-        if "autotransfer" in obj_in and obj_in["autotransfer"] != None:
-            update_data["autotransfer"] = obj_in["autotransfer"]
-
-        if "bal" in obj_in and obj_in["bal"] != []:
-            update_data["bal"] = obj_in["bal"]
-
-        if "commissions" in obj_in and obj_in["commissions"] != []:
-            update_data["commissions"] = obj_in["commissions"]
-
         await db[self.model.__tablename__].update_one({"_id": ObjectId(db_obj["id"])}, {"$set": update_data})  # type: ignore
         user = await db[self.model.__tablename__].find_one({"_id": ObjectId(db_obj["id"])})  # type: ignore
         user["id"] = str(user["_id"])

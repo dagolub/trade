@@ -55,7 +55,7 @@ async def recover_password(email: str, db: Session = Depends(deps.get_db)) -> An
     return {"msg": "Password recovery email sent"}
 
 
-@router.post("/reset-password/", response_model=schemas.Msg)
+@router.post("/reset-password", response_model=schemas.Msg)
 async def reset_password(
     token: str = Body(...),
     new_password: str = Body(...),

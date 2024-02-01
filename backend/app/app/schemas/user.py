@@ -8,18 +8,13 @@ class UserBase(BaseModel):
     email: Optional[EmailStr] = ""
     is_active: Optional[bool] = True
     is_superuser: bool = None
-    autotransfer: bool = None
     full_name: Optional[str] = ""
     created: Optional[datetime]
-    bal: Optional[dict] = []
-    commissions: Optional[dict] = []
-
 
 
 # Properties to receive via API on creation
 class UserCreate(UserBase):
     password: Optional[str] = ""
-
 
 
 # Properties to receive via API on update

@@ -1,5 +1,4 @@
-import {deleteDeposit, GET} from "./services/api";
-import React from "react";
+import {GET} from "./services/api"
 const populateSelect = (data, label_field) => {
     let result = []
     for (const i in data) {

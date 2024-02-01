@@ -4,7 +4,7 @@ from fastapi.encoders import jsonable_encoder
 from motor.motor_asyncio import AsyncIOMotorClient  # type: ignore
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-
+from datetime import datetime
 from app.db.base_class import Base
 
 ModelType = TypeVar("ModelType", bound=Base)
@@ -65,6 +65,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return result
 
     async def create(self, db: Session, obj_in: dict) -> Optional[ModelType]:
+        if "created" not in obj_in:
+            obj_in["created"] = datetime.now()
         obj = await db[self.model.__tablename__].insert_one(document=obj_in)  # type: ignore
         object = await db[self.model.__tablename__].find_one(  # type: ignore
             {"_id": ObjectId(obj.inserted_id)}
@@ -92,30 +94,6 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         del entity["_id"]
         await db[self.model.__tablename__].delete_one({"_id": ObjectId(entity_id)})
         return entity
-
-    async def get_by_deposit(self, db, deposit_id):
-        entity = await db[self.model.__tablename__].find_one({"deposit_id": deposit_id})  # type: ignore
-        if entity:
-            entity["id"] = str(entity["_id"])
-            return entity
-        else:
-            return None
-
-    async def get_by_withdraw(self, db, withdraw_id):
-        entity = await db[self.model.__tablename__].find_one({"withdraw_id": withdraw_id})  # type: ignore
-        if entity:
-            entity["id"] = str(entity["_id"])
-            return entity
-        else:
-            return None
-
-    async def get_by_tx(self, db, tx):
-        entity = await db[self.model.__tablename__].find_one({"tx": tx})  # type: ignore
-        if entity:
-            entity["id"] = str(entity["_id"])
-            return entity
-        else:
-            return None
 
     async def get_by_status(self, db, status):
         if not isinstance(status, (list)):

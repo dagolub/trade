@@ -10,11 +10,11 @@ else:
     MONGO_USERNAME = ""
 
 MONGO_URL = f"{MONGO_USERNAME}{settings.MONGO_HOST}"
-if settings.MONGO_HOST == "localhost" or settings.MONGO_HOST == "rpay-io-mongo1":
-    MONGO_HOST = f"mongodb://{MONGO_URL}:27017/cryptopayments"
+if settings.MONGO_HOST == "localhost":
+    MONGO_HOST = f"mongodb://{MONGO_URL}:27017/{settings.MONGO_DB}"
 else:
     MONGO_HOST = f"mongodb+srv://{MONGO_URL}/?retryWrites=true&w=majority"
 
 client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_HOST)
 client.get_io_loop = asyncio.get_event_loop
-database = client.cryptopayments
+database = client[settings.MONGO_DB]
