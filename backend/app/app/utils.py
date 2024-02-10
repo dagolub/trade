@@ -2,12 +2,12 @@ import logging
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, Optional
-
 import emails  # type: ignore
 from emails.template import JinjaTemplate  # type: ignore
+from jinja2 import Template
 from jose import jwt  # type: ignore
-
 from app.core.config import settings
+import os
 
 
 def send_email(
@@ -15,7 +15,17 @@ def send_email(
     subject_template: str = "",
     html_template: str = "",
     environment: Dict[str, Any] = {},
-) -> None:
+) -> str:
+    if "localhost" in settings.SERVER_HOST:
+        if not os.path.exists("files"):
+            os.makedirs("files")
+        if not os.path.exists("files/mail"):
+            os.makedirs("files/mail")
+        file = "files/mail/" + subject_template + ".html"
+
+        with open(file, "w") as file:
+            file.write(Template(html_template).render(environment))
+        return "Email saved locally"
     message = emails.Message(
         subject=JinjaTemplate(subject_template),
         html=JinjaTemplate(html_template),
@@ -51,7 +61,7 @@ def send_reset_password_email(email_to: str, email: str, token: str) -> None:
     with open(Path(settings.EMAIL_TEMPLATES_DIR) / "reset_password.html") as f:
         template_str = f.read()
     server_host = settings.SERVER_HOST
-    link = f"{server_host}/reset-password?token={token}"
+    link = f"{server_host}/reset?token={token}"
     send_email(
         email_to=email_to,
         subject_template=subject,

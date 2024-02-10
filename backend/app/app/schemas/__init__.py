@@ -11,6 +11,13 @@ from .folder import (  # noqa
     FolderInDB,  # noqa
     FolderUpdate,  # noqa
     FolderBaseCreate,  # noqa
+)  # noqa   
+from .page import (  # noqa
+    Page,  # noqa
+    PageCreate,  # noqa
+    PageInDB,  # noqa
+    PageUpdate,  # noqa
+    PageBaseCreate,  # noqa
 )  # noqa
 from .msg import Msg  # noqa
 from .token import Token, TokenPayload  # noqa

@@ -73,6 +73,11 @@ async def reset_password(
     elif not crud.user.is_active(user):  # type: ignore
         raise HTTPException(status_code=400, detail="Inactive user")
     hashed_password = get_password_hash(new_password)
+    if hashed_password == user["hashed_password"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Password can not be the same",
+        )
     await crud.user.update(
         db=db, db_obj=user, obj_in={"hashed_password": hashed_password}
     )
