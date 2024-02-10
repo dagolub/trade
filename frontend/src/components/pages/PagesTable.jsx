@@ -1,12 +1,13 @@
 import React from 'react'
-import Folder from './FoldersTableItem'
+import Pages from './PagesTableItem'
 import {getUserMe} from "../../services/api"
 
-function FoldersTable({
+function PagesTable({
                          list,
                          settingList
                      }) {
     const [superuser, setSuperuser] = React.useState(false)
+    console.log(list)
     React.useEffect(() => {
         getUserMe().then((data) => setSuperuser(data["is_superuser"]))
     })
@@ -24,33 +25,27 @@ function FoldersTable({
                                 <div className="font-semibold text-left">User</div>
                             </th>}
                             <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                                <div className="font-semibold text-left">Name</div>
-                            </th>
-                            <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                                <div className="font-semibold text-left">Folder Id</div>
+                                <div className="font-semibold text-left">Title</div>
                             </th>
                             <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                                 <div className="font-semibold text-left">Created</div>
                             </th>
-
                             <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                                 <div className="font-semibold text-left">Act</div>
                             </th>
                         </tr>
                         </thead>
-                        {/* Table body */}
                         <tbody className="text-sm divide-y divide-slate-200 dark:divide-slate-700">
                         {
 
                             list.map(entity => {
                                 return (
-                                    <Folder
+                                    <Pages
                                         key={entity.id}
                                         id={entity.id}
 
                                         owner_id={entity.owner_id}
-                                        name={entity.name}
-                                        folder_id={entity.folder_id}
+                                        title={entity.title}
                                         created={entity.created}
                                         superuser={superuser}
 
@@ -61,11 +56,10 @@ function FoldersTable({
                         }
                         </tbody>
                     </table>
-
                 </div>
             </div>
         </div>
     );
 }
 
-export default FoldersTable;
+export default PagesTable;

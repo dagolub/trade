@@ -3,14 +3,14 @@ import searchUser from "../searchUser"
 import Edit from '../edit'
 import Del from '../delete'
 import showDate from "../showDate";
-import {deleteFolder} from "../../services/api";
+import {deletePage} from "../../services/api";
 
-function FoldersTableItem(props) {
+function PagesTableItem(props) {
     const editHandler = (id) => {
         window.location.href = "/folders/edit/" + id
     }
     const deleteHandler = (id) => {
-        deleteEnt(deleteFolder, id)
+        deleteEnt(deletePage, id)
     };
     return (
         <tr id={"tr" + props.id}>
@@ -18,10 +18,7 @@ function FoldersTableItem(props) {
                 <div className={divClass}>{searchUser(props.owner_id)}</div>
             </td>}
             <td className={tdClass(props.id)}>
-                <div className={divClass}>{props.name}</div>
-            </td>
-            <td className={tdClass(props.id)}>
-                <div className={divClass}>{props.folder_id}</div>
+                <div className={divClass}>{props.title}</div>
             </td>
             <td className={tdClass(props.id)}>
                 <div className={divClass}>{showDate(props.created)}</div>
@@ -36,4 +33,4 @@ function FoldersTableItem(props) {
     );
 }
 
-export default FoldersTableItem;
+export default PagesTableItem;

@@ -5,7 +5,7 @@ import Header from '../../partials/Header';
 import { getFolder } from '../../services/api';
 import { useParams } from 'react-router-dom';
 import showError from "../../components/showError";
-function UsersEdit() {
+function FoldersEdit() {
   const { id } = useParams();
   const [name, setName] = useState('');
   const [folder_id, setFolderId] = useState('');
@@ -44,4 +44,4 @@ function UsersEdit() {
   );
 }
 
-export default UsersEdit;
+export default FoldersEdit;

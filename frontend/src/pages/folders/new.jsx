@@ -5,7 +5,7 @@ import {createFolder} from "../../services/api";
 import {populateSelect} from "../../utils"
 import load from '../../images/load.svg'
 import showError from '../../components/showError'
-function DepositNew() {
+function FoldersNew() {
     const refName = React.useRef("")
     const refFolderId = React.useRef("")
 
@@ -110,4 +110,4 @@ function DepositNew() {
     );
 }
 
-export default DepositNew;
+export default FoldersNew;

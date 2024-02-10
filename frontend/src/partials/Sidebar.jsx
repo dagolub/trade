@@ -58,7 +58,11 @@ function Sidebar() {
                                 <span className={span_class}>Folders</span>
                             </NavLink>
                         </li>
-
+                        <li className={li_class}>
+                            <NavLink to="/pages/list" className={a_class}>
+                                <span className={span_class}>Pages</span>
+                            </NavLink>
+                        </li>
                     </ul>
                 </div>
             </div>

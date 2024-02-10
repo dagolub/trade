@@ -108,15 +108,15 @@ const deleteUser = (id) => {
 
 
 const createDocument = (document) => {
-    return POST('/api/documents/', {
+    return POST('/api/documents/',
         document
-    }, {"Content-Type": "multipart/form-data",}
+    , {"Content-Type": "multipart/form-data"}
     )
 }
 const updateDocument = (document) => {
-    return POST('/api/documents/', {
+    return POST('/api/documents/',
         document
-    }, {"Content-Type": "multipart/form-data",}
+    , {"Content-Type": "multipart/form-data"}
     )
 }
 const getDocuments = (q = "", skip = 0, limit = 10) => {
@@ -162,12 +162,43 @@ const getFolder = (id) => {
 const deleteFolder = (id) => {
     return DELETE('/api/folders/' + id)
 }
-
+const createPage = (title, description, document) => {
+    console.log("Title - " + title)
+    console.log("Description - " + description)
+    console.log("Document - " + document)
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("document", document);
+    return POST('/api/pages/', formData,{"Content-Type": "multipart/form-data"})
+}
+const updatePage = (id, name, description) => {
+    return PUT('/api/pages/' + id, {
+        "name": name,
+        "description": description
+    })
+}
+const getPages = (q = "", skip = 0, limit = 10) => {
+    let url
+    if (q === "") {
+        url = '/api/pages/?skip=' + skip + '&limit=' + limit
+    } else {
+        url = '/api/pages/?skip=' + skip + '&limit=' + limit + '&q=' + q
+    }
+    return GET(url)
+}
+const getPage = (id) => {
+    return GET('/api/pages/' + id)
+}
+const deletePage = (id) => {
+    return DELETE('/api/pages/' + id)
+}
 export {
     Login,
     GET, POST, PUT, DELETE,
     getUserMe, createUser, getUsers, getUser, updateUser, deleteUser,
     createDocument, updateDocument, getDocuments, getDocument, deleteDocument,
-    createFolder, updateFolder, getFolders, getFolder, deleteFolder
+    createFolder, updateFolder, getFolders, getFolder, deleteFolder,
+    createPage, updatePage, getPages, getPage, deletePage
     // INSERT2
 };

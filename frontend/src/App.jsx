@@ -14,6 +14,10 @@ import Folders from './pages/folders/list'
 import FoldersNew from './pages/folders/new'
 import FoldersEdit from './pages/folders/edit'
 
+import Pages from './pages/pages/list'
+import PagesNew from './pages/pages/new'
+import PagesEdit from './pages/pages/edit'
+
 import Settings from './pages/settings'
 
 import Signin from './pages/Signin'; // Import Signin properly
@@ -45,6 +49,10 @@ function App() {
         <Route path="/folders/list" element={<Folders />} />
         <Route path="/folders/new/" element={<FoldersNew />} />
         <Route path="/folders/edit/:id" element={<FoldersEdit />} />
+
+        <Route path="/pages/list" element={<Pages />} />
+        <Route path="/pages/new/" element={<PagesNew />} />
+        <Route path="/pages/edit/:id" element={<PagesEdit />} />
 
         <Route path="/settings" element={<Settings />} />
         <Route path="/signin" element={<Signin />} />

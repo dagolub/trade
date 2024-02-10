@@ -13,9 +13,6 @@ Later you will need:
 ## Add ssh-keys for you profile
 You need add keys [here](https://gitlab.com/-/profile/keys) [instruction how to generate](https://coderlessons.com/tutorials/devops/vyuchit-gitlab/gitlab-nastroika-kliucha-ssh)
 
-## Git clone 
-`git clone git@gitlab.com:K-I-S-S-Software/cryptopayments-back-end-python.git`
-
 ## Install venv
 `cd app` <br />
 `python3.10 -m venv venv` <br />
