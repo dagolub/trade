@@ -82,7 +82,7 @@ def save_page(id, data, ext):
     original = f"files/tmp/original.{ext}"
     with open(original, "wb") as file:
         file.write(data)
-    os.remove(original)
+
     result = destination + "document." + ext
     shutil.copy2(original, result)
     return "pages/" + path + "document." + ext
