@@ -29,7 +29,7 @@ Main thing is monga and provisioning
 `pip install poetry`
 
 ## Install poetry dependencies
-`cd backend\app\app` <br />
+`cd backend\app` <br />
 `poetry install`
 
 ## Run application
