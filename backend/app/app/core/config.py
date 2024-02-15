@@ -48,6 +48,8 @@ class Settings(BaseSettings):
     ENVIRONMENT: str
 
     FILES_HOST: str
+    FILES_KEY: str = None
+    FILES_SECRET: str = None
 
     class Config:
         case_sensitive = True

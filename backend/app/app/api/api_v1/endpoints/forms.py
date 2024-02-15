@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from app.api import deps
 from sqlalchemy.orm import Session
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from app import crud
+from app.core.config import settings
 
 router = APIRouter()
 
@@ -18,15 +19,21 @@ async def forms(db: Session = Depends(deps.get_db)):
     return result
 
 
-@router.get("/fill/online?id={id}")
-async def fill(id: int, db: Session = Depends(deps.get_db)):
-    id
-    pass
+@router.get("/fill/online/{form_id}", response_class=HTMLResponse)
+async def fill(form_id, db: Session = Depends(deps.get_db)):
+    host = None
+
+    if settings.ENVIRONMENT == "local":
+        host = "http://pdfmax.localhost"
+    if settings.ENVIRONMENT == "stage":
+        host = "http://pdfmax.xyz"
+
+    return RedirectResponse(f"{host}/fill?id=" + form_id)
 
 
 @router.get("/{slug}", response_class=HTMLResponse)
 async def forms(slug: str, db: Session = Depends(deps.get_db)):
     title = slug.replace(".html", "").title().replace("_", " ")
     page = await crud.page.get_by_title(db=db, title=title)
-    url = "/forms/fill/online?id=" + page[0]["id"]
+    url = "/forms/fill/online/" + page[0]["id"]
     return f'<a href="{url}">Fill online</a>'

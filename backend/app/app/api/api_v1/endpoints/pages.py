@@ -7,6 +7,10 @@ from app.api import deps
 from app.core.config import settings
 import os
 import shutil
+import boto3
+from boto3 import session
+from botocore.client import Config
+from boto3.s3.transfer import S3Transfer
 
 router = APIRouter()
 import re
@@ -76,14 +80,39 @@ def save_page(id, data, ext):
         + i[23]
         + "/"
     )
-    destination = f"files/pages/{path}"
+    pages_folder = f"pages/{path}"
+    destination = f"files/{pages_folder}"
     if not os.path.exists(destination):
         os.makedirs(destination)
     original = f"files/tmp/original.{ext}"
     with open(original, "wb") as file:
         file.write(data)
-
     result = destination + "document." + ext
+
+    if settings.FILES_KEY and settings.FILES_SECRET:
+        s = session.Session()
+        client = s.client(
+            "s3",
+            region_name="fra1",  # enter your own region_name
+            endpoint_url="https://pdfmax.fra1.digitaloceanspaces.com",  # enter your own endpoint url
+            aws_access_key_id=settings.FILES_KEY,
+            aws_secret_access_key=settings.FILES_SECRET,
+        )
+
+        transfer = S3Transfer(client)
+
+        # Uploads a file called 'name-of-file' to your Space called 'name-of-space'
+        # Creates a new-folder and the file's final name is defined as 'name-of-file'
+        transfer.upload_file(original, "pages", f"{path}document.{ext}")
+
+        # This makes the file you are have specifically uploaded public by default.
+        response = client.put_object_acl(
+            ACL="public-read",
+            Bucket="pages",
+            Key=f"{path}document.{ext}",
+        )
+        return "pages/" + path + "document." + ext
+
     shutil.copy2(original, result)
     return "pages/" + path + "document." + ext
 
