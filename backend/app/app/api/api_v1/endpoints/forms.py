@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from fastapi.responses import HTMLResponse, RedirectResponse
 from app import crud
 from app.core.config import settings
+import re
 
 router = APIRouter()
 
@@ -26,14 +27,19 @@ async def fill(form_id, db: Session = Depends(deps.get_db)):
     if settings.ENVIRONMENT == "local":
         host = "http://pdfmax.localhost"
     if settings.ENVIRONMENT == "stage":
-        host = "http://pdfmax.xyz"
+        host = "https://pdfmax.xyz"
 
     return RedirectResponse(f"{host}/fill?id=" + form_id)
 
 
 @router.get("/{slug}", response_class=HTMLResponse)
 async def forms(slug: str, db: Session = Depends(deps.get_db)):
+    file = "../../../frontend/index.html"
+    with open(file, "r") as f:
+        html_file = f.read()
+
     title = slug.replace(".html", "").title().replace("_", " ")
     page = await crud.page.get_by_title(db=db, title=title)
     url = "/forms/fill/online/" + page[0]["id"]
-    return f'<a href="{url}">Fill online</a>'
+    result = f'<a href="{url}">Fill online</a>'
+    return re.sub(r"<body.*?><\/body>", rf"<body>{result}</body>", html_file)

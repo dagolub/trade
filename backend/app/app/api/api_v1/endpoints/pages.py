@@ -81,13 +81,10 @@ def save_page(id, data, ext):
         + "/"
     )
     pages_folder = f"pages/{path}"
-    destination = f"files/{pages_folder}"
-    if not os.path.exists(destination):
-        os.makedirs(destination)
+
     original = f"files/tmp/original.{ext}"
     with open(original, "wb") as file:
         file.write(data)
-    result = destination + "document." + ext
 
     if settings.FILES_KEY and settings.FILES_SECRET:
         s = session.Session()
@@ -112,8 +109,12 @@ def save_page(id, data, ext):
             Key=f"{path}document.{ext}",
         )
         return "pages/" + path + "document." + ext
-
-    shutil.copy2(original, result)
+    else:
+        destination = f"files/{pages_folder}"
+        if not os.path.exists(destination):
+            os.makedirs(destination)
+        result = destination + "document." + ext
+        shutil.copy2(original, result)
     return "pages/" + path + "document." + ext
 
 

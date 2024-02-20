@@ -12,6 +12,8 @@ import re
 from app import crud
 from boto3 import session
 from boto3.s3.transfer import S3Transfer
+import requests
+import urllib3
 
 router = APIRouter()
 
@@ -39,15 +41,69 @@ async def fill(
         obj_in={"owner_id": current_user["id"], "name": page["title"], "folder_id": 0},
     )
     destination = create_dir(file["id"])
+
     _from = "files/" + page["file"]
     _to = destination + "document.pdf"
-    shutil.copy2(_from, _to)
+
+    if settings.FILES_KEY and settings.FILES_SECRET:
+        copy_forms_to_file(
+            page["file"], destination.replace("files/files/", "files/") + "document.pdf"
+        )
+    else:
+        shutil.copy2(_from, _to)
     await crud.document.update(
         db=db,
         db_obj=file,
         obj_in={"file": _to.replace("files/files/", "files/"), "ext": "pdf"},
     )
     return {"id": file["id"]}
+
+
+def copy_forms_to_file(_from, _to):
+    if settings.FILES_KEY and settings.FILES_SECRET:
+        s = session.Session()
+        client = s.client(
+            "s3",
+            region_name="fra1",  # enter your own region_name
+            endpoint_url="https://pdfmax.fra1.digitaloceanspaces.com",  # enter your own endpoint url
+            aws_access_key_id=settings.FILES_KEY,
+            aws_secret_access_key=settings.FILES_SECRET,
+        )
+
+        transfer = S3Transfer(client)
+        # forms_file = requests.get(settings.FILES_HOST + _from)
+        if not os.path.exists("files"):
+            os.makedirs("files")
+        if not os.path.exists("files/tmp"):
+            os.makedirs("files/tmp")
+        original = "files/tmp/document.pdf"
+
+        resp = urllib3.request(
+            "GET",
+            settings.FILES_HOST + _from,
+            preload_content=False,
+        )
+
+        with open(original, "wb") as f:
+            for chunk in resp.stream(65536):
+                f.write(chunk)
+
+        resp.release_conn()
+        # Uploads a file called 'name-of-file' to your Space called 'name-of-space'
+        # Creates a new-folder and the file's final name is defined as 'name-of-file'
+        transfer.upload_file(
+            original,
+            "files",
+            _to.replace("files/", ""),
+            extra_args={"ContentType": "application/pdf"},
+        )
+
+        # This makes the file you are have specifically uploaded public by default.
+        response = client.put_object_acl(
+            ACL="public-read",
+            Bucket="files",
+            Key=_to.replace("files/", ""),
+        )
 
 
 def create_dir(id):
@@ -238,7 +294,12 @@ def save_document(id, data, ext):
 
         # Uploads a file called 'name-of-file' to your Space called 'name-of-space'
         # Creates a new-folder and the file's final name is defined as 'name-of-file'
-        transfer.upload_file(original, "files", f"{path}document.{ext}")
+        transfer.upload_file(
+            original,
+            "files",
+            f"{path}document.{ext}",
+            extra_args={"ContentType": "application/pdf"},
+        )
 
         # This makes the file you are have specifically uploaded public by default.
         response = client.put_object_acl(
