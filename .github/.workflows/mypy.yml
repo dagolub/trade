@@ -13,10 +13,10 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install Dependencies and run MyPy
       run: |
-        python3 -m venv venv
+        python --version
+        python -m venv venv
         source ./venv/bin/activate
         pip install poetry
         pip install --upgrade pip
-        cd backend/app
         poetry install
-        ../../venv/bin/mypy ./
+        ./venv/bin/mypy ./trade/*/*.py

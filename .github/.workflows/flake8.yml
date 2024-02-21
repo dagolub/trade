@@ -16,5 +16,6 @@ jobs:
       - name: Install flake8
         run: pip install flake8
       - name: Run flake8
-        run: |
-          flake8 --exclude=".venv,frontend,backend/app/app/codegen.py,backend/app/app/cron/transfer.py, backend/app/app/services/okx, backend/app/app/tests" .
+        uses: py-actions/flake8@v2
+        with:
+          path: "trade"

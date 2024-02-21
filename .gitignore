@@ -1,8 +1,3 @@
-.idea
-.vscode
-.mypy_cache
-.env
-docker-stack.yml
-frontent/node_modules
 venv
-images
+.idea
+__pycache__

@@ -1,6 +1,0 @@
-.idea
-.mypy_cache
-.coverage
-htmlcov
-.venv
-app/files

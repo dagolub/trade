@@ -1,0 +1,232 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trade
+  namespace: amlback
+  labels:
+    app: trade
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trade
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: trade
+    spec:
+      initContainers:
+        - name: trade-migrations
+          image: <IMAGE>
+          command:
+            - alembic
+            - upgrade
+            - head
+          envFrom:
+            - configMapRef:
+                name: trade
+          resources: {}
+          imagePullPolicy: Always
+      containers:
+        - name: trade
+          image: <IMAGE>
+          command: ["gunicorn", "main:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8080", "--pythonpath", "/app/trade"]
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: trade
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: registry
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: tradecron
+  namespace: amlback
+  labels:
+    app: tradecron
+spec:
+  schedule: "*/10 * * * *"
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+  concurrencyPolicy: Allow
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          imagePullSecrets:
+            - name: registry
+          containers:
+            - name: tradecron
+              image: <IMAGE>
+              command: ["python"]
+              args: ["/app/trade/cron/spot_okx.py"]
+              envFrom:
+                - configMapRef:
+                    name: trade
+              resources: {}
+              imagePullPolicy: Always
+          restartPolicy: Never
+---
+#apiVersion: batch/v1
+#kind: CronJob
+#metadata:
+#  name: tradecron2
+#  namespace: amlback
+#  labels:
+#    app: tradecron2
+#spec:
+#  schedule: "*/5 * * * *"
+#  successfulJobsHistoryLimit: 2
+#  failedJobsHistoryLimit: 2
+#  concurrencyPolicy: Allow
+#  jobTemplate:
+#    spec:
+#      template:
+#        spec:
+#          imagePullSecrets:
+#            - name: registry
+#          containers:
+#            - name: tradecron2
+#              image: <IMAGE>
+#              command: ["python"]
+#              args: ["/app/trade/cron/exchange_binance.py"]
+#              envFrom:
+#                - configMapRef:
+#                    name: trade
+#              resources: {}
+#              imagePullPolicy: Always
+#          restartPolicy: Never
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: tradecron3
+  namespace: amlback
+  labels:
+    app: tradecron3
+spec:
+  schedule: "*/10 * * * *"
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+  concurrencyPolicy: Allow
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          imagePullSecrets:
+            - name: registry
+          containers:
+            - name: tradecron3
+              image: <IMAGE>
+              command: ["python"]
+              args: ["/app/trade/cron/volatility.py"]
+              envFrom:
+                - configMapRef:
+                    name: trade
+              resources: {}
+              imagePullPolicy: Always
+          restartPolicy: Never
+#---
+#apiVersion: batch/v1
+#kind: CronJob
+#metadata:
+#  name: tradecron4
+#  namespace: amlback
+#  labels:
+#    app: tradecron4
+#spec:
+#  schedule: "*/5 * * * *"
+#  successfulJobsHistoryLimit: 2
+#  failedJobsHistoryLimit: 2
+#  concurrencyPolicy: Allow
+#  jobTemplate:
+#    spec:
+#      template:
+#        spec:
+#          imagePullSecrets:
+#            - name: registry
+#          containers:
+#            - name: tradecron4
+#              image: <IMAGE>
+#              command: ["python"]
+#              args: ["/app/trade/cron/order.py"]
+#              envFrom:
+#                - configMapRef:
+#                    name: trade
+#              resources: {}
+#              imagePullPolicy: Always
+#          restartPolicy: Never
+#---
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: tradecron5
+  namespace: amlback
+  labels:
+    app: tradecron5
+spec:
+  schedule: "*/10 * * * *"
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+  concurrencyPolicy: Allow
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          imagePullSecrets:
+            - name: registry
+          containers:
+            - name: tradecron5
+              image: <IMAGE>
+              command: ["python"]
+              args: ["/app/trade/cron/exchange_okx.py"]
+              envFrom:
+                - configMapRef:
+                    name: trade
+              resources: {}
+              imagePullPolicy: Always
+          restartPolicy: Never
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trade-service
+  namespace: amlback
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: trade
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-trade
+  namespace: amlback
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: <DOMAIN>
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: trade-service
+                port:
+                  number: 8080
